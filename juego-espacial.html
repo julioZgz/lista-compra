@@ -262,7 +262,7 @@ ${view(p)}
 <nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['x','Comercio']].map(([k,n])=>`<button class="${V===k?'on':''}" onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
 function tick(skip){if(!S)return;if(!skip&&advance(Date.now()))dirty=true,render();
 const p=P(SP),c=capN(p),rp=p;
-const ri=$('#rbi');if(ri){ri.textContent=(p.rb>=40?'⚠ ':'')+`Rebelión ${p.rb.toFixed(0)}% · Defensas −${Math.round(defRed(p)*100)}% a los rebeldes`+(p.rb>50?` · éxito rebelde ${Math.round(rebWin(p)*100)}%`:' · sin ataques');ri.style.color=p.rb>50?'#ff8a8a':p.rb>=40?'#ffb547':''}
+const ri=$('#rbi');if(ri){ri.textContent=(p.rb>=40?'⚠ ':'')+`Rebelión ${p.rb.toFixed(0)}% (→ ${rbT(p).toFixed(0)}%) · Defensas −${Math.round(defRed(p)*100)}% a los rebeldes`+(p.rb>50?` · éxito rebelde ${Math.round(rebWin(p)*100)}%`:' · sin ataques');ri.style.color=p.rb>50?'#ff8a8a':p.rb>=40?'#ffb547':''}
 for(let i=0;i<3;i++){const r=R(p)['mcg'[i]],e=$('#rv'+i);if(e){e.textContent=fmt(r)+' / '+fmt(c);e.className=r>=c?'full':'';$('#rp'+i).textContent='+'+prodN(p,i).toFixed(1)+'/s'}}
 document.querySelectorAll('[data-cost]').forEach(b=>{if(!b.dataset.off)b.disabled=!afford(R(rp),JSON.parse(b.dataset.cost))});
 document.querySelectorAll('.ch[data-n]').forEach(e=>{const k=e.dataset.k,n=+e.dataset.n,miss=n-R(rp)[k];let t=`${fmt(n)} ${RN[k]}`;
