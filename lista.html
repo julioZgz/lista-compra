@@ -10,6 +10,7 @@
 :root{--bg:#f2f6f1;--surface:#fff;--ink:#16291d;--muted:#66796c;--line:#d5e0d6;--accent:#1f7a4d;--accent-ink:#fff;--wa:#128c4a;--danger:#b3372f;color-scheme:light;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root{--bg:#101a14;--surface:#18271d;--ink:#e6f0e8;--muted:#92a89a;--line:#2a3d30;--accent:#4fc08a;--accent-ink:#0b1a11;--wa:#3fbf78;--danger:#ef8179;color-scheme:dark}}
+[hidden]{display:none!important}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
 main{max-width:520px;margin:0 auto;padding:16px 16px 32px}
@@ -48,6 +49,12 @@ li.done .nm,li.done .q{text-decoration:line-through;color:var(--muted)}
 .link{background:none;color:var(--muted);font-weight:400;text-decoration:underline;padding:6px 2px}
 .btn{display:flex;width:100%;margin-top:20px;padding:14px 10px;background:var(--wa);color:var(--accent-ink)}
 .btn[aria-disabled=true]{opacity:.4;pointer-events:none}
+.ef{display:flex;gap:6px;width:100%;align-items:center}
+.ef input[type=text]{padding:10px;font-size:1rem}
+.ef .add{padding:10px 14px}
+li.editing{padding:8px 10px}
+.wide{width:100%;padding:13px;margin-top:8px}
+.ed{font-size:1.05rem;padding:4px 8px}
 </style>
 </head>
 <body>
@@ -62,7 +69,10 @@ li.done .nm,li.done .q{text-decoration:line-through;color:var(--muted)}
 <form id="bf" autocomplete="off"><input type="text" id="bn" placeholder="Artículo" aria-label="Artículo de la plantilla"><input type="text" id="bq" class="qty" placeholder="Cant." aria-label="Cantidad"><button class="add" type="submit">Añadir</button></form>
 <ul id="blist"></ul>
 <button class="link" id="fromList" type="button">Añadir a la plantilla lo que hay en la lista</button>
+<p class="msg" id="cfgmsg" role="status"></p>
+<button class="add wide" id="done" type="button">Hecho</button>
 </section>
+<div id="mainv">
 <form id="f" autocomplete="off">
 <input type="text" id="in" placeholder="Añade un artículo" aria-label="Nuevo artículo" enterkeyhint="done">
 <input type="text" id="qty" class="qty" placeholder="Cant." aria-label="Cantidad (opcional)">
@@ -73,12 +83,13 @@ li.done .nm,li.done .q{text-decoration:line-through;color:var(--muted)}
 <ul id="list"></ul>
 <div class="tools"><button class="link" id="copy" type="button">Copiar lista</button><button class="link" id="load" type="button">Cargar plantilla</button><button class="link" id="clear" type="button">Quitar los comprados</button></div>
 <a class="btn" id="wa" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+</div>
 </main>
 <script>
 /* Pega aquí la dirección de tu base de datos de Firebase, entre las comillas. */
 var DB_URL="https://lista-compra-3e6a2-default-rtdb.europe-west1.firebasedatabase.app";
 
-var KEY="lista-compra-v2",BKEY="lista-base-v1",items=[],base=[],pend=0,lastJ="";
+var KEY="lista-compra-v2",BKEY="lista-base-v1",items=[],base=[],pend=0,lastJ="",editId=null,bEditId=null;
 function $(i){return document.getElementById(i)}
 function noop(){}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
@@ -90,7 +101,7 @@ function pending(){return items.filter(function(i){return!i.done})}
 function link(){return/^https?:/.test(location.protocol)?"\n"+location.href.split(/[?#]/)[0]:""}
 function line(i){return i.t+(i.q?" ("+i.q+")":"")}
 function textOut(){return"\ud83d\uded2 *Lista de la compra*"+link()+"\n\n"+pending().map(function(i){return"\u25ab\ufe0f "+line(i)}).join("\n")}
-function msg(t){$("msg").textContent=t;clearTimeout(msg.h);msg.h=setTimeout(function(){$("msg").textContent=""},3500)}
+function msg(t){$("msg").textContent=t;$("cfgmsg").textContent=t;clearTimeout(msg.h);msg.h=setTimeout(function(){$("msg").textContent="";$("cfgmsg").textContent=""},3500)}
 function setStatus(s){
 $("sync").textContent=!DB_URL?"Modo local: la lista solo está en este móvil":s==="off"?"Sin conexión, reintentando…":"Sincronizada con la lista compartida"}
 function api(method,path,body){
@@ -100,9 +111,9 @@ return fetch(DB_URL.replace(/\/$/,"")+path+".json",{method:method,headers:{"Cont
 .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
 .then(function(d){pend--;setStatus("ok");return d},function(e){pend--;setStatus("off");throw e})}
 function sync(){
-if(!DB_URL||pend>0||document.hidden)return;
+if(!DB_URL||pend>0||document.hidden||editId||bEditId)return;
 Promise.all([api("GET","/lista"),api("GET","/base")]).then(function(r){
-if(pend>0)return;
+if(pend>0||editId||bEditId)return;
 var arr=[],barr=[],d=r[0],bd=r[1];
 if(d)Object.keys(d).forEach(function(k){var v=d[k];if(v&&v.t)arr.push({id:k,t:v.t,q:v.q||"",done:!!v.done,ts:v.ts||0})});
 if(bd)Object.keys(bd).forEach(function(k){var v=bd[k];if(v&&v.t)barr.push({id:k,t:v.t,q:v.q||"",ts:v.ts||0})});
@@ -114,6 +125,7 @@ function render(){
 var ul=$("list");ul.innerHTML="";
 if(!items.length){var e=document.createElement("li");e.className="empty";e.textContent="La lista está vacía. Añade un artículo o carga tu plantilla.";ul.appendChild(e)}
 items.forEach(function(it){
+if(editId===it.id){ul.appendChild(editRow(it,false,function(){editId=null;render();renderSug()}));return}
 var li=document.createElement("li");if(it.done)li.className="done";
 var lb=document.createElement("label");
 var cb=document.createElement("input");cb.type="checkbox";cb.checked=it.done;
@@ -123,11 +135,23 @@ lb.appendChild(cb);lb.appendChild(sp);
 if(it.q){var q=document.createElement("span");q.className="q";q.textContent=it.q;lb.appendChild(q)}
 var d=document.createElement("button");d.className="del";d.type="button";d.textContent="×";d.setAttribute("aria-label","Borrar "+it.t);
 d.onclick=function(){items=items.filter(function(x){return x!==it});saveLocal();render();api("DELETE","/lista/"+it.id).catch(noop)};
-li.appendChild(lb);li.appendChild(d);ul.appendChild(li)});
+var ed=document.createElement("button");ed.className="del ed";ed.type="button";ed.textContent="\u270e";ed.setAttribute("aria-label","Editar "+it.t);ed.onclick=function(){editId=it.id;render()};
+li.appendChild(lb);li.appendChild(ed);li.appendChild(d);ul.appendChild(li)});
 var n=pending().length;
 $("count").textContent=n?n+(n===1?" artículo pendiente":" artículos pendientes"):"Nada pendiente";
 $("wa").href="https://wa.me/?text="+encodeURIComponent(textOut());
 $("wa").setAttribute("aria-disabled",n?"false":"true")}
+function editRow(o,isBase,done){
+var li=document.createElement("li");li.className="editing";
+var f=document.createElement("form");f.className="ef";f.autocomplete="off";
+var n=document.createElement("input");n.type="text";n.value=o.t;n.setAttribute("aria-label","Nombre");
+var q=document.createElement("input");q.type="text";q.className="qty";q.value=o.q||"";q.placeholder="Cant.";q.setAttribute("aria-label","Cantidad");
+var s=document.createElement("button");s.type="submit";s.className="add";s.textContent="\u2713";s.setAttribute("aria-label","Guardar");
+var c=document.createElement("button");c.type="button";c.className="del";c.textContent="\u2715";c.setAttribute("aria-label","Cancelar");
+f.onsubmit=function(ev){ev.preventDefault();var t=n.value.trim();if(!t)return;o.t=t;o.q=q.value.trim();saveLocal();api("PATCH",(isBase?"/base/":"/lista/")+o.id,{t:o.t,q:o.q}).catch(noop);done()};
+c.onclick=function(){done()};
+f.appendChild(n);f.appendChild(q);f.appendChild(s);f.appendChild(c);li.appendChild(f);
+setTimeout(function(){n.focus()},0);return li}
 function renderSug(){
 var v=norm($("in").value),box=$("sug");box.innerHTML="";
 if(!v){box.hidden=true;return}
@@ -143,12 +167,14 @@ function renderCfg(){
 var ul=$("blist");ul.innerHTML="";
 if(!base.length){var e=document.createElement("li");e.className="empty";e.textContent="Todavía no hay artículos en la plantilla.";ul.appendChild(e)}
 base.slice().sort(function(a,b){return norm(a.t)<norm(b.t)?-1:1}).forEach(function(b){
+if(bEditId===b.id){ul.appendChild(editRow(b,true,function(){bEditId=null;renderCfg();renderSug()}));return}
 var li=document.createElement("li");
 var sp=document.createElement("span");sp.className="nm";sp.textContent=b.t;li.appendChild(sp);
 if(b.q){var q=document.createElement("span");q.className="q";q.textContent=b.q;li.appendChild(q)}
 var d=document.createElement("button");d.className="del";d.type="button";d.textContent="×";d.setAttribute("aria-label","Quitar "+b.t+" de la plantilla");
 d.onclick=function(){base=base.filter(function(x){return x!==b});saveLocal();renderCfg();renderSug();api("DELETE","/base/"+b.id).catch(noop)};
-li.appendChild(d);ul.appendChild(li)})}
+var ed=document.createElement("button");ed.className="del ed";ed.type="button";ed.textContent="\u270e";ed.setAttribute("aria-label","Editar "+b.t);ed.onclick=function(){bEditId=b.id;renderCfg()};
+li.appendChild(ed);li.appendChild(d);ul.appendChild(li)})}
 $("in").oninput=renderSug;
 $("f").onsubmit=function(ev){
 ev.preventDefault();var v=$("in").value.trim();if(!v)return;
@@ -162,8 +188,11 @@ if(b){b.t=t;b.q=q}else{b={id:uid(),t:t,q:q,ts:Date.now()};base.push(b)}
 saveLocal();renderCfg();$("bn").value="";$("bq").value="";$("bn").focus();
 api("PUT","/base/"+b.id,{t:b.t,q:b.q,ts:b.ts}).catch(noop)};
 $("gear").onclick=function(){
-var c=$("cfg");c.hidden=!c.hidden;$("gear").setAttribute("aria-expanded",String(!c.hidden));
-if(!c.hidden){renderCfg();$("bn").focus()}};
+var c=$("cfg");c.hidden=!c.hidden;var op=!c.hidden;
+$("gear").setAttribute("aria-expanded",String(op));$("mainv").hidden=op;$("count").hidden=op;
+editId=null;bEditId=null;
+if(op){renderCfg();window.scrollTo(0,0)}else{render();renderSug()}};
+$("done").onclick=function(){$("gear").click()};
 $("fromList").onclick=function(){
 var have={},p={},n=0;base.forEach(function(b){have[norm(b.t)]=1});
 items.forEach(function(i,k){
