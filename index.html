@@ -3,117 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Lista de la compra</title>
+<title>Menú</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
 <style>
-:root{--bg:#f2f6f1;--surface:#fff;--ink:#16291d;--muted:#66796c;--line:#d5e0d6;--accent:#1f7a4d;--accent-ink:#fff;--wa:#128c4a;--danger:#b3372f;color-scheme:light;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root{--bg:#101a14;--surface:#18271d;--ink:#e6f0e8;--muted:#92a89a;--line:#2a3d30;--accent:#4fc08a;--accent-ink:#0b1a11;--wa:#3fbf78;--danger:#ef8179;color-scheme:dark}}
+:root{--bg:#f2f6f1;--surface:#fff;--ink:#16291d;--muted:#66796c;--line:#d5e0d6;--accent:#1f7a4d;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#101a14;--surface:#18271d;--ink:#e6f0e8;--muted:#92a89a;--line:#2a3d30;--accent:#4fc08a;color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
-main{max-width:520px;margin:0 auto;padding:20px 16px 32px}
-h1{font-size:2rem;font-weight:800;margin:8px 0 2px;letter-spacing:-.02em}
-.count{color:var(--muted);margin:0}
-.sync{color:var(--muted);font-size:.85rem;margin:0 0 18px}
-form{display:flex;gap:8px}
-input[type=text]{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
-input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px}
-button,.btn{font:inherit;font-weight:600;border:0;border-radius:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-button:focus-visible,.btn:focus-visible,input[type=checkbox]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.add{background:var(--accent);color:var(--accent-ink);padding:0 18px}
-ul{list-style:none;margin:18px 0 0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
-li:last-child{border-bottom:0}
-li label{flex:1;display:flex;align-items:center;gap:12px;font-size:1.08rem;cursor:pointer;min-width:0;word-break:break-word}
-input[type=checkbox]{width:22px;height:22px;accent-color:var(--accent);flex:none}
-li.done label span{text-decoration:line-through;color:var(--muted)}
-.del{background:none;color:var(--muted);font-size:1.3rem;padding:4px 10px;line-height:1}
-.empty{display:block;color:var(--muted);text-align:center;padding:26px 14px}
-.tools{display:flex;justify-content:space-between;margin-top:10px}
-.link{background:none;color:var(--muted);font-weight:400;text-decoration:underline;padding:6px 2px}
-.btn{display:flex;width:100%;margin-top:20px;padding:14px 10px;background:var(--wa);color:var(--accent-ink)}
-.btn[aria-disabled=true]{opacity:.4;pointer-events:none}
+main{max-width:520px;margin:0 auto;padding:28px 16px}
+h1{font-size:2.2rem;font-weight:800;margin:8px 0 4px;letter-spacing:-.02em}
+p{color:var(--muted);margin:0 0 24px}
+a{display:block;background:var(--surface);color:var(--ink);text-decoration:none;border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:16px;padding:22px 20px;margin-bottom:14px;font-size:1.3rem;font-weight:800}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+a small{display:block;font-weight:400;font-size:.95rem;color:var(--muted);margin-top:2px}
 </style>
 </head>
 <body>
 <main>
-<h1>Lista de la compra</h1>
-<p class="count" id="count"></p>
-<p class="sync" id="sync"></p>
-<form id="f" autocomplete="off">
-<input type="text" id="in" placeholder="Añade un artículo" aria-label="Nuevo artículo" enterkeyhint="done">
-<button class="add" type="submit">Añadir</button>
-</form>
-<ul id="list"></ul>
-<div class="tools"><button class="link" id="copy" type="button">Copiar lista</button><button class="link" id="clear" type="button">Quitar los comprados</button></div>
-<a class="btn" id="wa" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+<h1>Casa</h1>
+<p>¿Qué quieres abrir?</p>
+<a href="lista.html">🛒 Lista de la compra<small>Añade artículos y envíalos por WhatsApp</small></a>
+<a href="calendario.html">📅 Calendario<small>Eventos por día, semana o en lista</small></a>
 </main>
-<script>
-/* Pega aquí la dirección de tu base de datos de Firebase, entre las comillas. */
-var DB_URL="https://lista-compra-3e6a2-default-rtdb.europe-west1.firebasedatabase.app";
-
-var KEY="lista-compra-v2",items=[],pend=0;
-function $(i){return document.getElementById(i)}
-function noop(){}
-try{items=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){items=[]}
-if(!Array.isArray(items))items=[];
-function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}}
-function pending(){return items.filter(function(i){return!i.done})}
-function link(){return/^https?:/.test(location.protocol)?"\n"+location.href.split(/[?#]/)[0]:""}
-function textOut(){return"\ud83d\uded2 *Lista de la compra*"+link()+"\n\n"+pending().map(function(i){return"\u25ab\ufe0f "+i.t}).join("\n")}
-function setStatus(s){
-$("sync").textContent=!DB_URL?"Modo local: la lista solo está en este móvil":s==="off"?"Sin conexión, reintentando…":"Sincronizada con la lista compartida"}
-function api(method,path,body){
-if(!DB_URL)return Promise.resolve(null);
-pend++;
-return fetch(DB_URL.replace(/\/$/,"")+path+".json",{method:method,headers:{"Content-Type":"application/json"},body:body===undefined?undefined:JSON.stringify(body)})
-.then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
-.then(function(d){pend--;setStatus("ok");return d},function(e){pend--;setStatus("off");throw e})}
-function sync(){
-if(!DB_URL||pend>0||document.hidden)return;
-api("GET","/lista").then(function(d){
-if(pend>0)return;
-var arr=[];
-if(d)Object.keys(d).forEach(function(k){var v=d[k];if(v&&v.t)arr.push({id:k,t:v.t,done:!!v.done,ts:v.ts||0})});
-arr.sort(function(a,b){return a.ts-b.ts});
-items=arr;saveLocal();render()}).catch(noop)}
-function render(){
-var ul=$("list");ul.innerHTML="";
-if(!items.length){var e=document.createElement("li");e.className="empty";e.textContent="La lista está vacía. Añade tu primer artículo.";ul.appendChild(e)}
-items.forEach(function(it){
-var li=document.createElement("li");if(it.done)li.className="done";
-var lb=document.createElement("label");
-var cb=document.createElement("input");cb.type="checkbox";cb.checked=it.done;
-cb.onchange=function(){it.done=cb.checked;saveLocal();render();api("PATCH","/lista/"+it.id,{done:it.done}).catch(noop)};
-var sp=document.createElement("span");sp.textContent=it.t;
-lb.appendChild(cb);lb.appendChild(sp);
-var d=document.createElement("button");d.className="del";d.type="button";d.textContent="×";d.setAttribute("aria-label","Borrar "+it.t);
-d.onclick=function(){items=items.filter(function(x){return x!==it});saveLocal();render();api("DELETE","/lista/"+it.id).catch(noop)};
-li.appendChild(lb);li.appendChild(d);ul.appendChild(li)});
-var n=pending().length;
-$("count").textContent=n?n+(n===1?" artículo pendiente":" artículos pendientes"):"Nada pendiente";
-$("wa").href="https://wa.me/?text="+encodeURIComponent(textOut());
-$("wa").setAttribute("aria-disabled",n?"false":"true")}
-$("f").onsubmit=function(ev){
-ev.preventDefault();var v=$("in").value.trim();if(!v)return;
-var it={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:v,done:false,ts:Date.now()};
-items.push(it);$("in").value="";saveLocal();render();$("in").focus();
-api("PUT","/lista/"+it.id,{t:it.t,done:false,ts:it.ts}).catch(noop)};
-$("clear").onclick=function(){
-var gone=items.filter(function(i){return i.done});
-if(!gone.length)return;
-items=pending();saveLocal();render();
-var p={};gone.forEach(function(g){p[g.id]=null});
-api("PATCH","/lista",p).catch(noop)};
-$("copy").onclick=function(){
-var t=textOut(),b=$("copy");
-function ok(){b.textContent="Copiada";setTimeout(function(){b.textContent="Copiar lista"},1500)}
-function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");ok()}catch(e){}document.body.removeChild(a)}
-try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}};
-setStatus("ok");render();sync();
-setInterval(sync,4000);
-document.addEventListener("visibilitychange",function(){if(!document.hidden)sync()});
-</script>
 </body>
 </html>

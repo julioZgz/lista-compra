@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calendario</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#f2f6f1;--surface:#fff;--ink:#16291d;--muted:#66796c;--line:#d5e0d6;--accent:#1f7a4d;--accent-ink:#fff;--danger:#b3372f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#101a14;--surface:#18271d;--ink:#e6f0e8;--muted:#92a89a;--line:#2a3d30;--accent:#4fc08a;--accent-ink:#0b1a11;--danger:#ef8179;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
+main{max-width:560px;margin:0 auto;padding:16px 16px 40px}
+a.back{color:var(--muted);text-decoration:none;font-size:.95rem}
+h1{font-size:2rem;font-weight:800;margin:6px 0 2px;letter-spacing:-.02em}
+h2{font-size:1.05rem;margin:14px 0 8px;text-transform:capitalize}
+h3{font-size:.95rem;margin:0 0 6px;text-transform:capitalize}
+.sync{color:var(--muted);font-size:.85rem;margin:0 0 14px}
+button{font:inherit;font-weight:600;border:0;border-radius:10px;cursor:pointer;background:var(--surface);color:var(--ink);padding:9px 14px;border:1px solid var(--line)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+summary{cursor:pointer;font-weight:600}
+form{display:grid;gap:10px;margin-top:12px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:grid;gap:4px;font-size:.8rem;color:var(--muted)}
+input[type=text],input[type=date],input[type=time]{font:inherit;font-size:1rem;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+.add{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:12px}
+.tabs,.bar{display:flex;gap:8px;margin-bottom:10px}
+.tabs button{flex:1}
+.bar{justify-content:space-between;align-items:center}
+.bar>div{display:flex;gap:6px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.none{color:var(--muted);margin:0;font-size:.9rem}
+.ev{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;margin-top:6px;background:var(--bg);border-left:4px solid var(--accent);border-radius:8px}
+.ev.past{opacity:.5}
+.tx{min-width:0;word-break:break-word}
+.tx small{display:block;color:var(--muted)}
+.del{background:none;border:0;color:var(--muted);font-size:1.3rem;padding:2px 8px;line-height:1}
+.chk{display:flex;flex-direction:row;align-items:center;gap:8px;margin-bottom:10px;font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="./">← Menú</a>
+<h1>Calendario</h1>
+<p class="sync" id="sync"></p>
+<details id="new"><summary>+ Nuevo evento</summary>
+<form id="f" autocomplete="off">
+<input type="text" id="t" placeholder="Título del evento" aria-label="Título del evento" required>
+<div class="row"><label>Fecha<input type="date" id="d" required></label><label>Hasta (opcional)<input type="date" id="e"></label></div>
+<div class="row"><label>Hora de inicio (opcional)<input type="time" id="h1"></label><label>Hora de fin (opcional)<input type="time" id="h2"></label></div>
+<button class="add" type="submit">Guardar evento</button>
+</form></details>
+<nav class="tabs"><button data-v="cal" class="on">Calendario</button><button data-v="lst">Lista</button></nav>
+<section id="cal">
+<div class="bar"><div id="seg"><button data-m="dia" class="on">Día</button><button data-m="sem">Semana</button></div><div><button id="prev" aria-label="Anterior">‹</button><button id="today">Hoy</button><button id="next" aria-label="Siguiente">›</button></div></div>
+<h2 id="range"></h2><div id="grid"></div>
+</section>
+<section id="lst" hidden>
+<label class="chk"><input type="checkbox" id="past"> Ver eventos pasados</label>
+<div id="all"></div>
+</section>
+</main>
+<script>
+/* Pega aquí la dirección de tu base de datos de Firebase, entre las comillas. */
+var DB_URL="https://lista-compra-3e6a2-default-rtdb.europe-west1.firebasedatabase.app";
+
+var KEY="eventos-v1",ev=[],pend=0,view="cal",mode="dia";
+function $(i){return document.getElementById(i)}
+function noop(){}
+function pad(n){return(n<10?"0":"")+n}
+function ymd(x){return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())}
+function pd(s){var a=s.split("-");return new Date(+a[0],+a[1]-1,+a[2])}
+function addD(x,n){return new Date(x.getFullYear(),x.getMonth(),x.getDate()+n)}
+function monday(x){return addD(x,-((x.getDay()+6)%7))}
+function fmt(x,o){return x.toLocaleDateString("es-ES",o)}
+var cur=pd(ymd(new Date()));
+try{ev=JSON.parse(localStorage.getItem(KEY))||[]}catch(e){ev=[]}
+if(!Array.isArray(ev))ev=[];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ev))}catch(e){}}
+function setStatus(s){$("sync").textContent=!DB_URL?"Modo local: los eventos solo están en este móvil":s==="off"?"Sin conexión, reintentando…":"Sincronizado con el calendario compartido"}
+function api(method,path,body){
+if(!DB_URL)return Promise.resolve(null);
+pend++;
+return fetch(DB_URL.replace(/\/$/,"")+path+".json",{method:method,headers:{"Content-Type":"application/json"},body:body===undefined?undefined:JSON.stringify(body)})
+.then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+.then(function(d){pend--;setStatus("ok");return d},function(e){pend--;setStatus("off");throw e})}
+function sync(){
+if(!DB_URL||pend>0||document.hidden)return;
+api("GET","/eventos").then(function(d){
+if(pend>0)return;
+var arr=[];
+if(d)Object.keys(d).forEach(function(k){var v=d[k];if(v&&v.t&&v.d)arr.push({id:k,t:v.t,d:v.d,e:v.e||"",h1:v.h1||"",h2:v.h2||"",ts:v.ts||0})});
+ev=arr;save();render()}).catch(noop)}
+function item(x){
+var c=document.createElement("div");c.className="ev";
+var tx=document.createElement("div");tx.className="tx";
+var tt=document.createElement("strong");tt.textContent=x.t;tx.appendChild(tt);
+var p=[];
+if(x.h1)p.push(x.h1+(x.h2?"–"+x.h2:""));else if(x.h2)p.push("hasta las "+x.h2);
+if(x.e&&x.e>x.d)p.push(fmt(pd(x.d),{day:"numeric",month:"short"})+" → "+fmt(pd(x.e),{day:"numeric",month:"short"}));
+if(p.length){var m=document.createElement("small");m.textContent=p.join(" · ");tx.appendChild(m)}
+var b=document.createElement("button");b.className="del";b.type="button";b.textContent="×";b.setAttribute("aria-label","Borrar "+x.t);
+b.onclick=function(){ev=ev.filter(function(y){return y!==x});save();render();api("DELETE","/eventos/"+x.id).catch(noop)};
+c.appendChild(tx);c.appendChild(b);return c}
+function dayEvents(s){return ev.filter(function(x){return x.d<=s&&s<=(x.e||x.d)}).sort(function(a,b){return a.h1.localeCompare(b.h1)})}
+function block(dt,noHead){
+var s=ymd(dt),b=document.createElement("div");b.className="day"+(s===ymd(new Date())?" today":"");
+if(!noHead){var h=document.createElement("h3");h.textContent=fmt(dt,{weekday:"long",day:"numeric",month:"long"});b.appendChild(h)}
+var l=dayEvents(s);
+if(!l.length){var p=document.createElement("p");p.className="none";p.textContent="Sin eventos";b.appendChild(p)}
+l.forEach(function(x){b.appendChild(item(x))});return b}
+function render(){
+$("cal").hidden=view!=="cal";$("lst").hidden=view!=="lst";
+document.querySelectorAll(".tabs button").forEach(function(b){b.classList.toggle("on",b.dataset.v===view)});
+document.querySelectorAll("#seg button").forEach(function(b){b.classList.toggle("on",b.dataset.m===mode)});
+var g=$("grid");g.innerHTML="";
+if(mode==="dia"){$("range").textContent=fmt(cur,{weekday:"long",day:"numeric",month:"long",year:"numeric"});g.appendChild(block(cur,true))}
+else{var m=monday(cur);$("range").textContent="Semana del "+fmt(m,{day:"numeric",month:"short"})+" al "+fmt(addD(m,6),{day:"numeric",month:"short",year:"numeric"});
+for(var i=0;i<7;i++)g.appendChild(block(addD(m,i)))}
+var a=$("all");a.innerHTML="";
+var today=ymd(new Date()),showPast=$("past").checked,last="";
+var l=ev.filter(function(x){return showPast||(x.e||x.d)>=today}).sort(function(x,y){return(x.d+x.h1).localeCompare(y.d+y.h1)});
+if(!l.length){var n=document.createElement("p");n.className="none";n.textContent="No hay eventos.";a.appendChild(n)}
+l.forEach(function(x){
+if(x.d!==last){last=x.d;var h=document.createElement("h3");h.style.marginTop="14px";h.textContent=fmt(pd(x.d),{weekday:"long",day:"numeric",month:"long",year:"numeric"});a.appendChild(h)}
+var it=item(x);if((x.e||x.d)<today)it.classList.add("past");a.appendChild(it)})}
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){view=b.dataset.v;render()}});
+document.querySelectorAll("#seg button").forEach(function(b){b.onclick=function(){mode=b.dataset.m;render()}});
+$("prev").onclick=function(){cur=addD(cur,mode==="dia"?-1:-7);render()};
+$("next").onclick=function(){cur=addD(cur,mode==="dia"?1:7);render()};
+$("today").onclick=function(){cur=pd(ymd(new Date()));render()};
+$("past").onchange=render;
+$("f").onsubmit=function(ev2){
+ev2.preventDefault();
+var t=$("t").value.trim(),d=$("d").value;if(!t||!d)return;
+var en=$("e").value;if(en&&en<=d)en="";
+var x={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:t,d:d,e:en,h1:$("h1").value,h2:$("h2").value,ts:Date.now()};
+ev.push(x);save();$("f").reset();$("d").value=d;cur=pd(d);$("new").open=false;render();
+api("PUT","/eventos/"+x.id,{t:x.t,d:x.d,e:x.e,h1:x.h1,h2:x.h2,ts:x.ts}).catch(noop)};
+$("d").value=ymd(new Date());
+setStatus("ok");render();sync();
+setInterval(sync,4000);
+document.addEventListener("visibilitychange",function(){if(!document.hidden)sync()});
+</script>
+</body>
+</html>
