@@ -61,8 +61,8 @@ u:{n:'Universidad',d:'Cada nivel reduce un 8% los tiempos de este planeta y da +
 h:{n:'Hangar de transporte',d:'Con la tecnología Redes de transporte, conecta este planeta a la red: sus recursos, su producción y su almacén se suman a los comunes.',b:{m:300,c:200,g:60},f:1,max:1},
 o:{n:'Centro de ocio',d:'Reduce un 4% por nivel la rebelión hacia la que tiende este planeta.',b:{m:150,c:120},f:1.6,max:10},
 k:{n:'Parque',d:'Reduce un 4% por nivel la rebelión hacia la que tiende este planeta.',b:{m:100,c:60},f:1.5,max:10},
-w:{n:'Murallas',d:'Defensa contra ataques separatistas.',b:{m:200,c:50},f:1.6,max:10},
-t:{n:'Torretas láser',d:'Defensa potente contra ataques separatistas.',b:{m:220,c:120,g:60},f:1.6,max:10},
+w:{n:'Murallas',d:'Cada nivel reduce un 4% la probabilidad de que los rebeldes ganen un ataque.',b:{m:200,c:50},f:1.6,max:10},
+t:{n:'Torretas láser',d:'Cada nivel reduce un 6% la probabilidad de que los rebeldes ganen un ataque.',b:{m:220,c:120,g:60},f:1.6,max:10},
 p:{n:'Puerto comercial',d:'Cada nivel atrae un 15% más de visitas, aumenta un 5% lo que dejan los mercaderes y reduce la llegada de refugiados.',b:{m:200,c:150,g:30},f:1.7,max:5},
 d:{n:'Fábrica de drones',d:'Cada nivel reduce un 8% los tiempos de este planeta y da +5% de producción.',b:{m:240,c:140,g:40},f:1.7,max:10}};
 const T={p:{n:'Propulsión',d:'Más alcance (+2 de distancia) y viajes más rápidos.',b:{c:100,g:60},f:1.9,max:8},
@@ -88,6 +88,7 @@ const cap=p=>Math.round(1000*Math.pow(1.7,lv(p,'a')));
 const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*L*Math.pow(1.15,L)*(1+.1*S.tech.e+.05*(lv(p,'u')+lv(p,'d')))};
 const lv=(p,k)=>p.dm&&p.dm.includes(k)?0:p.b[k];
 const rbT=p=>Math.max(0,Math.min(100,p.rb0+1.5*(p.b.m+p.b.c+p.b.g)-4*(lv(p,'o')+lv(p,'k'))));
+const defRed=p=>Math.min(.9,.04*lv(p,'w')+.06*lv(p,'t')),rebWin=p=>Math.max(.05,Math.min(.95,.5+(p.rb-50)/100+(p.b.m+p.b.c+p.b.g)/100))*(1-defRed(p));
 const warn=p=>p.rb>=40||(p.dm&&p.dm.length>0);
 function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[]}
 const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/2)])),repT=(p,k)=>Math.ceil(tB(k,p.b[k]-1,p)/2);
@@ -156,8 +157,8 @@ const f=(.6+Math.random()*.8)*(1+.05*lvl),g={m:Math.round((40+pw*14)*f),c:Math.r
 const p=S.cs[Math.floor(Math.random()*S.cs.length)],who=['Unos mercaderes','Unos peregrinos','Una nave a la deriva'][Math.floor(Math.random()*3)];
 for(const k in g)R(p)[k]+=g[k];
 S.ev=`${who} han visitado ${U(p.id).name} y dejan ${g.m} de metal, ${g.c} de cristal y ${g.g} de gas.`;toast(S.ev)}
-function attack(p){const mines=p.b.m+p.b.c+p.b.g,att=3+(p.rb-50)/5+mines/3,def=2*lv(p,'w')+3*lv(p,'t'),n=U(p.id).name;
-if(Math.random()<def/(def+att)){p.rb=Math.max(0,p.rb-3);S.ev=`Ataque separatista repelido en ${n}.`;toast(S.ev);return}
+function attack(p){const n=U(p.id).name;
+if(Math.random()>=rebWin(p)){p.rb=Math.max(0,p.rb-3);S.ev=`Ataque separatista repelido en ${n}.`;toast(S.ev);return}
 const pool=R(p),st={};for(const k of['m','c','g']){st[k]=Math.floor(pool[k]*.2);pool[k]-=st[k]}
 const ok=Object.keys(p.b).filter(k=>p.b[k]>0&&!p.dm.includes(k));let d='';if(ok.length){const k=ok[Math.floor(Math.random()*ok.length)];p.dm.push(k);d=` ${B[k].n} dañado.`}
 S.ev=`Ataque separatista en ${n}: roban ${st.m} de metal, ${st.c} de cristal y ${st.g} de gas.${d}`;toast(S.ev)}
@@ -251,12 +252,13 @@ if(!S){a.innerHTML=`<div style="text-align:center">${planet(0,130)}</div><h1>Col
 const p=P(SP);
 a.innerHTML=`<div class=top><h1>Colonias Estelares</h1><div class=st><span id=st>${st}</span> <button onclick="logout()" style="background:none;border:0;color:var(--mu);text-decoration:underline">Salir</button></div></div>
 <div class=hd><div class=tabs>${S.cs.map(c=>`<button class="tab ${c.id===SP?'on':''}${warn(c)?' warn':''}" onclick="selPlanet(${c.id})">${orb(c.id)}${warn(c)?'⚠ ':''}${U(c.id).name}</button>`).join('')}</div>
-${p.nj?'<div class=st>🔗 Recursos de la red interplanetaria</div>':''}<div class=res>${[0,1,2].map(i=>`<div class=rs><span class="${'mcg'[i]}">${RN['mcg'[i]]}</span><strong id=rv${i}></strong><small id=rp${i}></small></div>`).join('')}</div></div>
+${p.nj?'<div class=st>🔗 Recursos de la red interplanetaria</div>':''}<div class=res>${[0,1,2].map(i=>`<div class=rs><span class="${'mcg'[i]}">${RN['mcg'[i]]}</span><strong id=rv${i}></strong><small id=rp${i}></small></div>`).join('')}</div><div class=st id=rbi style="margin:-6px 0 6px"></div></div>
 ${rfCard()}${strip()}${S.ev?`<p class=st>${S.ev}</p>`:''}
 ${view(p)}
 <nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['x','Comercio']].map(([k,n])=>`<button class="${V===k?'on':''}" onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
 function tick(skip){if(!S)return;if(!skip&&advance(Date.now()))dirty=true,render();
 const p=P(SP),c=capN(p),rp=p;
+const ri=$('#rbi');if(ri){ri.textContent=(p.rb>=40?'⚠ ':'')+`Rebelión ${p.rb.toFixed(0)}% · Defensas −${Math.round(defRed(p)*100)}% a los rebeldes`+(p.rb>50?` · éxito rebelde ${Math.round(rebWin(p)*100)}%`:' · sin ataques');ri.style.color=p.rb>50?'#ff8a8a':p.rb>=40?'#ffb547':''}
 for(let i=0;i<3;i++){const r=R(p)['mcg'[i]],e=$('#rv'+i);if(e){e.textContent=fmt(r)+' / '+fmt(c);e.className=r>=c?'full':'';$('#rp'+i).textContent='+'+prodN(p,i).toFixed(1)+'/s'}}
 document.querySelectorAll('[data-cost]').forEach(b=>{if(!b.dataset.off)b.disabled=!afford(R(rp),JSON.parse(b.dataset.cost))});
 document.querySelectorAll('.ch[data-n]').forEach(e=>{const k=e.dataset.k,n=+e.dataset.n,miss=n-R(rp)[k];let t=`${fmt(n)} ${RN[k]}`;
