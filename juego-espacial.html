@@ -84,14 +84,14 @@ const afford=(r,c)=>Object.keys(c).every(k=>r[k]>=c[k]);
 const fmt=n=>n>=1e4?(n/1e3).toFixed(1)+'k':Math.floor(n);
 const fmtT=s=>{const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+'d ':'')+(d||h?h+'h ':'')+(d||h||m?m+'m ':'')+s%60+'s'};
 const P=id=>S.cs.find(c=>c.id===id),U=id=>S.u.find(p=>p.id===id);
-const cap=p=>Math.round(1000*Math.pow(1.7,lv(p,'a')));
+const cap=p=>Math.round(1000*Math.pow(1.7,p.dm&&p.dm.includes('a')?Math.floor(p.b.a/2):p.b.a));
 const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*L*Math.pow(1.15,L)*(1+.1*S.tech.e+.05*(lv(p,'u')+lv(p,'d')))};
 const lv=(p,k)=>p.dm&&p.dm.includes(k)?0:p.b[k];
 const rbT=p=>Math.max(0,Math.min(100,p.rb0+1.5*(p.b.m+p.b.c+p.b.g)-4*(lv(p,'o')+lv(p,'k'))));
 const defRed=p=>Math.min(.9,.04*lv(p,'w')+.06*lv(p,'t')),rebWin=p=>Math.max(.05,Math.min(.95,.5+(p.rb-50)/100+(p.b.m+p.b.c+p.b.g)/100))*(1-defRed(p));
 const warn=p=>p.rb>=40||(p.dm&&p.dm.length>0);
-function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[]}
-const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/2)])),repT=(p,k)=>Math.ceil(tB(k,p.b[k]-1,p)/2);
+function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
+const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/10)])),repT=(p,k)=>Math.max(30,Math.round(300/ef(p)));
 const R=p=>p.nj?S.net:p.r,mem=()=>S.cs.filter(p=>p.nj);
 const capN=p=>p.nj?mem().reduce((a,q)=>a+cap(q),0):cap(p),prodN=(p,i)=>p.nj?mem().reduce((a,q)=>a+prod(q,i),0):prod(p,i);
 function sync(){S.cs.forEach(p=>{if(!p.nj&&S.tech.n>=1&&p.b.h>=1){for(const k of['m','c','g']){S.net[k]+=R(p)[k];R(p)[k]=0}p.nj=1;toast('Conectado a la red: '+U(p.id).name)}})}
@@ -166,8 +166,9 @@ function advance(now){const dt=Math.min((now-S.t)/1000,172800);S.t=now;if(dt<=0)
 S.cs.forEach(p=>{if(p.nj)return;const c=cap(p);for(let i=0;i<3;i++){const k='mcg'[i];if(R(p)[k]<c)R(p)[k]=Math.min(c,R(p)[k]+prod(p,i)*dt)}});
 if(S.cs.some(p=>p.nj)){const m=mem(),c=m.reduce((a,p)=>a+cap(p),0);for(let i=0;i<3;i++){const k='mcg'[i];if(S.net[k]<c)S.net[k]=Math.min(c,S.net[k]+m.reduce((a,p)=>a+prod(p,i),0)*dt)}}
 let ch=false;
-S.cs.forEach(p=>{if(p.q&&p.q.end<=now){if(p.q.rep)p.dm=p.dm.filter(x=>x!==p.q.k);else p.b[p.q.k]++;toast(`${B[p.q.k].n} de ${U(p.id).name} ${p.q.rep?'reparado':'mejorado'}`);delete p.q;ch=true}
-p.rb+=(rbT(p)-p.rb)*Math.min(1,dt/600);if(p.rb>50&&Math.random()<1-Math.exp(-dt*(p.rb-50)/45000)){attack(p);ch=true}});
+S.cs.forEach(p=>{if(p.rr&&p.rr.end<=now){p.dm=p.dm.filter(x=>x!==p.rr.k);toast(`${B[p.rr.k].n} de ${U(p.id).name} reparado`);delete p.rr;ch=true}
+if(p.q&&p.q.end<=now){if(p.q.rep)p.dm=p.dm.filter(x=>x!==p.q.k);else p.b[p.q.k]++;toast(`${B[p.q.k].n} de ${U(p.id).name} ${p.q.rep?'reparado':'mejorado'}`);delete p.q;ch=true}
+p.rb+=(rbT(p)-p.rb)*Math.min(1,dt/600);if(dt<=120&&p.rb>50&&Math.random()<1-Math.exp(-dt*(p.rb-50)/45000)){attack(p);ch=true}});
 S.cs.forEach(p=>{if(p.rq&&p.rq.end<=now){S.tech[p.rq.k]++;toast('Investigación completada: '+T[p.rq.k].n);delete p.rq;ch=true}if(p.sq&&p.sq.end<=now){S.fleet[p.sq.t]++;toast(SH[p.sq.t].n+' construido');delete p.sq;ch=true}});
 S.mis=S.mis.filter(m=>{if(m.end>now)return true;ch=true;done(m);return false});if(S.rf&&S.rf.exp<=now){delete S.rf;ch=true}if(S.nv<=now){visitor();S.nv=now+(300+Math.random()*300)*1000/(1+.15*S.cs.reduce((a,p)=>a+lv(p,'p'),0));ch=true}sync();return ch}
 
@@ -175,7 +176,10 @@ function change(){dirty=true;render()}
 function build(k){const p=P(SP),L=p.b[k];if(p.q||p.dm.includes(k)||L>=maxL(p,k))return;const c=cost(B[k].b,B[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.q={k,end:Date.now()+tB(k,L,p)*1000,c};change()}
 function research(k){const p=P(SP),L=S.tech[k];if(p.rq||S.cs.some(q=>q.rq&&q.rq.k===k)||L>=T[k].max||lv(p,'l')<L+1)return;const c=cost(T[k].b,T[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rq={k,end:Date.now()+tT(k,L,p)*1000,c};change()}
 function ship(t){const p=P(SP),d=SH[t];if(p.sq||lv(p,'s')<d.s||!afford(R(p),d.b))return;for(const x in d.b)R(p)[x]-=d.b[x];p.sq={t,end:Date.now()+tS(t,p)*1000,c:d.b};change()}
-function repair(k){const p=P(SP);if(p.q||!p.dm.includes(k))return;const c=repC(p,k);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.q={k,end:Date.now()+repT(p,k)*1000,c,rep:1};change()}
+function repair(k){const p=P(SP);if(p.rr||!p.dm.includes(k))return;const c=repC(p,k);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rr={k,end:Date.now()+repT(p,k)*1000,c};change()}
+function accel(){const p=P(SP),r=p.rr;if(!r||r.acc)return;const c=repC(p,r.k);if(!afford(R(p),c))return;for(const x in c){R(p)[x]-=c[x];r.c[x]=(r.c[x]||0)+c[x]}r.acc=1;r.end=Date.now()+Math.max(0,r.end-Date.now())/2;change()}
+function cancelRR(){const p=P(SP);if(!p.rr)return;for(const x in p.rr.c)R(p)[x]+=p.rr.c[x];delete p.rr;change()}
+const rrCard=p=>{const r=p.rr,c=repC(p,r.k);return`<div class=card><div class=row><b>Reparando ${B[r.k].n}</b><span class=lv data-end="${r.end}"></span></div>${r.acc?'':`<div class=chs>${chips(c)}</div>`}<button class=go ${r.acc?'disabled data-off=1':`data-cost='${JSON.stringify(c)}'`} onclick="accel()">${r.acc?'Ya acelerada':'Acelerar: mitad del tiempo restante'}</button><button class=go style="background:#ff8a8a;margin-top:8px" onclick="cancelRR()">Cancelar (recuperas todo)</button></div>`};
 function refugee(a){const f=S.rf;if(!f)return;const p=P(f.pid);delete S.rf;
 if(a&&p){const pool=R(p);for(const k in f.c)pool[k]=Math.max(0,pool[k]-f.c[k]);p.rb=Math.max(0,p.rb-8);p.rb0=Math.max(0,p.rb0-2);S.ev=`Has acogido a los refugiados en ${U(p.id).name}: baja la rebelión.`}else S.ev='Has rechazado a los refugiados.';toast(S.ev);change()}
 const rfCard=()=>{const f=S.rf;if(!f||!P(f.pid))return'';return`<div class=card><div class=row><b>Llegan refugiados a ${U(f.pid).name}</b><span class=lv data-end="${f.exp}"></span></div><p>Aceptarlos cuesta ${f.c.m} de metal, ${f.c.c} de cristal y ${f.c.g} de gas, pero reduce la rebelión del planeta (−8% ahora y −2% para siempre). Si no respondes, se marchan.</p><div class=row><button class=go onclick="refugee(1)">Aceptar</button><button class=go style="background:#ff8a8a" onclick="refugee(0)">Rechazar</button></div></div>`};
@@ -184,7 +188,7 @@ function cancelR(){const h=P(SP);if(!h.rq)return;for(const x in h.rq.c)R(h)[x]+=
 function cancelS(){const h=P(SP);if(!h.sq)return;for(const x in h.sq.c)R(h)[x]+=h.sq.c[x];delete h.sq;change()}
 const qc=(t,e,f)=>`<div class=card><div class=row><b>${t}</b><span class=lv data-end="${e}"></span></div><button class=go style="background:#ff8a8a" onclick="${f}">Cancelar (recuperas todo)</button></div>`;
 function strip(){const a=[];S.mis.forEach(m=>a.push([{x:'Explorando',c:'Colonizando',r:'Saqueando'}[m.k]+' '+U(m.to).name,m.end]));
-S.cs.forEach(p=>{const n=U(p.id).name;p.q&&a.push([`${B[p.q.k].n} (${n})`,p.q.end]);p.rq&&a.push([`Investigando ${T[p.rq.k].n} (${n})`,p.rq.end]);p.sq&&a.push([`Construyendo ${SH[p.sq.t].n} (${n})`,p.sq.end])});
+S.cs.forEach(p=>{const n=U(p.id).name;p.q&&a.push([`${B[p.q.k].n} (${n})`,p.q.end]);p.rr&&a.push([`Reparando ${B[p.rr.k].n} (${n})`,p.rr.end]);p.rq&&a.push([`Investigando ${T[p.rq.k].n} (${n})`,p.rq.end]);p.sq&&a.push([`Construyendo ${SH[p.sq.t].n} (${n})`,p.sq.end])});
 return a.length?`<div class=ms>${a.map(([t,e])=>`<span class=ch>${t} · <span data-end="${e}"></span></span>`).join('')}</div>`:''}
 const need=u=>Math.max(0,Math.ceil((u.dist-2)/2));
 function send(k,to){const u=U(to);if(S.tech.p<need(u)||S.mis.length>=1+S.tech.m)return;
@@ -206,7 +210,7 @@ function tmax(){TA=Math.floor(R(P(SP))[TF]);render()}
 function tp(){const e=$('#tp');if(e)e.textContent=`Recibes ${rate()} de ${RN[TT]}`}
 function trade(){const p=P(SP),g=rate();if(TA<1||g<1||R(p)[TF]<TA){toast('No tienes suficiente '+RN[TF]);return}
 R(p)[TF]-=TA;R(p)[TT]+=g;toast(`Cambiados ${TA} de ${RN[TF]} por ${g} de ${RN[TT]}`);change()}
-function refundOf(p){const r={m:0,c:0,g:0};for(const k in B)for(let l=0;l<p.b[k];l++){const c=cost(B[k].b,B[k].f,l);for(const x in c)r[x]+=Math.floor(c[x]/2)}for(const x in r)r[x]+=Math.floor(R(p)[x]);for(const q of[p.q,p.rq,p.sq])if(q)for(const x in q.c)r[x]+=q.c[x];return r}
+function refundOf(p){const r={m:0,c:0,g:0};for(const k in B)for(let l=0;l<p.b[k];l++){const c=cost(B[k].b,B[k].f,l);for(const x in c)r[x]+=Math.floor(c[x]/2)}for(const x in r)r[x]+=Math.floor(R(p)[x]);for(const q of[p.q,p.rq,p.sq,p.rr])if(q)for(const x in q.c)r[x]+=q.c[x];return r}
 function abandon(){const p=P(SP);if(!p||!p.id||S.mis.some(m=>m.to===p.id))return toast('No puedes abandonarla con misiones en curso hacia ella');const r=refundOf(p);
 if(!confirm(`Abandonar ${U(p.id).name}? Recibirás en ${U(S.cs[0].id).name}: ${r.m} de metal, ${r.c} de cristal y ${r.g} de gas (la mitad de lo invertido en edificios más lo almacenado). No se puede deshacer.`))return;
 for(const x in r)R(S.cs[0])[x]+=r[x];S.cs=S.cs.filter(c=>c.id!==p.id);dirty=true;selPlanet(S.cs[0].id)}
@@ -223,8 +227,8 @@ catch(e){S=null;err='No se pudo conectar con Firebase. Comprueba las reglas de l
 function logout(){code='';S=null;localStorage.removeItem('je_code');render()}
 
 /* Vistas */
-function view(p){let h=(V==='b'?`<div class=card><div class=row><b>Rebelión</b><span class=lv>${p.rb.toFixed(0)}% (tiende al ${rbT(p).toFixed(0)}%)</span></div><p>Las minas la suben; centros de ocio y parques la bajan. Por encima del 50% hay ataques separatistas: roban recursos y dañan edificios. Murallas y torretas ayudan a repelerlos.</p></div>`:'')+(V==='b'&&p.q?qc(p.q.rep?`Reparando ${B[p.q.k].n}`:`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):'')+(V==='i'&&p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):'')+(V==='f'&&p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):'');
-if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k];if(p.dm.includes(k)){h+=card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.q?'Construcción en curso':'',icon(BI[k],k in IDX?k:''),repT(p,k));continue}
+function view(p){let h=(V==='b'?`<div class=card><div class=row><b>Rebelión</b><span class=lv>${p.rb.toFixed(0)}% (tiende al ${rbT(p).toFixed(0)}%)</span></div><p>Las minas la suben; centros de ocio y parques la bajan. Por encima del 50% hay ataques separatistas: roban recursos y dañan edificios. Murallas y torretas ayudan a repelerlos.</p></div>`:'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='b'&&p.q?qc(p.q.rep?`Reparando ${B[p.q.k].n}`:`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):'')+(V==='i'&&p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):'')+(V==='f'&&p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):'');
+if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k];if(p.dm.includes(k)){h+=card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.rr?'Reparación en curso':'',icon(BI[k],k in IDX?k:''),repT(p,k));continue}
 let d=B[k].d+(i!==undefined?` Ahora: ${prod(p,i).toFixed(1)}/s. Este planeta limita la mina al nivel ${mx}. Más nivel, más rebelión.`:'');
 h+=card(B[k].n,`Nivel ${L}/${mx}`,d,L<mx?cost(B[k].b,B[k].f,L):null,'Mejorar',`build('${k}')`,L>=mx?'Nivel máximo':p.q?'Construcción en curso':'',icon(BI[k],k in IDX?k:''),L<mx?tB(k,L,p):0)}
 else if(V==='i')for(const k in T){const L=S.tech[k],lab=lv(p,'l');
