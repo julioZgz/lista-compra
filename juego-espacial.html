@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
 <title>Colonias Estelares</title>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -35,7 +35,7 @@ h1{font-size:20px;margin:0}
 button{font:inherit;cursor:pointer}
 .card button,.go{width:100%;background:var(--ok);color:#06231a;border:0;border-radius:8px;padding:10px;font-weight:600}
 button:disabled{background:#26344f!important;color:var(--mu)!important;cursor:default}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#0a111d;border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom)}
+html{touch-action:manipulation}nav{z-index:10;touch-action:manipulation;position:fixed;left:0;right:0;bottom:0;display:flex;background:#0a111d;border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:none;border:0;color:var(--mu);padding:14px 2px;font-size:13px}
 nav button.on{color:var(--ok);font-weight:700}
 input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--ln);background:var(--pn);color:var(--tx);font:inherit;margin:10px 0}
@@ -58,6 +58,7 @@ s:{n:'Astillero',d:'Nivel 1 construye exploradores; nivel 2, colonizadores.',b:{
 l:{n:'Laboratorio',d:'Necesario para investigar. Su nivel limita las tecnologías.',b:{m:150,c:200},f:1.7,max:8}};
 const T={p:{n:'Propulsión',d:'Más alcance (+2 de distancia) y viajes más rápidos.',b:{c:100,g:60},f:1.9,max:8},
 c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel.',b:{c:200,g:120},f:2,max:6},
+m:{n:'Flotas coordinadas',d:'Una misión simultánea más por nivel.',b:{c:250,g:150},f:2,max:6},
 e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:100},f:1.9,max:10}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
@@ -67,7 +68,7 @@ let S=null,SP=0,V=(['b','i','f','m','x'].includes(localStorage.getItem('je_v'))?
 const cost=(b,f,L)=>Object.fromEntries(Object.entries(b).map(([k,v])=>[k,Math.round(v*Math.pow(f,L))]));
 const afford=(r,c)=>Object.keys(c).every(k=>r[k]>=c[k]);
 const fmt=n=>n>=1e4?(n/1e3).toFixed(1)+'k':Math.floor(n);
-const fmtT=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+const fmtT=s=>{const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+'d ':'')+(d||h?h+'h ':'')+(d||h||m?m+'m ':'')+s%60+'s'};
 const P=id=>S.cs.find(c=>c.id===id),U=id=>S.u.find(p=>p.id===id);
 const cap=p=>Math.round(1000*Math.pow(1.7,p.b.a));
 const prod=(p,i)=>{const L=p.b['mcg'[i]];return K[i]*L*Math.pow(1.15,L)*(1+.1*S.tech.e)};
@@ -81,6 +82,7 @@ s:`<path d="M24 6c6 6 8 14 6 24H18c-2-10 0-18 6-24z"/><circle cx="24" cy="18" r=
 l:`<path d="M19 6h10M21 6v12L10 38a3 3 0 003 5h22a3 3 0 003-5L27 18V6"/><path d="M15 32h18"/>`};
 const TI={p:`<path d="M24 6c8 8 8 18 0 26-8-8-8-18 0-26z"/><path d="M24 32v10M18 36l-2 6M30 36l2 6"/>`,
 c:`<path d="M8 38a16 16 0 0132 0z"/><path d="M4 38h40M24 22v-8M24 14h8l-3 3 3 3h-8"/>`,
+m:`<path d="M24 6v10M12 20h24M12 20v10M36 20v10M8 40h8M32 40h8M20 30h8"/><circle cx="24" cy="6" r="2"/>`,
 e:`<path d="M27 4L10 27h12l-3 17 19-24H26z"/>`};
 const SI={e:`<path d="M24 4l6 14v16l-6 6-6-6V18z"/><circle cx="24" cy="20" r="2.5"/><path d="M18 30l-8 6M30 30l8 6"/>`,
 c:`<rect x="14" y="10" width="20" height="26" rx="5"/><path d="M14 28l-8 10M34 28l8 10M20 36v6M28 36v6M18 18h12M18 24h12"/>`,
@@ -129,12 +131,13 @@ function build(k){const p=P(SP),L=p.b[k];if(L>=maxL(p,k))return;const c=cost(B[k
 function research(k){const p=P(SP),L=S.tech[k];if(L>=T[k].max||p.b.l<L+1)return;const c=cost(T[k].b,T[k].f,L);if(!afford(p.r,c))return;for(const x in c)p.r[x]-=c[x];S.tech[k]++;change()}
 function ship(t){const p=P(SP),d=SH[t];if(p.b.s<d.s||!afford(p.r,d.b))return;for(const x in d.b)p.r[x]-=d.b[x];S.fleet[t]++;change()}
 const need=u=>Math.max(0,Math.ceil((u.dist-2)/2));
-function send(k,to){const u=U(to);if(S.tech.p<need(u))return;
+function send(k,to){const u=U(to);if(S.tech.p<need(u)||S.mis.length>=1+S.tech.m)return;
 if(k==='x'){if(S.fleet.e<1)return;S.fleet.e--}
 else{if(S.fleet.c<1||S.cs.length+S.mis.filter(m=>m.k==='c').length>=1+S.tech.c)return;S.fleet.c--}
 S.mis.push({k,to,end:Date.now()+Math.ceil(u.dist*20/(1+.25*S.tech.p))*1000});change()}
 
-function raid(to){const u=U(to);if(S.tech.p<need(u)||S.fleet.r<1||P(to)||S.mis.some(m=>m.to===to))return;const n=S.fleet.r;S.fleet.r=0;
+let RC=0;
+function raid(to){const u=U(to);if(S.tech.p<need(u)||S.fleet.r<1||P(to)||S.mis.length>=1+S.tech.m||S.mis.some(m=>m.to===to))return;const n=Math.min(S.fleet.r,RC||S.fleet.r);S.fleet.r-=n;
 S.mis.push({k:'r',to,n,end:Date.now()+2*Math.ceil(u.dist*20/(1+.25*S.tech.p))*1000});change()}
 function go(v){V=v;localStorage.setItem('je_v',v);render();window.scrollTo(0,0)}
 function selPlanet(id){SP=id;localStorage.setItem('je_sp',id);render()}
@@ -147,6 +150,10 @@ function tmax(){TA=Math.floor(P(SP).r[TF]);render()}
 function tp(){const e=$('#tp');if(e)e.textContent=`Recibes ${rate()} de ${RN[TT]}`}
 function trade(){const p=P(SP),g=rate();if(TA<1||g<1||p.r[TF]<TA){toast('No tienes suficiente '+RN[TF]);return}
 p.r[TF]-=TA;p.r[TT]+=g;toast(`Cambiados ${TA} de ${RN[TF]} por ${g} de ${RN[TT]}`);change()}
+function refundOf(p){const r={m:0,c:0,g:0};for(const k in B)for(let l=0;l<p.b[k];l++){const c=cost(B[k].b,B[k].f,l);for(const x in c)r[x]+=Math.floor(c[x]/2)}for(const x in r)r[x]+=Math.floor(p.r[x]);return r}
+function abandon(){const p=P(SP);if(!p||!p.id||S.mis.some(m=>m.to===p.id))return toast('No puedes abandonarla con misiones en curso hacia ella');const r=refundOf(p);
+if(!confirm(`Abandonar ${U(p.id).name}? Recibirás en ${U(S.cs[0].id).name}: ${r.m} de metal, ${r.c} de cristal y ${r.g} de gas (la mitad de lo invertido en edificios más lo almacenado). No se puede deshacer.`))return;
+for(const x in r)S.cs[0].r[x]+=r[x];S.cs=S.cs.filter(c=>c.id!==p.id);dirty=true;selPlanet(S.cs[0].id)}
 /* Guardado en Firebase */
 const key=()=>encodeURIComponent(code.replace(/[.$#\[\]\/]/g,'_'));
 async function save(){if(!S||!code)return;advance(Date.now());
@@ -155,7 +162,7 @@ catch(e){st='Sin guardar (revisa la conexión o las reglas de Firebase)'}setSt()
 function setSt(){const e=$('#st');if(e)e.textContent=st}
 async function load(c){code=c.trim();if(!code)return;localStorage.setItem('je_code',code);err='';st='Cargando…';S=null;render();
 try{const r=await fetch(`${DB}/juego_espacial/${key()}.json`);if(!r.ok)throw 0;const d=await r.json();
-S=d||newGame();S.mis=S.mis||[];S.known=S.known||[0];S.fleet.r=S.fleet.r||0;S.rd=S.rd||{};S.nv=S.nv||Date.now()+(300+Math.random()*300)*1000;{const sv=+localStorage.getItem('je_sp');SP=S.cs.some(c=>c.id===sv)?sv:S.cs[0].id}advance(Date.now());dirty=!d;st=d?'Partida cargada':'Partida nueva';if(!d)save()}
+S=d||newGame();S.mis=S.mis||[];S.known=S.known||[0];S.fleet.r=S.fleet.r||0;S.rd=S.rd||{};S.tech.m=S.tech.m||0;S.nv=S.nv||Date.now()+(300+Math.random()*300)*1000;{const sv=+localStorage.getItem('je_sp');SP=S.cs.some(c=>c.id===sv)?sv:S.cs[0].id}advance(Date.now());dirty=!d;st=d?'Partida cargada':'Partida nueva';if(!d)save()}
 catch(e){S=null;err='No se pudo conectar con Firebase. Comprueba las reglas de la base de datos.'}render()}
 function logout(){code='';S=null;localStorage.removeItem('je_code');render()}
 
@@ -170,17 +177,19 @@ else if(V==='f'){for(const t in SH){const d=SH[t];h+=card(d.n,`Disponibles: ${S.
 h+='<b>Misiones en curso</b>'+(S.mis.length?S.mis.map(m=>`<div class=card><div class=row><b>${{x:'Explorando',c:'Colonizando',r:'Saqueando'}[m.k]} ${U(m.to).name}${m.k==='r'?' ('+m.n+')':''}</b><span class=lv data-end=${m.end}></span></div></div>`).join(''):'<p class=st>No hay misiones en curso.</p>')}
 else if(V==='x'){const ch=(f,cur)=>RS.map(k=>`<button class="tab ${k===cur?'on':''}" onclick="${f}('${k}')"><span class="${k}">${RN[k]}</span></button>`).join('');
 h=`<div class=card><b>Comercio en ${U(p.id).name}</b><p>Los mercaderes cambian recursos con una comisión del 20%. Los valores relativos son: 1 metal, 1,7 cristal y 3,4 gas.</p><div class=st>Dar</div><div class=tabs>${ch('tf',TF)}</div><div class=st>Recibir</div><div class=tabs>${ch('tt',TT)}</div><div class=st>Cantidad (tienes ${fmt(p.r[TF])})</div><input id=ta type=number inputmode=numeric min=0 value="${TA}" oninput="tin(this.value)"><button class="tab" type=button onclick="tmax()">Todo</button><p id=tp style="margin-top:10px"></p><button class=go onclick="trade()">Cambiar</button></div>`}
-else{h+=`<p class=st>Alcance actual: distancia ${2+2*S.tech.p}. Colonias: ${S.cs.length}/${1+S.tech.c}.</p>`;
+else{const tt2={m:0,c:0,g:0},pp=[0,0,0];S.cs.forEach(q=>{for(let i=0;i<3;i++){tt2['mcg'[i]]+=q.r['mcg'[i]];pp[i]+=prod(q,i)}});
+h+=`<div class=card><b>Total de tus colonias</b><p>Metal ${fmt(tt2.m)} (+${pp[0].toFixed(1)}/s) · Cristal ${fmt(tt2.c)} (+${pp[1].toFixed(1)}/s) · Gas ${fmt(tt2.g)} (+${pp[2].toFixed(1)}/s)</p>${S.cs.map(q=>`<div class=st>${U(q.id).name}: ${fmt(q.r.m)} / ${fmt(q.r.c)} / ${fmt(q.r.g)}</div>`).join('')}</div><div class=card>Corsarios a enviar (0 = todos; tienes ${S.fleet.r}) <input type=number inputmode=numeric min=0 value="${RC}" onchange="RC=Math.max(0,Math.floor(+this.value||0));render()"></div><p class=st>Alcance actual: distancia ${2+2*S.tech.p}. Misiones: ${S.mis.length}/${1+S.tech.m}. Colonias: ${S.cs.length}/${1+S.tech.c}.</p>`;
 S.u.filter(u=>u.id).forEach(u=>{const own=P(u.id),kn=S.known.includes(u.id),bm=S.mis.find(m=>m.to===u.id),busy=!!bm,n=need(u),secs=Math.ceil(u.dist*20/(1+.25*S.tech.p));
 let info=kn?`Máx. de minas: metal ${u.rich[0]}, cristal ${u.rich[1]}, gas ${u.rich[2]}`:'Recursos desconocidos',btn;
 if(own)btn=`<button class=go onclick="selPlanet(${u.id});go('b')">Ir a la colonia</button>`;
 else{const k=kn?'c':'x',lab=kn?'Colonizar':'Explorar',have=kn?S.fleet.c:S.fleet.e,slot=!kn||S.cs.length+S.mis.filter(m=>m.k==='c').length<1+S.tech.c;
-const off=busy?`En camino (<span data-end="${bm.end}"></span>)`:S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:have<1?`Necesitas un ${kn?'colonizador':'explorador'}`:!slot?'Sin capacidad: investiga Colonización':'';
+const off=busy?`En camino (<span data-end="${bm.end}"></span>)`:S.mis.length>=1+S.tech.m?'Sin misiones libres (Flotas coordinadas)':S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:have<1?`Necesitas un ${kn?'colonizador':'explorador'}`:!slot?'Sin capacidad: investiga Colonización':'';
 btn=`<button class=go ${off?'disabled':''} onclick="send('${k}',${u.id})">${off||lab+' ('+fmtT(secs)+')'}</button>`}
-let rb='';if(!own&&kn){const n2=S.fleet.r,def=Math.ceil(u.dist/2)+1,pc=Math.round(100*Math.max(.15,Math.min(.95,.5+.15*(n2-def)))),cnt=S.rd['p'+u.id]||0;
-const off=busy?`En camino (<span data-end="${bm.end}"></span>)`:S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:n2<1?'Necesitas corsarios':'';
+let rb='';if(!own&&kn){const n2=Math.min(S.fleet.r,RC||S.fleet.r),def=Math.ceil(u.dist/2)+1,pc=Math.round(100*Math.max(.15,Math.min(.95,.5+.15*(n2-def)))),cnt=S.rd['p'+u.id]||0;
+const off=busy?`En camino (<span data-end="${bm.end}"></span>)`:S.mis.length>=1+S.tech.m?'Sin misiones libres (Flotas coordinadas)':S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:n2<1?'Necesitas corsarios':'';
 rb=`<div class=st style="margin:8px 0 4px">Defensa ${def}${cnt?' · botín reducido por saqueos previos':''}</div><button class=go style="background:#e8a86a" ${off?'disabled':''} onclick="raid(${u.id})">${off||`Saquear con ${n2} corsarios (~${pc}%, ${fmtT(2*secs)})`}</button>`}
 h+=`<div class=card><div class=pl>${planet(u.id,60,!kn&&!own)}<div><b>${kn||own?u.name:'Planeta sin explorar'}</b><div class=st>Distancia ${u.dist} · ${info}</div></div></div>${own?'<div class=tag>Colonizado</div>':''}<div style="margin-top:8px">${btn}</div>${rb}</div>`})}
+if(V==='b'&&p.id)h+=`<button class=go style="background:#ff8a8a" onclick="abandon()">Abandonar colonia</button>`;
 return h}
 function render(){const a=$('#app');
 if(!S){a.innerHTML=`<div style="text-align:center">${planet(0,130)}</div><h1>Colonias Estelares</h1><p class=st>Escribe el nombre de tu partida. Si no existe, se crea una nueva.</p><input id=cd placeholder="Nombre de la partida" value="${code}" autocapitalize=off><button class=go onclick="load($('#cd').value)">Entrar</button><p class=st>${err||st}</p>`;return}
@@ -190,7 +199,7 @@ a.innerHTML=`<div class=top><h1>Colonias Estelares</h1><div class=st><span id=st
 <div class=res>${[0,1,2].map(i=>`<div class=rs><span class="${'mcg'[i]}">${RN['mcg'[i]]}</span><strong id=rv${i}></strong><small id=rp${i}></small></div>`).join('')}</div></div>
 ${S.mis.length?`<div class=ms>${S.mis.map(m=>`<span class=ch>${{x:'Explorando',c:'Colonizando',r:'Saqueando'}[m.k]} ${U(m.to).name} · <span data-end="${m.end}"></span></span>`).join('')}</div>`:''}${S.ev?`<p class=st>${S.ev}</p>`:''}
 ${view(p)}
-<nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['x','Comercio']].map(([k,n])=>`<button class="${V===k?'on':''}" onclick="go('${k}')">${n}</button>`).join('')}</nav>`;tick(true)}
+<nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['x','Comercio']].map(([k,n])=>`<button class="${V===k?'on':''}" onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
 function tick(skip){if(!S)return;if(!skip&&advance(Date.now()))dirty=true,render();
 const p=P(SP),c=cap(p);
 for(let i=0;i<3;i++){const r=p.r['mcg'[i]],e=$('#rv'+i);if(e){e.textContent=fmt(r)+' / '+fmt(c);e.className=r>=c?'full':'';$('#rp'+i).textContent='+'+prod(p,i).toFixed(1)+'/s'}}
