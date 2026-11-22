@@ -52,6 +52,9 @@ input[type=text],input[type=date],input[type=time]{font:inherit;font-size:1rem;p
 .tx{flex:1}
 .gh{cursor:pointer}
 .gh::after{content:" ›";color:var(--muted)}
+.wkd{margin-bottom:20px}
+.wkd .tl{margin-top:16px;margin-bottom:6px}
+.gh.tdy{color:var(--accent)}
 </style>
 </head>
 <body>
@@ -138,13 +141,15 @@ if(grp.length&&o.s>=gEnd){flush();gEnd=0}
 var c=0;while(cols[c]!==undefined&&cols[c]>o.s)c++;
 cols[c]=o.e;o.c=c;grp.push(o);gEnd=Math.max(gEnd,o.e)});
 flush();return l}
-function dayView(dt){
+function dayView(dt,wk){
 var s=ymd(dt),w=document.createElement("div"),all=[],tm=[];
+if(wk){w.className="wkd";var hh=document.createElement("h3");hh.className="gh"+(s===ymd(new Date())?" tdy":"");hh.textContent=fmt(dt,{weekday:"long",day:"numeric",month:"long"});hh.onclick=function(){mode="dia";cur=dt;render()};w.appendChild(hh)}
 dayEvents(s).forEach(function(x){(x.h1&&!(x.e&&x.e>x.d)?tm:all).push(x)});
 if(all.length){var a=document.createElement("div");a.className="day";var h=document.createElement("h3");h.textContent="Todo el día";a.appendChild(h);all.forEach(function(x){a.appendChild(item(x))});w.appendChild(a)}
 var L=tm.map(function(x){var st=tmin(x.h1),en=x.h2?tmin(x.h2):st+60;if(en<=st)en=st+60;return{x:x,s:st,e:Math.max(en,st+30)}}).sort(function(a,b){return a.s-b.s});
-var from=420,to=1260;
+var from=wk?1440:420,to=wk?0:1260;
 L.forEach(function(o){from=Math.min(from,Math.floor(o.s/60)*60);to=Math.max(to,Math.ceil(o.e/60)*60)});
+if(wk&&!L.length){if(!all.length){var np=document.createElement("p");np.className="none";np.textContent="Sin eventos";w.appendChild(np)}return w}
 to=Math.min(to,1440);
 var P=0.8,tl=document.createElement("div");tl.className="tl";tl.style.height=(to-from)*P+"px";
 for(var m=from;m<=to;m+=60){var hl=document.createElement("div");hl.className="hl";hl.style.top=(m-from)*P+"px";var sp=document.createElement("span");sp.className="hh";sp.textContent=pad(m/60)+":00";hl.appendChild(sp);tl.appendChild(hl)}
@@ -173,7 +178,7 @@ document.querySelectorAll("#seg button").forEach(function(b){b.classList.toggle(
 var g=$("grid"),osc=g.querySelector(".wks"),sl=osc?osc.scrollLeft:null;g.innerHTML="";
 if(mode==="dia"){$("range").textContent=fmt(cur,{weekday:"long",day:"numeric",month:"long",year:"numeric"});g.appendChild(dayView(cur))}
 else{var m=monday(cur);$("range").textContent="Semana del "+fmt(m,{day:"numeric",month:"short"})+" al "+fmt(addD(m,6),{day:"numeric",month:"short",year:"numeric"});
-for(var i=0;i<7;i++)g.appendChild(block(addD(m,i)))}
+for(var i=0;i<7;i++)g.appendChild(dayView(addD(m,i),true))}
 var a=$("all");a.innerHTML="";
 var today=ymd(new Date()),showPast=$("past").checked,last="";
 var l=ev.filter(function(x){return showPast||(x.e||x.d)>=today}).sort(function(x,y){return(x.d+x.h1).localeCompare(y.d+y.h1)});
