@@ -39,11 +39,14 @@ html{touch-action:manipulation}nav{z-index:10;touch-action:manipulation;position
 nav button{flex:1;background:none;border:0;color:var(--mu);padding:14px 2px;font-size:13px}
 nav button.on{color:var(--ok);font-weight:700}
 input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--ln);background:var(--pn);color:var(--tx);font:inherit;margin:10px 0}
-#toast{position:fixed;top:calc(8px + env(safe-area-inset-top));left:12px;right:12px;max-width:616px;margin:auto;background:var(--ok);color:#06231a;border-radius:10px;padding:10px 12px;font-weight:600;z-index:9;display:none}
+#toast{position:fixed;bottom:calc(64px + env(safe-area-inset-bottom));left:12px;right:12px;max-width:616px;margin:auto;background:var(--ok);color:#06231a;border-radius:10px;padding:10px 12px;font-weight:600;z-index:11;display:none;align-items:center;gap:10px}
 .pl{display:flex;gap:10px;align-items:center}.pl .orb{width:34px;height:34px}
 .tag{font-size:12px;color:var(--ok)}
 .ch.lack{border-color:#ff8a8a;background:#3a1d24}
 .tab.warn{border-color:#ffb547;color:#ffb547}
+.hd .tab.on{background:#1d4d41;border-width:2px;border-color:var(--ok);color:#fff;font-weight:700}
+.ic.sp{width:76px;height:76px;border:0;display:block;background:url(edificios.webp) no-repeat;background-size:500% 500%;background-position:calc(var(--c)*25%) calc(var(--r)*25%)}
+.ic.sp.off{opacity:.4;filter:grayscale(1)}.ic.sp.dmg{filter:grayscale(.7) brightness(.65)}
 .card button.tab{width:auto;background:var(--pn);color:var(--tx);border:1px solid var(--ln);padding:6px 12px;font-weight:400}.card button.tab.on{border-color:var(--ok)}
 .ms{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.ms .ch{background:var(--pn);padding:4px 8px}
 .ic{width:46px;height:46px;border-radius:12px;background:var(--bg);border:1px solid var(--ln);display:grid;place-items:center;flex:none;color:var(--ok)}
@@ -97,6 +100,9 @@ const capN=p=>p.nj?mem().reduce((a,q)=>a+cap(q),0):cap(p),prodN=(p,i)=>p.nj?mem(
 function sync(){S.cs.forEach(p=>{if(!p.nj&&S.tech.n>=1&&p.b.h>=1){for(const k of['m','c','g']){S.net[k]+=R(p)[k];R(p)[k]=0}p.nj=1;toast('Conectado a la red: '+U(p.id).name)}})}
 const maxL=(p,k)=>k in IDX?U(p.id).rich[IDX[k]]:B[k].max;
 const icon=(p,c)=>`<div class="ic ${c||''}"><svg viewBox="0 0 48 48" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${p}</svg></div>`;
+const SPM={l:0,s:1,c:2,g:3,a:4};let SPR=false;
+if(typeof Image!=='undefined'){const spr=new Image();spr.onload=()=>{SPR=true;if(S)render()};spr.src='edificios.webp'}
+const bic=(k,L,dm)=>SPR&&k in SPM?`<div class="ic sp${L?'':' off'}${dm?' dmg':''}" style="--c:${Math.max(0,Math.min(4,Math.floor((L-1)/2)))};--r:${SPM[k]}"></div>`:icon(BI[k],k in IDX?k:'');
 const BI={m:`<path d="M6 40L18 18l8 12 6-8 10 18z"/><path d="M14 8l20 8M24 6l-6 12"/>`,
 c:`<path d="M24 6l10 10-10 26L14 16z"/><path d="M14 16h20M24 6v36"/>`,
 g:`<path d="M14 36a8 8 0 010-16 10 10 0 0119-2 8 8 0 011 18z"/><path d="M18 42h4M26 42h6"/>`,
@@ -131,7 +137,7 @@ const orb=id=>planet(id,20);
 const chips=c=>Object.entries(c).map(([k,v])=>`<i class="ch ${k}" data-k="${k}" data-n="${v}">${fmt(v)} ${RN[k]}</i>`).join('');
 const card=(t,lv,d,c,lab,fn,off,ic,tm)=>`<div class=card><div class=row><div class=pl>${ic||''}<b>${t}</b></div><span class=lv>${lv}</span></div><p>${d}</p>${c||tm?`<div class=chs>${c?chips(c):''}${tm?`<i class=ch>⏱ ${fmtT(tm)}</i>`:''}</div>`:''}<button ${c?`data-cost='${JSON.stringify(c)}'`:''} ${off?'disabled data-off=1':''} onclick="${fn}">${off||lab}</button></div>`;
 
-function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',4000)}
+function toast(t){const e=$('#toast');e.innerHTML='<span style="flex:1"></span><b style="font-size:20px;padding:0 4px">✕</b>';e.firstChild.textContent=t;e.style.display='flex';e.onclick=()=>e.style.display='none';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',3500)}
 function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function newGame(){const r=rng(Date.now()),sy=['Kor','Vex','Ael','Zan','Tir','Oru','Nex','Lum','Yra','Dax','Pel','Mor'];
 const u=[{id:0,name:'Hogar',dist:0,rich:[8,6,4]}];
@@ -228,9 +234,9 @@ function logout(){code='';S=null;localStorage.removeItem('je_code');render()}
 
 /* Vistas */
 function view(p){let h=(V==='b'?`<div class=card><div class=row><b>Rebelión</b><span class=lv>${p.rb.toFixed(0)}% (tiende al ${rbT(p).toFixed(0)}%)</span></div><p>Las minas la suben; centros de ocio y parques la bajan. Por encima del 50% hay ataques separatistas: roban recursos y dañan edificios. Murallas y torretas ayudan a repelerlos.</p></div>`:'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='b'&&p.q?qc(p.q.rep?`Reparando ${B[p.q.k].n}`:`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):'')+(V==='i'&&p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):'')+(V==='f'&&p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):'');
-if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k];if(p.dm.includes(k)){h+=card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.rr?'Reparación en curso':'',icon(BI[k],k in IDX?k:''),repT(p,k));continue}
+if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k];if(p.dm.includes(k)){h+=card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.rr?'Reparación en curso':'',bic(k,p.b[k],p.dm.includes(k)),repT(p,k));continue}
 let d=B[k].d+(i!==undefined?` Ahora: ${prod(p,i).toFixed(1)}/s. Este planeta limita la mina al nivel ${mx}. Más nivel, más rebelión.`:'');
-h+=card(B[k].n,`Nivel ${L}/${mx}`,d,L<mx?cost(B[k].b,B[k].f,L):null,'Mejorar',`build('${k}')`,L>=mx?'Nivel máximo':p.q?'Construcción en curso':'',icon(BI[k],k in IDX?k:''),L<mx?tB(k,L,p):0)}
+h+=card(B[k].n,`Nivel ${L}/${mx}`,d,L<mx?cost(B[k].b,B[k].f,L):null,'Mejorar',`build('${k}')`,L>=mx?'Nivel máximo':p.q?'Construcción en curso':'',bic(k,p.b[k],p.dm.includes(k)),L<mx?tB(k,L,p):0)}
 else if(V==='i')for(const k in T){const L=S.tech[k],lab=lv(p,'l');
 h+=card(T[k].n,`Nivel ${L}/${T[k].max}`,T[k].d+' Investigación compartida por todos tus planetas.',L<T[k].max?cost(T[k].b,T[k].f,L):null,'Investigar',`research('${k}')`,L>=T[k].max?'Nivel máximo':p.rq?'Investigación en curso':S.cs.some(q=>q.rq&&q.rq.k===k)?'Ya se investiga en otro planeta':lab<L+1?`Requiere laboratorio nivel ${L+1}`:'',icon(TI[k]),L<T[k].max?tT(k,L,p):0)}
 else if(V==='f'){for(const t in SH){const d=SH[t];h+=card(d.n,`Disponibles: ${S.fleet[t]}`,d.d,d.b,'Construir',`ship('${t}')`,lv(p,'s')<d.s?`Requiere astillero nivel ${d.s}`:p.sq?'Astillero ocupado':'',icon(SI[t]),tS(t,p))}
@@ -254,7 +260,7 @@ return h}
 function render(){const a=$('#app');
 if(!S){a.innerHTML=`<div style="text-align:center">${planet(0,130)}</div><h1>Colonias Estelares</h1><p class=st>Escribe el nombre de tu partida. Si no existe, se crea una nueva.</p><input id=cd placeholder="Nombre de la partida" value="${code}" autocapitalize=off><button class=go onclick="load($('#cd').value)">Entrar</button><p class=st>${err||st}</p>`;return}
 const p=P(SP);
-a.innerHTML=`<div class=top><h1>Colonias Estelares</h1><div class=st><span id=st>${st}</span> <button onclick="logout()" style="background:none;border:0;color:var(--mu);text-decoration:underline">Salir</button></div></div>
+a.innerHTML=`<div class=top><h1>📍 ${U(SP).name}</h1><div class=st><span id=st>${st}</span> <button onclick="logout()" style="background:none;border:0;color:var(--mu);text-decoration:underline">Salir</button></div></div>
 <div class=hd><div class=tabs>${S.cs.map(c=>`<button class="tab ${c.id===SP?'on':''}${warn(c)?' warn':''}" onclick="selPlanet(${c.id})">${orb(c.id)}${warn(c)?'⚠ ':''}${U(c.id).name}</button>`).join('')}</div>
 ${p.nj?'<div class=st>🔗 Recursos de la red interplanetaria</div>':''}<div class=res>${[0,1,2].map(i=>`<div class=rs><span class="${'mcg'[i]}">${RN['mcg'[i]]}</span><strong id=rv${i}></strong><small id=rp${i}></small></div>`).join('')}</div><div class=st id=rbi style="margin:-6px 0 6px"></div></div>
 ${rfCard()}${strip()}${S.ev?`<p class=st>${S.ev}</p>`:''}
