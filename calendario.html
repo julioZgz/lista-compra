@@ -164,6 +164,12 @@ b.appendChild(t);b.appendChild(sm);b.onclick=function(){startEdit(o.x)};ec.appen
 tl.appendChild(ec);
 if(s===ymd(new Date())){var n=new Date(),nm=n.getHours()*60+n.getMinutes();if(nm>=from&&nm<=to){var nl=document.createElement("div");nl.className="now";nl.style.top=(nm-from)*P+"px";tl.appendChild(nl)}}
 w.appendChild(tl);return w}
+function isPast(x){
+var td=ymd(new Date()),ed=x.e||x.d;
+if(ed<td)return true;
+if(ed>td||(!x.h1&&!x.h2))return false;
+var n=new Date(),nm=n.getHours()*60+n.getMinutes(),en=x.h2?tmin(x.h2):tmin(x.h1)+60;
+return en<=nm}
 function startEdit(x){
 editId=x.id;$("t").value=x.t;$("d").value=x.d;$("e").value=x.e||"";$("h1").value=x.h1||"";$("h2").value=x.h2||"";
 $("new").open=true;$("new").querySelector("summary").textContent="Editar evento";
@@ -180,12 +186,17 @@ if(mode==="dia"){$("range").textContent=fmt(cur,{weekday:"long",day:"numeric",mo
 else{var m=monday(cur);$("range").textContent="Semana del "+fmt(m,{day:"numeric",month:"short"})+" al "+fmt(addD(m,6),{day:"numeric",month:"short",year:"numeric"});
 for(var i=0;i<7;i++)g.appendChild(dayView(addD(m,i),true))}
 var a=$("all");a.innerHTML="";
-var today=ymd(new Date()),showPast=$("past").checked,last="";
-var l=ev.filter(function(x){return showPast||(x.e||x.d)>=today}).sort(function(x,y){return(x.d+x.h1).localeCompare(y.d+y.h1)});
-if(!l.length){var n=document.createElement("p");n.className="none";n.textContent="No hay eventos.";a.appendChild(n)}
+function sec(l,title){
+var last="";
+if(title){var t=document.createElement("h2");t.textContent=title;a.appendChild(t)}
 l.forEach(function(x){
 if(x.d!==last){last=x.d;var h=document.createElement("h3");h.style.marginTop="14px";h.textContent=fmt(pd(x.d),{weekday:"long",day:"numeric",month:"long",year:"numeric"});a.appendChild(h)}
-var it=item(x);if((x.e||x.d)<today)it.classList.add("past");a.appendChild(it)})}
+var it=item(x);if(isPast(x))it.classList.add("past");a.appendChild(it)})}
+var up=ev.filter(function(x){return!isPast(x)}).sort(function(x,y){return(x.d+x.h1).localeCompare(y.d+y.h1)});
+var pa=ev.filter(isPast).sort(function(x,y){return(y.d+y.h1).localeCompare(x.d+x.h1)});
+if(!up.length){var n=document.createElement("p");n.className="none";n.textContent="No hay eventos próximos.";a.appendChild(n)}
+sec(up);
+if($("past").checked&&pa.length)sec(pa,"Pasados")}
 document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){view=b.dataset.v;render()}});
 document.querySelectorAll("#seg button").forEach(function(b){b.onclick=function(){mode=b.dataset.m;render()}});
 $("prev").onclick=function(){cur=addD(cur,mode==="dia"?-1:-7);render()};
@@ -208,6 +219,7 @@ api("DELETE","/eventos/"+id).catch(noop)};
 $("d").value=ymd(new Date());
 setStatus("ok");render();sync();
 setInterval(sync,4000);
+setInterval(function(){if(!document.hidden)render()},60000);
 document.addEventListener("visibilitychange",function(){if(!document.hidden)sync()});
 </script>
 </body>
