@@ -48,6 +48,20 @@ input[type=text],input[type=date],input[type=time]{font:inherit;font-size:1rem;p
 .blk small{display:block;color:var(--muted);font-size:.75rem}
 .now{position:absolute;left:0;right:0;border-top:2px solid var(--danger);z-index:2}
 .dng{color:var(--danger)}
+.wk{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:10px}
+.wrow,.wbody{display:grid;grid-template-columns:34px repeat(7,minmax(0,1fr))}
+.wd{display:flex;flex-direction:column;align-items:center;gap:2px;border:0;border-radius:0;background:none;padding:6px 0;font-weight:400}
+.wd small{font-size:.7rem;color:var(--muted);text-transform:uppercase}
+.wd strong{font-size:.95rem;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center}
+.wd.on{background:none;color:var(--ink)}
+.wd.on strong{background:var(--accent);color:var(--accent-ink);border-radius:50%}
+.wa{border-left:1px solid var(--line);padding:2px;min-height:4px}
+.chip{background:var(--blk);border-left:3px solid var(--accent);border-radius:4px;font-size:.65rem;line-height:1.15;padding:1px 3px;margin-bottom:2px;overflow:hidden;word-break:break-word;cursor:pointer;max-height:2.4em}
+.wl{position:relative}
+.wl .hh{left:0;top:2px;width:30px}
+.wc{position:relative;border-left:1px solid var(--line)}
+.wc .evs{left:1px;right:1px}
+.wc .blk{padding:1px 3px;font-size:.65rem;border-left-width:3px;border-radius:4px;word-break:normal;overflow-wrap:break-word;box-shadow:0 0 0 1px var(--surface)}
 </style>
 </head>
 <body>
@@ -154,6 +168,51 @@ b.appendChild(t);b.appendChild(sm);b.onclick=function(){startEdit(o.x)};ec.appen
 tl.appendChild(ec);
 if(s===ymd(new Date())){var n=new Date(),nm=n.getHours()*60+n.getMinutes();if(nm>=from&&nm<=to){var nl=document.createElement("div");nl.className="now";nl.style.top=(nm-from)*P+"px";tl.appendChild(nl)}}
 w.appendChild(tl);return w}
+function toL(a){return a.map(function(x){var st=tmin(x.h1),en=x.h2?tmin(x.h2):st+60;if(en<=st)en=st+60;return{x:x,s:st,e:Math.max(en,st+30)}}).sort(function(a,b){return a.s-b.s})}
+function weekView(m){
+var w=document.createElement("div"),days=[],from=420,to=1260,anyAll=false,todayS=ymd(new Date());
+for(var i=0;i<7;i++){
+var dt=addD(m,i),all=[],tm=[];
+dayEvents(ymd(dt)).forEach(function(x){(x.h1&&!(x.e&&x.e>x.d)?tm:all).push(x)});
+var L=toL(tm);
+L.forEach(function(o){from=Math.min(from,Math.floor(o.s/60)*60);to=Math.max(to,Math.ceil(o.e/60)*60)});
+if(all.length)anyAll=true;
+days.push({dt:dt,all:all,L:layout(L)})}
+to=Math.min(to,1440);
+var P=0.8,H=(to-from)*P;
+w.className="wk";
+var hd=document.createElement("div");hd.className="wrow";hd.appendChild(document.createElement("div"));
+days.forEach(function(d){
+var b=document.createElement("button");b.type="button";b.className="wd"+(ymd(d.dt)===todayS?" on":"");
+var a=document.createElement("small");a.textContent=fmt(d.dt,{weekday:"short"}).replace(".","");
+var n=document.createElement("strong");n.textContent=d.dt.getDate();
+b.appendChild(a);b.appendChild(n);b.setAttribute("aria-label","Ver el día "+fmt(d.dt,{weekday:"long",day:"numeric",month:"long"}));
+b.onclick=function(){mode="dia";cur=d.dt;render()};hd.appendChild(b)});
+w.appendChild(hd);
+if(anyAll){
+var ar=document.createElement("div");ar.className="wrow";ar.appendChild(document.createElement("div"));
+days.forEach(function(d){
+var c=document.createElement("div");c.className="wa";
+d.all.forEach(function(x){var ch=document.createElement("div");ch.className="chip";ch.textContent=x.t;ch.onclick=function(){startEdit(x)};c.appendChild(ch)});
+ar.appendChild(c)});
+w.appendChild(ar)}
+var bd=document.createElement("div");bd.className="wbody";
+var wl=document.createElement("div");wl.className="wl";wl.style.height=H+"px";
+for(var k=from;k<=to;k+=60){var sp=document.createElement("span");sp.className="hh";sp.style.top=((k-from)*P+2)+"px";sp.textContent=pad(k/60);wl.appendChild(sp)}
+bd.appendChild(wl);
+days.forEach(function(d){
+var col=document.createElement("div");col.className="wc";col.style.height=H+"px";
+for(var k=from;k<=to;k+=60){var hl=document.createElement("div");hl.className="hl";hl.style.top=((k-from)*P)+"px";col.appendChild(hl)}
+var ec=document.createElement("div");ec.className="evs";
+d.L.forEach(function(o){
+var b=document.createElement("div");b.className="blk";
+b.style.top=(o.s-from)*P+"px";b.style.height=Math.max((o.e-o.s)*P-2,14)+"px";
+b.style.left=(o.c*9)+"px";b.style.width="calc(100% - "+(o.c*9+1)+"px)";b.style.zIndex=o.c+1;
+b.textContent=o.x.t;b.onclick=function(){startEdit(o.x)};ec.appendChild(b)});
+col.appendChild(ec);
+if(ymd(d.dt)===todayS){var nw=new Date(),nm=nw.getHours()*60+nw.getMinutes();if(nm>=from&&nm<=to){var nl=document.createElement("div");nl.className="now";nl.style.top=(nm-from)*P+"px";col.appendChild(nl)}}
+bd.appendChild(col)});
+w.appendChild(bd);return w}
 function startEdit(x){
 editId=x.id;$("t").value=x.t;$("d").value=x.d;$("e").value=x.e||"";$("h1").value=x.h1||"";$("h2").value=x.h2||"";
 $("new").open=true;$("new").querySelector("summary").textContent="Editar evento";
@@ -168,7 +227,7 @@ document.querySelectorAll("#seg button").forEach(function(b){b.classList.toggle(
 var g=$("grid");g.innerHTML="";
 if(mode==="dia"){$("range").textContent=fmt(cur,{weekday:"long",day:"numeric",month:"long",year:"numeric"});g.appendChild(dayView(cur))}
 else{var m=monday(cur);$("range").textContent="Semana del "+fmt(m,{day:"numeric",month:"short"})+" al "+fmt(addD(m,6),{day:"numeric",month:"short",year:"numeric"});
-for(var i=0;i<7;i++)g.appendChild(block(addD(m,i)))}
+g.appendChild(weekView(m))}
 var a=$("all");a.innerHTML="";
 var today=ymd(new Date()),showPast=$("past").checked,last="";
 var l=ev.filter(function(x){return showPast||(x.e||x.d)>=today}).sort(function(x,y){return(x.d+x.h1).localeCompare(y.d+y.h1)});
