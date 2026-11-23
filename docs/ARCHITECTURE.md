@@ -1,6 +1,6 @@
 # ARCHITECTURE — Colonias Estelares
 
-Juego estático (HTML + JS clásico + CSS), sin build ni librerías. Publicado en GitHub Pages (https://juliozgz.github.io/utilidades/juego-espacial.html). Persistencia: Firebase Realtime Database por REST (`fetch`, sin SDK) + localStorage. Única petición externa: Google Fonts.
+Juego estático (HTML + JS clásico + CSS); hoy sin build ni librerías. Publicado en GitHub Pages (https://juliozgz.github.io/utilidades/juego-espacial.html). Persistencia: Firebase Realtime Database por REST (`fetch`, sin SDK) + localStorage. Única petición externa: Google Fonts.
 
 ## Orden de carga y reglas por módulo
 Los scripts se cargan en este orden desde `juego-espacial.html` (`js/<m>.js?v=N`). Un módulo solo puede usar lo de los anteriores **al cargarse**; en ejecución todo es global.
@@ -33,5 +33,5 @@ Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. 
 - Caché: al cambiar un .js o el CSS, subir su `?v=` en `juego-espacial.html`.
 - Archivo nuevo: `js/x.js` con cabecera de 3 líneas + su `<script>` en el sitio correcto del orden (antes de `render.js` si es lógica o vista).
 
-## Zonas congeladas (solo con petición explícita “cambio de regla” o “migración”)
-`data.js`, `rules.js`, `engine.js`, `norm`/`prep` en `storage.js`, textos de juego.
+## Zonas sensibles (reglas y compatibilidad)
+`data.js`, `rules.js`, `engine.js`, `norm`/`prep` en `storage.js` y los textos de juego. Se tocan solo si lo pedido lo requiere, avisando antes de qué cambia exactamente; el resto debe quedar idéntico.
