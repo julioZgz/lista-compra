@@ -4,14 +4,15 @@
 <title>Colonias Estelares</title>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d1523;--pn:#16213a;--ln:#2a3b5e;--tx:#e8eefb;--mu:#93a4c4;--m:#e8a86a;--c:#76d6f2;--g:#b9a2ff;--ok:#5be3b0}
+:root{--sat:env(safe-area-inset-top,0px);--bg:#0d1523;--pn:#16213a;--ln:#2a3b5e;--tx:#e8eefb;--mu:#93a4c4;--m:#e8a86a;--c:#76d6f2;--g:#b9a2ff;--ok:#5be3b0}
 *{box-sizing:border-box}
 body{margin:0;color:var(--tx);font:15px/1.4 system-ui,sans-serif;background:var(--bg);
 background-image:radial-gradient(1px 1px at 20px 30px,#fff8,transparent),radial-gradient(1px 1px at 120px 90px,#fff6,transparent),radial-gradient(1.5px 1.5px at 200px 160px,#fff9,transparent);background-size:240px 200px;background-attachment:fixed;
 padding:0 0 calc(76px + env(safe-area-inset-bottom))}
-body::before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:5}
-.hd{position:sticky;top:env(safe-area-inset-top,0px);z-index:4;background:var(--bg);padding:4px 0 2px}
-.top{padding-top:env(safe-area-inset-top,0px)}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:var(--sat);background:var(--bg);z-index:5}
+.hd{position:sticky;top:var(--sat);z-index:4;background:var(--bg);padding:4px 0 2px}
+.top{padding-top:var(--sat)}
+@media (hover:none){:root{--sat:max(env(safe-area-inset-top,0px),44px)}}
 #app{max-width:640px;margin:0 auto;padding:12px}
 h1,b,.lv,.rs strong{font-family:'Chakra Petch',system-ui,sans-serif}
 h1{font-size:20px;margin:0}
@@ -224,8 +225,11 @@ function build(k){const p=P(SP),b=vb(p),L=b[k];if(used(p)>=slots()||p.dm.include
 if(!p.q)p.q={k,end:Date.now()+tB(k,L,p)*1000,c};else p.bq.push({k,L,c});change()}
 function cancelQ(i){const p=P(SP),it=p.bq[i];if(!it)return;for(const x in it.c)R(p)[x]+=it.c[x];p.bq.splice(i,1);reval(p);change()}
 function cancelSQ(i){const p=P(SP),it=p.sqq[i];if(!it)return;for(const x in it.c)R(p)[x]+=it.c[x];p.sqq.splice(i,1);change()}
-const bqList=p=>`<p class=st>Cola de obras: ${used(p)}/${slots()}</p>`+(p.bq||[]).map((it,i)=>`<div class=card><div class=row><b>En cola: ${B[it.k].n} → nivel ${it.L+1}</b><span class=lv>${i+1}º</span></div><button class=go style="background:#ff8a8a" onclick="cancelQ(${i})">Quitar de la cola (recuperas todo)</button></div>`).join('');
-const sqList=p=>`<p class=st>Cola de naves: ${sUsed(p)}/${slots()}</p>`+(p.sqq||[]).map((it,i)=>`<div class=card><div class=row><b>En cola: ${SH[it.t].n}</b><span class=lv>${i+1}º</span></div><button class=go style="background:#ff8a8a" onclick="cancelSQ(${i})">Quitar de la cola (recuperas todo)</button></div>`).join('');
+let QO=false;
+const qBlock=(h,sm,inner)=>`<div class=card style="cursor:pointer;margin-bottom:6px" onclick="qToggle()"><div class=row><b>${h}</b><span class=lv>${sm} <span id=qa>${QO?'▴':'▾'}</span></span></div></div><div id=qb style="display:${QO?'block':'none'}">${inner}</div>`;
+function qToggle(){QO=!QO;const b=$('#qb'),a=$('#qa');if(b)b.style.display=QO?'block':'none';if(a)a.textContent=QO?'▴':'▾'}
+const bqList=p=>(p.bq||[]).map((it,i)=>`<div class=card><div class=row><b>En cola: ${B[it.k].n} → nivel ${it.L+1}</b><span class=lv>${i+1}º</span></div><button class=go style="background:#ff8a8a" onclick="cancelQ(${i})">Quitar de la cola (recuperas todo)</button></div>`).join('');
+const sqList=p=>(p.sqq||[]).map((it,i)=>`<div class=card><div class=row><b>En cola: ${SH[it.t].n}</b><span class=lv>${i+1}º</span></div><button class=go style="background:#ff8a8a" onclick="cancelSQ(${i})">Quitar de la cola (recuperas todo)</button></div>`).join('');
 function research(k){const p=P(SP),L=S.tech[k];if(p.rq||S.cs.some(q=>q.rq&&q.rq.k===k)||L>=T[k].max||lv(p,'l')<L+1)return;const c=cost(T[k].b,T[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rq={k,end:Date.now()+tT(k,L,p)*1000,c};change()}
 function ship(t){const p=P(SP),d=SH[t];if(sUsed(p)>=slots()||lv(p,'s')<d.s||!afford(R(p),d.b))return;for(const x in d.b)R(p)[x]-=d.b[x];if(!p.sq)p.sq={t,end:Date.now()+tS(t,p)*1000,c:d.b};else p.sqq.push({t,c:d.b});change()}
 function repair(k){const p=P(SP);if(p.rr||!p.dm.includes(k))return;const c=repC(p,k);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rr={k,end:Date.now()+repT(p,k)*1000,c};change()}
@@ -283,8 +287,8 @@ if(bm)btn=`<button class=go disabled>${{x:'Explorando',r:'Saqueando'}[bm.k]} (<s
 else if(!kn){const off=fr||(S.fleet.e<1?'Necesitas un explorador':'');btn=`<button class=go ${off?'disabled':''} onclick="send('x',${u.id})">${off||`Explorar (${fmtT(secs)})`}</button>`}
 else{const off=fr||(S.fleet.r<1?'Necesitas corsarios':'');btn=`<button class=go style="background:#e8a86a" ${off?'disabled':''} onclick="openRaid(${u.id})">${off||'Saquear'}</button>`}
 h+=`<div class=card><div class=pl>${planet(u.id,60,!kn)}<div><b>${kn?u.name:'Puesto sin explorar'}</b><div class=st>Distancia ${u.dist}${kn?` · Defensa ${Math.ceil(u.dist/2)+1}${cnt?' · botín reducido':''}`:''}</div></div></div><div style="margin-top:8px">${btn}</div></div>`});return h}
-function go(v){V=v;localStorage.setItem('je_v',v);render();window.scrollTo(0,0)}
-function selPlanet(id){SP=id;localStorage.setItem('je_sp',id);render()}
+function go(v){QO=false;V=v;localStorage.setItem('je_v',v);render();window.scrollTo(0,0)}
+function selPlanet(id){QO=false;SP=id;localStorage.setItem('je_sp',id);render()}
 let TF='m',TT='c',TA=100;const W={m:1,c:1.7,g:3.4},RS=['m','c','g'];
 const comm=()=>.2-.03*S.tech.x,rate=()=>Math.floor(TA*W[TF]/W[TT]*(1-comm()));
 function tf(k){TF=k;if(TT===k)TT=RS.find(x=>x!==k);render()}
@@ -311,7 +315,7 @@ catch(e){S=null;err='No se pudo conectar con Firebase. Comprueba las reglas de l
 function logout(){code='';S=null;localStorage.removeItem('je_code');render()}
 
 /* Vistas */
-function view(p){if(!tabVis(V)||!tabAct(V,p))V='b';let h=(V==='b'?(p.q?qc(`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):qe('Nada en construcción')):'')+(V==='b'?bqList(p):'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='i'?(p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):qe('Nada en investigación')):'')+(V==='f'?(p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):qe('Nada en construcción de naves')):'')+(V==='f'?sqList(p):'');
+function view(p){if(!tabVis(V)||!tabAct(V,p))V='b';let h=(V==='b'?qBlock(`Cola de obras ${used(p)}/${slots()}`,p.q?`${B[p.q.k].n} · <span data-end="${p.q.end}"></span>`:'vacía',(p.q?qc(`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):qe('Nada en construcción'))+bqList(p)):'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='i'?(p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):qe('Nada en investigación')):'')+(V==='f'?qBlock(`Cola de naves ${sUsed(p)}/${slots()}`,p.sq?`${SH[p.sq.t].n} · <span data-end="${p.sq.end}"></span>`:'vacía',(p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):qe('Nada en construcción de naves'))+sqList(p)):'');
 if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k],vbb=vb(p),Lq=vbb[k];if(p.dm.includes(k)){h+=p.rr&&p.rr.k===k?card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Reparándose.',p.rr.c,`Cancelar reparación (<span data-end="${p.rr.end}"></span>)`,'cancelRR()','',bic(k,L,true),repT(p,k),undefined,1):card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.rr?`Reparación en curso (<span data-end="${p.rr.end}"></span>)`:'',bic(k,p.b[k],p.dm.includes(k)),repT(p,k));continue}
 let d=B[k].d+(i!==undefined?` Ahora: ${prod(p,i).toFixed(1)}/s. Este planeta limita la mina al nivel ${mx}. Más nivel, más rebelión.`:'');
 d+=reqTxt(k);
