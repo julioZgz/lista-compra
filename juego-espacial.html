@@ -37,6 +37,7 @@ button{font:inherit;cursor:pointer}
 button:disabled{background:#26344f!important;color:var(--mu)!important;cursor:default}
 html{touch-action:manipulation}nav{z-index:10;touch-action:manipulation;position:fixed;left:0;right:0;bottom:0;display:flex;background:#0a111d;border-top:1px solid var(--ln);padding-bottom:env(safe-area-inset-bottom)}
 nav button{flex:1;background:none;border:0;color:var(--mu);padding:14px 0;font-size:11px}
+nav button:disabled{background:none!important;opacity:.35}
 nav button.on{color:var(--ok);font-weight:700}
 input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--ln);background:var(--pn);color:var(--tx);font:inherit;margin:10px 0}
 #toast{position:fixed;bottom:calc(64px + env(safe-area-inset-bottom));left:12px;right:12px;max-width:616px;margin:auto;background:var(--ok);color:#06231a;border-radius:10px;padding:10px 12px;font-weight:600;z-index:11;display:none;align-items:center;gap:10px}
@@ -75,9 +76,10 @@ const T={p:{n:'Propulsión',d:'Más alcance (+2 de distancia) y viajes más ráp
 c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel.',b:{c:200,g:120},f:2,max:6},
 m:{n:'Flotas coordinadas',d:'Una misión simultánea más por nivel.',b:{c:250,g:150},f:2,max:6},
 n:{n:'Redes de transporte',d:'Permite conectar a una red de recursos compartidos los planetas que tengan Hangar de transporte.',b:{c:400,g:250},f:2,max:1},
-x:{n:'Tácticas comerciales',d:'Reduce 3 puntos por nivel la comisión de los mercaderes (del 20% al 5% en el nivel 5).',b:{c:200,g:100},f:1.8,max:5},
+x:{n:'Tácticas comerciales',d:'Reduce 3 puntos por nivel la comisión de los mercaderes (del 20% al 5% en el nivel 5). El nivel 1 desbloquea la sección Comercio.',b:{c:200,g:100},f:1.8,max:5},
 d:{n:'Ingeniería defensiva',d:'Permite subir Murallas y Torretas láser hasta el doble del nivel de esta tecnología.',b:{m:200,c:150,g:60},f:2,max:5},
-l:{n:'Logística',d:'Permite subir el Almacén y la Fábrica de drones hasta el doble del nivel de esta tecnología.',b:{m:150,c:120},f:1.9,max:6},
+l:{n:'Logística',d:'Permite subir el Almacén y la Fábrica de drones hasta el doble del nivel de esta tecnología. El nivel 1 desbloquea la sección Colas.',b:{m:150,c:120},f:1.9,max:6},
+y:{n:'Tácticas de combate',d:'Desbloquea la sección Saqueos y, con ella, la posibilidad de saquear puestos rivales.',b:{m:250,c:180,g:100},f:2,max:1},
 e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:100},f:1.9,max:10}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
@@ -110,6 +112,8 @@ if((k==='a'||k==='d')&&tL>2*(S.tech.l||0))o.push(`Logística ${Math.ceil(tL/2)}`
 if(k==='t'){nd('l',4);nd('w',tL)}
 return o};
 const reqTxt=k=>(!'zok'.includes(k)?' Máx. nivel: Centro de mando + 2.':'')+({m:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',c:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',g:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',l:' Máx. nivel: Universidad + 2.',h:' Requiere Almacén 5 y Astillero 1.',p:' Requiere Almacén 4 y Astillero 2.',w:' Requiere Mina de metal 3. Máx. nivel: el doble de Ingeniería defensiva.',a:' Máx. nivel: el doble de Logística.',d:' Máx. nivel: el doble de Logística.',t:' Requiere Laboratorio 4 y nivel igual o menor que las Murallas. Máx. nivel: el doble de Ingeniería defensiva.'}[k]||'');
+const tabVis=k=>({i:()=>S.cs.some(p=>p.b.l>=1),f:()=>S.cs.some(p=>p.b.s>=1),m:()=>S.tech.p>=1,r:()=>S.tech.y>=1,x:()=>S.tech.x>=1,q:()=>S.tech.l>=1}[k]||(()=>true))();
+const tabAct=(k,p)=>k==='i'?p.b.l>=1:k==='f'?p.b.s>=1:true;
 const warn=p=>p.rb>=40||(p.dm&&p.dm.length>0);
 function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;if(p.b.z==null)p.b.z=Math.min(10,Math.max(0,Math.max(...['m','c','g','a','s','l','u','d','h','w','t','p'].map(x=>p.b[x]||0))-2));p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
 const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/10)])),repT=(p,k)=>Math.max(30,Math.round(300/ef(p)));
@@ -136,7 +140,8 @@ w:`<path d="M6 42V14h8v6h6v-6h8v6h6v-6h8v28z"/>`,
 t:`<path d="M16 42l4-18h8l4 18z"/><path d="M24 24V10M18 10h12M10 8l8 2M38 8l-8 2"/>`,
 h:`<path d="M6 40V20L24 8l18 12v20M14 40V26h20v14M24 40V26"/>`,
 d:`<circle cx="24" cy="24" r="6"/><path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6"/>`};
-const TI={d:`<path d="M24 6l15 6v10c0 9-6 15-15 18C15 37 9 31 9 22V12z"/>`,
+const TI={y:`<path d="M8 8l24 24M32 32l-6 6 4 4 6-6zM40 8L16 32M16 32l6 6-4 4-6-6z"/>`,
+d:`<path d="M24 6l15 6v10c0 9-6 15-15 18C15 37 9 31 9 22V12z"/>`,
 l:`<path d="M6 14h22v18H6zM28 20h8l6 6v6H28z"/><circle cx="14" cy="36" r="3"/><circle cx="35" cy="36" r="3"/>`,
 p:`<path d="M24 6c8 8 8 18 0 26-8-8-8-18 0-26z"/><path d="M24 32v10M18 36l-2 6M30 36l2 6"/>`,
 c:`<path d="M8 38a16 16 0 0132 0z"/><path d="M4 38h40M24 22v-8M24 14h8l-3 3 3 3h-8"/>`,
@@ -290,7 +295,7 @@ catch(e){S=null;err='No se pudo conectar con Firebase. Comprueba las reglas de l
 function logout(){code='';S=null;localStorage.removeItem('je_code');render()}
 
 /* Vistas */
-function view(p){let h=(V==='b'?(p.q?qc(`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):qe('Nada en construcción')):'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='i'?(p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):qe('Nada en investigación')):'')+(V==='f'?(p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):qe('Nada en construcción de naves')):'');
+function view(p){if(!tabVis(V)||!tabAct(V,p))V='b';let h=(V==='b'?(p.q?qc(`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):qe('Nada en construcción')):'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='i'?(p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):qe('Nada en investigación')):'')+(V==='f'?(p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):qe('Nada en construcción de naves')):'');
 if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k];if(p.dm.includes(k)){h+=p.rr&&p.rr.k===k?card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Reparándose.',p.rr.c,`Cancelar reparación (<span data-end="${p.rr.end}"></span>)`,'cancelRR()','',bic(k,L,true),repT(p,k),undefined,1):card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.rr?`Reparación en curso (<span data-end="${p.rr.end}"></span>)`:'',bic(k,p.b[k],p.dm.includes(k)),repT(p,k));continue}
 let d=B[k].d+(i!==undefined?` Ahora: ${prod(p,i).toFixed(1)}/s. Este planeta limita la mina al nivel ${mx}. Más nivel, más rebelión.`:'');
 d+=reqTxt(k);
@@ -323,7 +328,7 @@ a.innerHTML=`<div class=top><h1>📍 ${U(SP).name}</h1><div class=st><span id=st
 ${p.nj?'<div class=st>🔗 Recursos de la red interplanetaria</div>':''}<div class=res>${[0,1,2].map(i=>`<div class=rs><span class="${'mcg'[i]}">${RN['mcg'[i]]}</span><strong id=rv${i}></strong><small id=rp${i}></small></div>`).join('')}</div><div class=st id=rbi style="margin:-6px 0 6px"></div></div>
 ${rfCard()}
 ${view(p)}
-<nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['r','Saqueos'],['x','Comercio'],['q','Colas']].map(([k,n])=>`<button class="${V===k?'on':''}" onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
+<nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['r','Saqueos'],['x','Comercio'],['q','Colas']].filter(([k])=>tabVis(k)).map(([k,n])=>`<button class="${V===k?'on':''}" ${tabAct(k,p)?'':'disabled'} onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
 function tick(skip){if(!S)return;if(!skip&&advance(Date.now()))dirty=true,render();
 const p=P(SP),c=capN(p),rp=p;
 const ri=$('#rbi');if(ri){ri.textContent=(p.rb>=40?'⚠ ':'')+`Rebelión ${p.rb.toFixed(0)}% (→ ${rbT(p).toFixed(0)}%) · Defensas −${Math.round(defRed(p)*100)}% a los rebeldes`+(p.rb>50?` · éxito rebelde ${Math.round(rebWin(p)*100)}%`:' · sin ataques');ri.style.color=p.rb>50?'#ff8a8a':p.rb>=40?'#ffb547':''}
