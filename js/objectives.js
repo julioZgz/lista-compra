@@ -1,0 +1,21 @@
+/* objectives.js — Objetivos y recompensas: OB, obOk, rwd, rwAmt, obReady, claim, obCard, openObj, lvM.
+ * Escribe: S.ob, S.acc, S.sh y recursos de la primera colonia (vía claim).
+ * NO debe: tocar colas ni guardado.
+ * Movido tal cual de juego-espacial.html original; ver ARCHITECTURE.md. */
+const lvM=k=>Math.max(...S.cs.map(p=>p.b[k]||0)),minM=()=>Math.max(...S.cs.map(p=>Math.min(p.b.m,p.b.c,p.b.g)));
+const OB=[
+{id:'eco',n:'Economía',l:[{t:'Centro de mando nivel 2',v:()=>[lvM('z'),2]},{t:'Almacén nivel 5',v:()=>[lvM('a'),5]},{t:'Las tres minas a nivel 5 en un planeta',v:()=>[minM(),5]},{t:'Centro de mando nivel 10',v:()=>[lvM('z'),10]},{t:'Almacén nivel 10',v:()=>[lvM('a'),10]}]},
+{id:'exp',n:'Expansión',l:[{t:'Explora un planeta',v:()=>[S.known.length-1,1]},{t:'Coloniza tu primer planeta',v:()=>[S.cs.length-1,1]},{t:'Coloniza 3 planetas',v:()=>[S.cs.length-1,3]},{t:'Conecta 2 planetas a la red',v:()=>[S.cs.filter(p=>p.nj).length,2]},{t:'Coloniza 5 planetas',v:()=>[S.cs.length-1,5]}]},
+{id:'sci',n:'Ciencia',l:[{t:'Investiga Logística',v:()=>[S.tech.l,1]},{t:'Investiga Planificación',v:()=>[S.tech.q,1]},{t:'Eficiencia nivel 5',v:()=>[S.tech.e,5]},{t:'Investiga Redes de transporte',v:()=>[S.tech.n,1]},{t:'Eficiencia nivel 10',v:()=>[S.tech.e,10]}]},
+{id:'def',n:'Defensa',l:[{t:'Murallas nivel 3',v:()=>[lvM('w'),3]},{t:'Repele 3 ataques',v:()=>[S.cnt.rep,3]},{t:'Ingeniería defensiva nivel 3',v:()=>[S.tech.d,3]},{t:'Rebelión por debajo del 30% en todos tus planetas',v:()=>[S.cs.filter(p=>p.rb<30).length,S.cs.length]},{t:'Repele 10 ataques',v:()=>[S.cnt.rep,10]}]},
+{id:'flo',n:'Flota',l:[{t:'Construye un corsario',v:()=>[S.cnt.cor,1]},{t:'Saquea con éxito por primera vez',v:()=>[S.cnt.sac,1]},{t:'Saquea 3 puestos distintos',v:()=>[S.cnt.sacT.length,3]},{t:'Flotas coordinadas nivel 2',v:()=>[S.tech.m,2]},{t:'Saquea con éxito 8 veces',v:()=>[S.cnt.sac,8]}]},
+{id:'com',n:'Comercio',l:[{t:'Haz tu primer intercambio',v:()=>[S.cnt.trd,1]},{t:'Acoge unos refugiados',v:()=>[S.cnt.ref,1]},{t:'Puerto comercial nivel 3',v:()=>[lvM('p'),3]},{t:'Tácticas comerciales nivel 3',v:()=>[S.tech.x,3]},{t:'Haz 10 intercambios',v:()=>[S.cnt.trd,10]}]}];
+const obOk=o=>{const[v,m]=o.v();return v>=m};
+const rwd=i=>({min:[10,15,20,30,45][i]||45,acc:[0,1,0,1,1][i]||0,sh:[0,0,1,0,2][i]||0});
+const rwAmt=i=>{const r=rwd(i),o={};['m','c','g'].forEach((k,j)=>{o[k]=Math.round(r.min*60*S.cs.reduce((a,p)=>a+prod(p,j),0))});return o};
+const obReady=()=>OB.some(c=>{const o=c.l[S.ob[c.id]];return o&&obOk(o)});
+function claim(id){const c=OB.find(x=>x.id===id),i=S.ob[id],o=c.l[i];if(!o||!obOk(o))return;const r=rwd(i),a=rwAmt(i),h=R(S.cs[0]);for(const k in a)h[k]+=a[k];S.acc+=r.acc;S.sh+=r.sh*3.6e6;S.ob[id]=i+1;toast('Recompensa reclamada: '+c.n);dirty=true;openObj();render()}
+const obCard=c=>{const i=S.ob[c.id],o=c.l[i];if(!o)return`<div class=card><div class=row><b>${c.n}</b><span class=lv>completada ✓</span></div></div>`;
+const[v0,m]=o.v(),v=Math.min(Math.max(0,v0),m),ok=v0>=m,a=rwAmt(i),r=rwd(i);
+return`<div class=card style="margin-bottom:10px"><div class=row><b>${c.n}</b><span class=lv>${i+1}/${c.l.length}</span></div><p style="margin:4px 0 6px;color:var(--tx)">${o.t}</p><div style="height:6px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="height:100%;width:${Math.round(100*v/m)}%;background:var(--ok)"></div></div><div class=st style="margin:2px 0 6px">${v}/${m}</div><div class=chs>${Object.entries(a).map(([k,x])=>`<i class="ch ${k}">+${fmt(x)} ${RN[k]}</i>`).join('')}${r.acc?`<i class=ch>⚡ ${r.acc} acelerador</i>`:''}${r.sh?`<i class=ch>🛡️ ${r.sh} h sin ataques</i>`:''}</div><button class=go ${ok?'':'disabled'} onclick="claim('${c.id}')">${ok?'Reclamar':'En curso'}</button></div>`};
+function openObj(){const m=$('#md');m.style.display='flex';m.innerHTML=`<div class=card style="width:100%;max-width:420px;max-height:85vh;overflow:auto"><div class=row><b style="font-size:18px">🏅 Objetivos</b><b onclick="closeM()" style="font-size:24px;cursor:pointer;padding:0 6px">✕</b></div><p class=st>Aceleradores: ${S.acc} · ${S.sh>0?'escudo '+fmtT(Math.round(S.sh/1000)):'sin escudo'}</p>${OB.map(obCard).join('')}</div>`}
