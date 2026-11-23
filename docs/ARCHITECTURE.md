@@ -1,9 +1,9 @@
 # ARCHITECTURE — Colonias Estelares
 
-Juego estático (HTML + JS clásico + CSS); hoy sin build ni librerías. Publicado en GitHub Pages (https://juliozgz.github.io/utilidades/juego-espacial.html). Persistencia: Firebase Realtime Database por REST (`fetch`, sin SDK) + localStorage. Única petición externa: Google Fonts.
+Juego estático (HTML + JS clásico + CSS); hoy sin build ni librerías. Publicado en GitHub Pages (https://juliozgz.github.io/utilidades/). Persistencia: Firebase Realtime Database por REST (`fetch`, sin SDK) + localStorage. Única petición externa: Google Fonts.
 
 ## Orden de carga y reglas por módulo
-Los scripts se cargan en este orden desde `juego-espacial.html` (`js/<m>.js?v=N`). Un módulo solo puede usar lo de los anteriores **al cargarse**; en ejecución todo es global.
+Los scripts se cargan en este orden desde `index.html` (`js/<m>.js?v=N`). Un módulo solo puede usar lo de los anteriores **al cargarse**; en ejecución todo es global.
 
 | # | Módulo | Qué es | No debe |
 |---|--------|--------|---------|
@@ -30,7 +30,7 @@ Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. 
 - Nombres top-level únicos en todo el juego (comparten ámbito).
 - Pestañas (`V`): b Edificios · i Investigar · f Flota · m Mapa · r Saqueos · x Comercio · q Colas (`tabVis` decide cuáles se ven).
 - Sprite `edificios.webp`: 1000×1000, cuadrícula 5×5. Fila = edificio (`SPM`: l laboratorio 0, s astillero 1, c mina de cristal 2, g gas 3, a almacén 4); columna = `floor((nivel-1)/2)` limitado a 0–4. Los demás edificios usan icono SVG (`BI`).
-- Caché: al cambiar un .js o el CSS, subir su `?v=` en `juego-espacial.html`.
+- Caché: al cambiar un .js o el CSS, subir su `?v=` en `index.html`.
 - Archivo nuevo: `js/x.js` con cabecera de 3 líneas + su `<script>` en el sitio correcto del orden (antes de `render.js` si es lógica o vista).
 
 ## Zonas sensibles (reglas y compatibilidad)
