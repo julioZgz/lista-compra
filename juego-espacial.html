@@ -76,6 +76,8 @@ c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel.',b:{c:200,
 m:{n:'Flotas coordinadas',d:'Una misión simultánea más por nivel.',b:{c:250,g:150},f:2,max:6},
 n:{n:'Redes de transporte',d:'Permite conectar a una red de recursos compartidos los planetas que tengan Hangar de transporte.',b:{c:400,g:250},f:2,max:1},
 x:{n:'Tácticas comerciales',d:'Reduce 3 puntos por nivel la comisión de los mercaderes (del 20% al 5% en el nivel 5).',b:{c:200,g:100},f:1.8,max:5},
+d:{n:'Ingeniería defensiva',d:'Permite subir Murallas y Torretas láser hasta el doble del nivel de esta tecnología.',b:{m:200,c:150,g:60},f:2,max:5},
+l:{n:'Logística',d:'Permite subir el Almacén y la Fábrica de drones hasta el doble del nivel de esta tecnología.',b:{m:150,c:120},f:1.9,max:6},
 e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:100},f:1.9,max:10}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
@@ -103,9 +105,11 @@ if(k==='l')nd('u',tL-2);
 if(k==='h'){nd('a',5);nd('s',1)}
 if(k==='p'){nd('a',4);nd('s',2)}
 if(k==='w')nd('m',3);
+if((k==='w'||k==='t')&&tL>2*(S.tech.d||0))o.push(`Ingeniería defensiva ${Math.ceil(tL/2)}`);
+if((k==='a'||k==='d')&&tL>2*(S.tech.l||0))o.push(`Logística ${Math.ceil(tL/2)}`);
 if(k==='t'){nd('l',4);nd('w',tL)}
 return o};
-const reqTxt=k=>(!'zok'.includes(k)?' Máx. nivel: Centro de mando + 2.':'')+({m:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',c:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',g:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',l:' Máx. nivel: Universidad + 2.',h:' Requiere Almacén 5 y Astillero 1.',p:' Requiere Almacén 4 y Astillero 2.',w:' Requiere Mina de metal 3.',t:' Requiere Laboratorio 4 y nivel igual o menor que las Murallas.'}[k]||'');
+const reqTxt=k=>(!'zok'.includes(k)?' Máx. nivel: Centro de mando + 2.':'')+({m:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',c:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',g:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',l:' Máx. nivel: Universidad + 2.',h:' Requiere Almacén 5 y Astillero 1.',p:' Requiere Almacén 4 y Astillero 2.',w:' Requiere Mina de metal 3. Máx. nivel: el doble de Ingeniería defensiva.',a:' Máx. nivel: el doble de Logística.',d:' Máx. nivel: el doble de Logística.',t:' Requiere Laboratorio 4 y nivel igual o menor que las Murallas. Máx. nivel: el doble de Ingeniería defensiva.'}[k]||'');
 const warn=p=>p.rb>=40||(p.dm&&p.dm.length>0);
 function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;if(p.b.z==null)p.b.z=Math.min(10,Math.max(0,Math.max(...['m','c','g','a','s','l','u','d','h','w','t','p'].map(x=>p.b[x]||0))-2));p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
 const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/10)])),repT=(p,k)=>Math.max(30,Math.round(300/ef(p)));
@@ -132,7 +136,9 @@ w:`<path d="M6 42V14h8v6h6v-6h8v6h6v-6h8v28z"/>`,
 t:`<path d="M16 42l4-18h8l4 18z"/><path d="M24 24V10M18 10h12M10 8l8 2M38 8l-8 2"/>`,
 h:`<path d="M6 40V20L24 8l18 12v20M14 40V26h20v14M24 40V26"/>`,
 d:`<circle cx="24" cy="24" r="6"/><path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6"/>`};
-const TI={p:`<path d="M24 6c8 8 8 18 0 26-8-8-8-18 0-26z"/><path d="M24 32v10M18 36l-2 6M30 36l2 6"/>`,
+const TI={d:`<path d="M24 6l15 6v10c0 9-6 15-15 18C15 37 9 31 9 22V12z"/>`,
+l:`<path d="M6 14h22v18H6zM28 20h8l6 6v6H28z"/><circle cx="14" cy="36" r="3"/><circle cx="35" cy="36" r="3"/>`,
+p:`<path d="M24 6c8 8 8 18 0 26-8-8-8-18 0-26z"/><path d="M24 32v10M18 36l-2 6M30 36l2 6"/>`,
 c:`<path d="M8 38a16 16 0 0132 0z"/><path d="M4 38h40M24 22v-8M24 14h8l-3 3 3 3h-8"/>`,
 x:`<circle cx="24" cy="24" r="15"/><path d="M24 14v20M19 19h8a3 3 0 010 6h-6a3 3 0 000 6h9"/>`,
 n:`<circle cx="10" cy="14" r="4"/><circle cx="38" cy="14" r="4"/><circle cx="24" cy="36" r="4"/><path d="M14 14h20M12 18l10 15M36 18L26 33"/>`,
