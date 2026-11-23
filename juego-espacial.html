@@ -59,7 +59,7 @@ input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--ln);backg
 <script>
 const DB='https://lista-compra-3e6a2-default-rtdb.europe-west1.firebasedatabase.app';
 const RN={m:'Metal',c:'Cristal',g:'Gas'},IDX={m:0,c:1,g:2},K=[.5,.3,.15];
-const B={m:{n:'Mina de metal',d:'Produce metal.',b:{m:60,c:15},f:1.6},c:{n:'Mina de cristal',d:'Produce cristal.',b:{m:48,c:24},f:1.6},g:{n:'Extractor de gas',d:'Produce gas.',b:{m:75,c:30},f:1.6},
+const B={z:{n:'Centro de mando',d:'Coordina la colonia.',b:{m:150,c:100},f:1.7,max:10},m:{n:'Mina de metal',d:'Produce metal.',b:{m:60,c:15},f:1.6},c:{n:'Mina de cristal',d:'Produce cristal.',b:{m:48,c:24},f:1.6},g:{n:'Extractor de gas',d:'Produce gas.',b:{m:75,c:30},f:1.6},
 a:{n:'Almacén',d:'Aumenta la capacidad de recursos.',b:{m:100,c:50},f:1.8,max:12},
 s:{n:'Astillero',d:'Nivel 1 construye exploradores; nivel 2, colonizadores.',b:{m:200,c:100},f:1.7,max:8},
 l:{n:'Laboratorio',d:'Necesario para investigar en este planeta. Su nivel limita las tecnologías.',b:{m:150,c:200},f:1.7,max:10},
@@ -82,7 +82,7 @@ c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400
 r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia.',b:{m:300,c:200,g:100},s:2}};
 const $=s=>document.querySelector(s);
 let S=null,SP=0,V=(['b','i','f','m','r','x'].includes(localStorage.getItem('je_v'))?localStorage.getItem('je_v'):'b'),code=localStorage.getItem('je_code')||'',dirty=false,st='',err='';
-const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50},ST={e:30,c:90,r:60},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));
+const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40},ST={e:30,c:90,r:60},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));
 const tB=(k,L,p)=>Math.max(5,Math.round(BT[k]*Math.pow(1.5,L)/ef(p)));
 const tT=(k,L,p)=>Math.max(5,Math.round(90*Math.pow(1.8,L)/(1+.15*lv(p,'l'))/ef(p)));
 const tS=(t,p)=>Math.max(5,Math.round(ST[t]/(1+.15*lv(p,'s'))/ef(p)));
@@ -96,8 +96,18 @@ const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*L*Math.pow(1.15,L)*(1+.1*S
 const lv=(p,k)=>p.dm&&p.dm.includes(k)?0:p.b[k];
 const rbT=p=>Math.max(0,Math.min(100,p.rb0+1.5*(p.b.m+p.b.c+p.b.g)-4*(lv(p,'o')+lv(p,'k'))));
 const defRed=p=>Math.min(.9,.04*lv(p,'w')+.06*lv(p,'t')),rebWin=p=>Math.max(.05,Math.min(.95,.5+(p.rb-50)/100+(p.b.m+p.b.c+p.b.g)/100))*(1-defRed(p));
+const RQ=(p,k,tL)=>{const o=[],nd=(x,n)=>{if((p.b[x]||0)<n)o.push(`${B[x].n} ${n}`)};
+if(!'zok'.includes(k))nd('z',tL-2);
+if(k in IDX&&(p.b.a||0)<10)nd('a',Math.ceil(tL/2));
+if(k==='l')nd('u',tL-2);
+if(k==='h'){nd('a',5);nd('s',1)}
+if(k==='p'){nd('a',4);nd('s',2)}
+if(k==='w')nd('m',3);
+if(k==='t'){nd('l',4);nd('w',tL)}
+return o};
+const reqTxt=k=>(!'zok'.includes(k)?' Máx. nivel: Centro de mando + 2.':'')+({m:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',c:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',g:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',l:' Máx. nivel: Universidad + 2.',h:' Requiere Almacén 5 y Astillero 1.',p:' Requiere Almacén 4 y Astillero 2.',w:' Requiere Mina de metal 3.',t:' Requiere Laboratorio 4 y nivel igual o menor que las Murallas.'}[k]||'');
 const warn=p=>p.rb>=40||(p.dm&&p.dm.length>0);
-function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
+function norm(p){for(const k of['o','k','w','t','p'])p.b[k]=p.b[k]||0;if(p.b.z==null)p.b.z=Math.min(10,Math.max(0,Math.max(...['m','c','g','a','s','l','u','d','h','w','t','p'].map(x=>p.b[x]||0))-2));p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
 const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/10)])),repT=(p,k)=>Math.max(30,Math.round(300/ef(p)));
 const R=p=>p.nj?S.net:p.r,mem=()=>S.cs.filter(p=>p.nj);
 const capN=p=>p.nj?mem().reduce((a,q)=>a+cap(q),0):cap(p),prodN=(p,i)=>p.nj?mem().reduce((a,q)=>a+prod(q,i),0):prod(p,i);
@@ -107,7 +117,8 @@ const icon=(p,c)=>`<div class="ic ${c||''}"><svg viewBox="0 0 48 48" width="34" 
 const SPM={l:0,s:1,c:2,g:3,a:4};let SPR=false;
 if(typeof Image!=='undefined'){const spr=new Image();spr.onload=()=>{SPR=true;if(S)render()};spr.src='edificios.webp'}
 const bic=(k,L,dm)=>SPR&&k in SPM?`<div class="ic sp${L?'':' off'}${dm?' dmg':''}" style="--c:${Math.max(0,Math.min(4,Math.floor((L-1)/2)))};--r:${SPM[k]}"></div>`:icon(BI[k],k in IDX?k:'');
-const BI={m:`<path d="M6 40L18 18l8 12 6-8 10 18z"/><path d="M14 8l20 8M24 6l-6 12"/>`,
+const BI={z:`<path d="M24 6l16 8v10c0 10-8 16-16 18C16 40 8 34 8 24V14z"/><path d="M18 24l4 4 8-9"/>`,
+m:`<path d="M6 40L18 18l8 12 6-8 10 18z"/><path d="M14 8l20 8M24 6l-6 12"/>`,
 c:`<path d="M24 6l10 10-10 26L14 16z"/><path d="M14 16h20M24 6v36"/>`,
 g:`<path d="M14 36a8 8 0 010-16 10 10 0 0119-2 8 8 0 011 18z"/><path d="M18 42h4M26 42h6"/>`,
 a:`<path d="M6 20L24 8l18 12v22H6z"/><path d="M16 42V28h16v14M16 35h16"/>`,
@@ -187,7 +198,7 @@ S.cs.forEach(p=>{if(p.rq&&p.rq.end<=now){S.tech[p.rq.k]++;toast('Investigación 
 S.mis=S.mis.filter(m=>{if(m.end>now)return true;ch=true;done(m);return false});if(S.rf&&S.rf.exp<=now){delete S.rf;ch=true}if(S.nv<=now){visitor();S.nv=now+(300+Math.random()*300)*1000/(1+.15*S.cs.reduce((a,p)=>a+lv(p,'p'),0));ch=true}sync();return ch}
 
 function change(){dirty=true;render()}
-function build(k){const p=P(SP),L=p.b[k];if(p.q||p.dm.includes(k)||L>=maxL(p,k))return;const c=cost(B[k].b,B[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.q={k,end:Date.now()+tB(k,L,p)*1000,c};change()}
+function build(k){const p=P(SP),L=p.b[k];if(p.q||p.dm.includes(k)||L>=maxL(p,k)||RQ(p,k,L+1).length)return;const c=cost(B[k].b,B[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.q={k,end:Date.now()+tB(k,L,p)*1000,c};change()}
 function research(k){const p=P(SP),L=S.tech[k];if(p.rq||S.cs.some(q=>q.rq&&q.rq.k===k)||L>=T[k].max||lv(p,'l')<L+1)return;const c=cost(T[k].b,T[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rq={k,end:Date.now()+tT(k,L,p)*1000,c};change()}
 function ship(t){const p=P(SP),d=SH[t];if(p.sq||lv(p,'s')<d.s||!afford(R(p),d.b))return;for(const x in d.b)R(p)[x]-=d.b[x];p.sq={t,end:Date.now()+tS(t,p)*1000,c:d.b};change()}
 function repair(k){const p=P(SP);if(p.rr||!p.dm.includes(k))return;const c=repC(p,k);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rr={k,end:Date.now()+repT(p,k)*1000,c};change()}
@@ -266,8 +277,9 @@ function logout(){code='';S=null;localStorage.removeItem('je_code');render()}
 function view(p){let h=(V==='b'?(p.q?qc(`Construyendo ${B[p.q.k].n} (nivel ${p.b[p.q.k]+1})`,p.q.end,'cancelB()'):qe('Nada en construcción')):'')+(V==='b'&&p.rr?rrCard(p):'')+(V==='i'?(p.rq?qc(`Investigando ${T[p.rq.k].n} (nivel ${S.tech[p.rq.k]+1})`,p.rq.end,'cancelR()'):qe('Nada en investigación')):'')+(V==='f'?(p.sq?qc(`Construyendo ${SH[p.sq.t].n}`,p.sq.end,'cancelS()'):qe('Nada en construcción de naves')):'');
 if(V==='b')for(const k in B){const L=p.b[k],mx=maxL(p,k),i=IDX[k];if(p.dm.includes(k)){h+=p.rr&&p.rr.k===k?card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Reparándose.',p.rr.c,`Cancelar reparación (<span data-end="${p.rr.end}"></span>)`,'cancelRR()','',bic(k,L,true),repT(p,k),undefined,1):card(B[k].n,`Nivel ${L}/${mx}`,'⚠ Dañado: no funciona hasta que lo repares.',repC(p,k),'Reparar',`repair('${k}')`,p.rr?`Reparación en curso (<span data-end="${p.rr.end}"></span>)`:'',bic(k,p.b[k],p.dm.includes(k)),repT(p,k));continue}
 let d=B[k].d+(i!==undefined?` Ahora: ${prod(p,i).toFixed(1)}/s. Este planeta limita la mina al nivel ${mx}. Más nivel, más rebelión.`:'');
+d+=reqTxt(k);
 if(p.q&&p.q.k===k){h+=card(B[k].n,`Nivel ${L}/${mx}`,d,p.q.c,`Cancelar construcción (<span data-end="${p.q.end}"></span>)`,'cancelB()','',bic(k,L,false),tB(k,L,p),undefined,1);continue}
-h+=card(B[k].n,`Nivel ${L}/${mx}`,d,L<mx?cost(B[k].b,B[k].f,L):null,'Mejorar',`build('${k}')`,L>=mx?'Nivel máximo':p.q?`Construcción en curso (<span data-end="${p.q.end}"></span>)`:'',bic(k,p.b[k],p.dm.includes(k)),L<mx?tB(k,L,p):0)}
+h+=card(B[k].n,`Nivel ${L}/${mx}`,d,L<mx?cost(B[k].b,B[k].f,L):null,'Mejorar',`build('${k}')`,L>=mx?'Nivel máximo':RQ(p,k,L+1).length?'Requiere '+RQ(p,k,L+1).join(', '):p.q?`Construcción en curso (<span data-end="${p.q.end}"></span>)`:'',bic(k,p.b[k],p.dm.includes(k)),L<mx?tB(k,L,p):0)}
 else if(V==='i')for(const k in T){const L=S.tech[k],lab=lv(p,'l');
 if(p.rq&&p.rq.k===k){h+=card(T[k].n,`Nivel ${L}/${T[k].max}`,T[k].d,p.rq.c,`Cancelar investigación (<span data-end="${p.rq.end}"></span>)`,'cancelR()','',icon(TI[k]),tT(k,L,p),undefined,1);continue}
 h+=card(T[k].n,`Nivel ${L}/${T[k].max}`,T[k].d+' Investigación compartida por todos tus planetas.',L<T[k].max?cost(T[k].b,T[k].f,L):null,'Investigar',`research('${k}')`,L>=T[k].max?'Nivel máximo':p.rq?`Investigación en curso (<span data-end="${p.rq.end}"></span>)`:S.cs.some(q=>q.rq&&q.rq.k===k)?'Ya se investiga en otro planeta':lab<L+1?`Requiere laboratorio nivel ${L+1}`:'',icon(TI[k]),L<T[k].max?tT(k,L,p):0)}
