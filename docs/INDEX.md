@@ -50,14 +50,14 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
 - `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast,rdPct,rdLoot,rdLost
-- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast
-- `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast
-- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento
+- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast,histAdd
+- `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
+- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes
 - `genRU()` · → rng
 
-## eventos.js
+## events.js
 - `warnP(p)` · p.b,p.dm
-- `evento(now,dt)` · S.ne,S.ev,S.cs,S.tech · p.st,p.dm,p.b · → warnP,prod,toast
+- `evento(now,dt)` · S.ne,S.ev,S.cs,S.tech · p.st,p.dm,p.b · → warnP,prod,toast,histAdd
 
 ## actions.js
 - `change()` · → render
@@ -72,7 +72,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `repair(k)` · p.rr,p.dm · → afford,repC
 - `accel()` · p.rr · → afford,repC
 - `cancelRR()` · p.rr
-- `refugee(a)` · S.rf,S.cnt,S.ev · p.rb,p.rb0 · → toast
+- `refugee(a)` · S.rf,S.cnt,S.ev · p.rb,p.rb0 · → toast,histRes
 - `cancelB()` · p.q
 - `cancelR()`
 - `cancelS()` · p.sq
@@ -107,7 +107,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne · p.b · localStorage getItem:je_sp · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist · p.b · localStorage getItem:je_sp · → genRU,obOk
 - `load(c)` · S.t · Firebase; localStorage setItem:je_code · → tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
@@ -143,6 +143,12 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `claim(id)` · S.ob,S.cs,S.acc,S.sh · → toast,render
 - `obCard(c)` · S.ob · → fmt
 - `openObj()` · S.acc,S.sh · → fmtT,closeM
+
+## history.js
+- `HLBL`
+- `histAdd(k,pid,x,f)` · S.hist · guarda una entrada (`k` n/v/a) y deja las 5 últimas de ese tipo; `f` marca refugiados sin decidir
+- `histRes(x)` · S.hist · pone el resultado en la última entrada con `f`
+- `histOpen()` · S.hist · → $,U,fmtT
 
 ## ui-art.js
 - `icon(p,c)`
@@ -183,7 +189,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.rd · → fmtT,planet,need,send,openRaid
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view

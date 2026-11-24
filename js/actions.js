@@ -16,7 +16,7 @@ function repair(k){const p=P(SP);if(p.rr||!p.dm.includes(k))return;const c=repC(
 function accel(){const p=P(SP),r=p.rr;if(!r||r.acc)return;const c=repC(p,r.k);if(!afford(R(p),c))return;for(const x in c){R(p)[x]-=c[x];r.c[x]=(r.c[x]||0)+c[x]}r.acc=1;r.end=Date.now()+Math.max(0,r.end-Date.now())/2;change()}
 function cancelRR(){const p=P(SP);if(!p.rr)return;for(const x in p.rr.c)R(p)[x]+=p.rr.c[x];delete p.rr;change()}
 function refugee(a){const f=S.rf;if(!f)return;const p=P(f.pid);delete S.rf;
-if(a&&p){const pool=R(p);for(const k in f.c)pool[k]=Math.max(0,pool[k]-f.c[k]);p.rb=Math.max(0,p.rb-8);p.rb0=Math.max(0,p.rb0-2);S.cnt.ref++;S.ev=`Has acogido a los refugiados en ${U(p.id).name}: baja la rebelión.`}else S.ev='Has rechazado a los refugiados.';toast(S.ev);change()}
+if(a&&p){const pool=R(p);for(const k in f.c)pool[k]=Math.max(0,pool[k]-f.c[k]);p.rb=Math.max(0,p.rb-8);p.rb0=Math.max(0,p.rb0-2);S.cnt.ref++;S.ev=`Has acogido a los refugiados en ${U(p.id).name}: baja la rebelión.`}else S.ev='Has rechazado a los refugiados.';histRes(S.ev);toast(S.ev);change()}
 function cancelB(){const p=P(SP);if(!p.q)return;for(const x in p.q.c)R(p)[x]+=p.q.c[x];delete p.q;startNext(p,Date.now());change()}
 function cancelR(){const h=P(SP);if(!h.rq)return;for(const x in h.rq.c)R(h)[x]+=h.rq.c[x];delete h.rq;change()}
 function cancelS(){const p=P(SP);if(!p.sq)return;for(const x in p.sq.c)R(p)[x]+=p.sq.c[x];delete p.sq;nextShip(p,Date.now());change()}

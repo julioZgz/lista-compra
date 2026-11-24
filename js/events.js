@@ -1,5 +1,5 @@
-/* eventos.js — Eventos aleatorios (tormenta solar, meteorito, hallazgo de recursos, tecnología gratis) y preaviso de la Estación de vigilancia.
- * Lee/Escribe: S.ne, S.ev, S.tech, p.st, p.dm y recursos de la colonia afectada. Lo llama advance (engine).
+/* events.js — Eventos aleatorios (tormenta solar, meteorito, hallazgo de recursos, tecnología gratis) y preaviso de la Estación de vigilancia.
+ * Lee/Escribe: S.ne, S.ev, S.hist (vía histAdd), S.tech, p.st, p.dm y recursos de la colonia afectada. Lo llama advance (engine).
  * NO debe: construir HTML, leer localStorage ni guardar. */
 const warnP=p=>Math.min(.8,.08*lv(p,'v'));
 function evento(now,dt){if(S.ne>now)return false;S.ne=now+(1200+Math.random()*1200)*1000;if(dt>120)return false;
@@ -11,4 +11,4 @@ if(w||!ok.length)S.ev=`Cae un meteorito cerca de ${n}${w?': la estación de vigi
 else{const k=ok[Math.floor(Math.random()*ok.length)];p.dm.push(k);S.ev=`Un meteorito impacta en ${n}: ${B[k].n} dañado.`}}
 else if(t){S.tech[t]++;S.ev=`Hallazgo en ${n}: unos restos antiguos te dan ${T[t].n} nivel ${S.tech[t]} gratis.`}
 else{const g={};for(let i=0;i<3;i++){g['mcg'[i]]=Math.round(600*prod(p,i));R(p)['mcg'[i]]+=g['mcg'[i]]}S.ev=`Hallazgo en ${n}: encuentras ${g.m} de metal, ${g.c} de cristal y ${g.g} de gas.`}
-toast(S.ev,p.id,'b');return true}
+histAdd('n',p.id,S.ev);toast(S.ev,p.id,'b');return true}
