@@ -49,15 +49,20 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast,rdPct,rdLoot,rdLost
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast,rdPct,rdLoot,rdLost,cxPlan
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
-- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes
+- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
 - `genRU()` · → rng
 
 ## events.js
 - `warnP(p)` · p.b,p.dm
 - `evento(now,dt)` · S.ne,S.ev,S.cs,S.tech · p.st,p.dm,p.b · → warnP,prod,toast,histAdd
+
+## counter.js
+- `cxPlan(to,n)` · S.cx · con n≥3 saqueos con éxito, probabilidad 15 % +10 % por saqueo extra (máx. 60 %); programa el golpe a 5-10 min
+- `cxHit(c)` · S.cx,S.sh,S.cs,S.ev · p.dm · resuelve: escudo → nada; si no, 30 % +5 % por saqueo sobre 2 (máx. 85 %) × (1−defRed); roba 20 % y daña un edificio · → defRed,histAdd,toast
+- `cxRun(now,dt)` · S.cx · lanza los pendientes; si dt>120 (ausente) los aplaza 2 min
 
 ## actions.js
 - `change()` · → render
@@ -107,7 +112,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist · p.b · localStorage getItem:je_sp · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx · p.b · localStorage getItem:je_sp · → genRU,obOk
 - `load(c)` · S.t · Firebase; localStorage setItem:je_code · → tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
@@ -146,7 +151,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## history.js
 - `HLBL`
-- `histAdd(k,pid,x,f)` · S.hist · guarda una entrada (`k` n/v/a) y deja las 5 últimas de ese tipo; `f` marca refugiados sin decidir
+- `histAdd(k,pid,x,f)` · S.hist · guarda una entrada (`k` n/v/a/c) y deja las 5 últimas de ese tipo; `f` marca refugiados sin decidir
 - `histRes(x)` · S.hist · pone el resultado en la última entrada con `f`
 - `histOpen()` · S.hist · → $,U,fmtT
 
