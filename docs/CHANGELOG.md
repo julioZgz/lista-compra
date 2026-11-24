@@ -1,5 +1,6 @@
 # CHANGELOG (1 línea por cambio, lo más nuevo arriba)
 
+- 2026-11-24 · v6 · [regla] Objetivos de Defensa: «Repele 3 ataques» → «Murallas nivel 5» y «Repele 10 ataques» → «Ingeniería defensiva nivel 5» (mismos huecos y recompensas), para que ningún objetivo dependa de recibir ataques rebeldes. Sin cambios de estado ni de guardado.
 - 2026-11-24 · v5 · Modales: se bloquea el arrastre táctil de la página de detrás con touch-action (en iPhone overflow:hidden no bastaba). Solo CSS.
 - 2026-11-24 · v4 · Modales (Objetivos y «Mientras no estabas»): el fondo pasa de negro al 67 % a negro al 93 % para que no se cuelen colores brillantes, y se bloquea el scroll de la página mientras hay una modal abierta (solo CSS). Sin cambios de reglas, estado ni guardado.
 - 2026-11-24 · v3 · [regla] Mina de nivel 1 sin requisito de Almacén (antes: Almacén 1; del nivel 2 en adelante igual). [regla] Producción base por planeta: K[i]·L·1,15^L·mult → K[i]·(L·1,15^L·mult + 0,2), es decir, +0,10 metal/s, +0,06 cristal/s y +0,03 gas/s en todos los planetas. Sin cambios de estado ni de guardado.
