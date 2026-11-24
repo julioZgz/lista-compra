@@ -7,13 +7,13 @@ const tT=(k,L,p)=>Math.max(5,Math.round(90*Math.pow(1.8,L)/(1+.15*lv(p,'l'))/ef(
 const tS=(t,p)=>Math.max(5,Math.round(ST[t]/(1+.15*lv(p,'s'))/ef(p)));
 const cost=(b,f,L)=>Object.fromEntries(Object.entries(b).map(([k,v])=>[k,Math.round(v*Math.pow(f,L))]));
 const cap=p=>Math.round(1000*Math.pow(1.7,p.dm&&p.dm.includes('a')?Math.floor(p.b.a/2):p.b.a));
-const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*L*Math.pow(1.15,L)*(1+.1*S.tech.e+.05*(lv(p,'u')+lv(p,'d')))};
+const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*(L*Math.pow(1.15,L)*(1+.1*S.tech.e+.05*(lv(p,'u')+lv(p,'d')))+.2)};
 const lv=(p,k)=>p.dm&&p.dm.includes(k)?0:p.b[k];
 const rbT=p=>Math.max(0,Math.min(100,p.rb0+1.5*(p.b.m+p.b.c+p.b.g)-4*(lv(p,'o')+lv(p,'k'))));
 const defRed=p=>Math.min(.9,.04*lv(p,'w')+.06*lv(p,'t')),rebWin=p=>Math.max(.05,Math.min(.95,.5+(p.rb-50)/100+(p.b.m+p.b.c+p.b.g)/100))*(1-defRed(p));
 const RQ=(p,k,tL,b=p.b)=>{const o=[],nd=(x,n)=>{if((b[x]||0)<n)o.push(`${B[x].n} ${n}`)};
 if(!'zok'.includes(k))nd('z',tL-2);
-if(k in IDX&&(b.a||0)<10)nd('a',Math.ceil(tL/2));
+if(k in IDX&&tL>1&&(b.a||0)<10)nd('a',Math.ceil(tL/2));
 if(k==='l')nd('u',tL-2);
 if(k==='h'){nd('a',5);nd('s',1)}
 if(k==='p'){nd('a',4);nd('s',2)}
