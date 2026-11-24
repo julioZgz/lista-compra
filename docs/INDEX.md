@@ -78,6 +78,19 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `abandon()` · S.mis,S.cs · → toast,selPlanet
 - `useAcc(kind)` · S.acc
 
+## dismantle.js
+- `DSP`
+- `DSQ`
+- `dsRet(t,n)`
+- `dsFix(t)` · S.fleet
+- `dsLab(t)` · → dsRet,fmt
+- `dsUpd(t)` · → dsLab
+- `dsStep(t,d)` · S.fleet · → dsUpd
+- `dsIn(t,v)` · S.fleet · → dsUpd
+- `dsAll(t)` · S.fleet · → dsUpd
+- `dsEx(t)` · S.fleet,S.cs · → dsFix,dsLab
+- `dismantle(t)` · S.fleet,S.cs · → dsRet,toast,change
+
 ## storage.js
 - `DB`
 - `norm(p)` · p.bq,p.sqq,p.b,p.rb0,p.rb,p.dm,p.q,p.rr,p.st
@@ -166,7 +179,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.rd · → fmtT,planet,need,send,openRaid
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
