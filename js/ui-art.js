@@ -21,7 +21,8 @@ k:`<circle cx="24" cy="18" r="11"/><path d="M24 29v13M16 42h16"/>`,
 w:`<path d="M6 42V14h8v6h6v-6h8v6h6v-6h8v28z"/>`,
 t:`<path d="M16 42l4-18h8l4 18z"/><path d="M24 24V10M18 10h12M10 8l8 2M38 8l-8 2"/>`,
 h:`<path d="M6 40V20L24 8l18 12v20M14 40V26h20v14M24 40V26"/>`,
-d:`<circle cx="24" cy="24" r="6"/><path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6"/>`};
+d:`<circle cx="24" cy="24" r="6"/><path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6"/>`,
+v:`<path d="M8 40h32M24 40V24"/><path d="M12 26a12 12 0 0024 0z"/><path d="M24 24l8-12"/><circle cx="33" cy="10" r="2.5"/>`};
 const TI={q:`<path d="M10 12h28M10 24h28M10 36h20"/><circle cx="38" cy="36" r="3"/>`,
 y:`<path d="M8 8l24 24M32 32l-6 6 4 4 6-6zM40 8L16 32M16 32l6 6-4 4-6-6z"/>`,
 d:`<path d="M24 6l15 6v10c0 9-6 15-15 18C15 37 9 31 9 22V12z"/>`,

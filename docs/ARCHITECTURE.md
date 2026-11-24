@@ -12,18 +12,19 @@ Los scripts se cargan en este orden desde `index.html` (`js/<m>.js?v=N`). Un mó
 | 3 | data | tablas: recursos, `B` edificios, `T` tecnologías, `SH` naves, tiempos | lógica de UI/guardado |
 | 4 | rules | fórmulas (coste, tiempo, producción, capacidad, rebelión, requisitos) | mutar S, DOM, toast |
 | 5 | engine | `advance(now)`: tiempo, colas, misiones, eventos; `newGame`, `genRU`, `sync` | HTML, localStorage |
-| 6 | actions | órdenes del jugador; casi todas acaban en `change()` | fórmulas, Firebase |
-| 7 | storage | Firebase, copias, archivos, migración (`norm`, `prep`), `load/save/logout` | reglas de juego |
-| 8 | raids | saqueos: `raid`, modal de envío | colas, guardado |
-| 9 | trade | comercio | colas, guardado |
-| 10 | objectives | objetivos y recompensas | colas, guardado |
-| 11 | ui-art | iconos SVG, sprite, planetas | mutar S |
-| 12 | ui-core | componentes (`card`, `toast`…), colas, navegación | fórmulas |
-| 13 | ui-views | contenido de cada pestaña (`view`, `queueView`, `raidView`) | mutar S directo |
-| 14 | render | `render()` y `tick()` (cada segundo) | lógica de juego |
-| 15 | main | temporizadores y arranque (`render()`, `load(code)`) | cualquier otra cosa |
+| 6 | eventos | eventos aleatorios (tormenta, meteorito, hallazgos) y preaviso de la estación de vigilancia | HTML, localStorage, guardado |
+| 7 | actions | órdenes del jugador; casi todas acaban en `change()` | fórmulas, Firebase |
+| 8 | storage | Firebase, copias, archivos, migración (`norm`, `prep`), `load/save/logout` | reglas de juego |
+| 9 | raids | saqueos: `raid`, modal de envío | colas, guardado |
+| 10 | trade | comercio | colas, guardado |
+| 11 | objectives | objetivos y recompensas | colas, guardado |
+| 12 | ui-art | iconos SVG, sprite, planetas | mutar S |
+| 13 | ui-core | componentes (`card`, `toast`…), colas, navegación | fórmulas |
+| 14 | ui-views | contenido de cada pestaña (`view`, `queueView`, `raidView`) | mutar S directo |
+| 15 | render | `render()` y `tick()` (cada segundo) | lógica de juego |
+| 16 | main | temporizadores y arranque (`render()`, `load(code)`) | cualquier otra cosa |
 
-Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. Acoplamientos que ya existían y se mantienen: `engine`→`toast`, `norm`, `key`, `startNext`, `nextShip`; `actions`→`toast`, `selPlanet`, `render`; `storage`→`card`, `showAway`, `toast`, `closeM`, `render`; `ui-core`→`actions` (botones). No “arreglarlos” sin pedirlo.
+Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. Acoplamientos que ya existían y se mantienen: `engine`→`toast`, `norm`, `key`, `startNext`, `nextShip`; `actions`→`toast`, `selPlanet`, `render`; `storage`→`card`, `showAway`, `toast`, `closeM`, `render`; `ui-core`→`actions` (botones). Nuevos: `engine`→`evento` y `eventos`→`toast` (mismo patrón que `visitor`/`attack`). No “arreglarlos” sin pedirlo.
 
 ## Convenciones técnicas que no se pueden romper
 - Cientos de `onclick="fn(...)"` inline → toda función llamada desde HTML debe ser **global** (declaración top-level). Nada de ES modules ni `type="module"`.

@@ -1,5 +1,6 @@
 # CHANGELOG (1 línea por cambio, lo más nuevo arriba)
 
+- 2026-11-24 · v8 · [regla] Eventos aleatorios cada 20-40 min de juego activo (tormenta solar 35 %, meteorito 30 %, hallazgo de recursos 30 %, tecnología gratis 5 %) y nuevo edificio Estación de vigilancia (preaviso 8 % por nivel, máx. nivel 10, coste 180 metal + 160 cristal + 50 gas ×1,6, requiere Laboratorio 2). [regla] prod() ×0,5 en la colonia mientras dura una tormenta solar. Archivo nuevo js/eventos.js; campos nuevos con valor por defecto: S.ne, p.st, p.b.v.
 - 2026-11-24 · v7 · Comercio: al completar un intercambio se conserva la posición de scroll (antes la página subía arriba). Solo trade.js. Sin cambios de reglas, estado ni guardado.
 - 2026-11-24 · v6 · [regla] Objetivos de Defensa: «Repele 3 ataques» → «Murallas nivel 5» y «Repele 10 ataques» → «Ingeniería defensiva nivel 5» (mismos huecos y recompensas), para que ningún objetivo dependa de recibir ataques rebeldes. Sin cambios de estado ni de guardado.
 - 2026-11-24 · v5 · Modales: se bloquea el arrastre táctil de la página de detrás con touch-action (en iPhone overflow:hidden no bastaba). Solo CSS.

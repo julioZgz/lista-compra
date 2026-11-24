@@ -22,7 +22,7 @@ else{S.fleet.c++;toast('No hay capacidad para colonizar '+u.name,null,'m')}}
 function visitor(){const lvl=S.cs.reduce((a,p)=>a+lv(p,'p'),0);
 if(!S.rf&&Math.random()<.3/(1+.1*lvl)){const q=S.cs[Math.floor(Math.random()*S.cs.length)],pool=R(q),c={};for(const k of['m','c','g'])c[k]=Math.floor(pool[k]*.15);
 S.rf={pid:q.id,c,exp:Date.now()+600000};S.ev=`Llegan refugiados a ${U(q.id).name}: decide si los aceptas.`;toast(S.ev,q.id,'b');return}
-let pw=0;S.cs.forEach(p=>{for(const k in p.b)pw+=p.b[k]});for(const k in S.tech)pw+=2*S.tech[k];
+let pw=0;S.cs.forEach(p=>{for(const k in p.b)if(k!=='v')pw+=p.b[k]});for(const k in S.tech)pw+=2*S.tech[k];
 const f=(.6+Math.random()*.8)*(1+.05*lvl),g={m:Math.round((40+pw*14)*f),c:Math.round((30+pw*10)*f),g:Math.round((12+pw*4)*f)};
 const p=S.cs[Math.floor(Math.random()*S.cs.length)],who=['Unos mercaderes','Unos peregrinos','Una nave a la deriva'][Math.floor(Math.random()*3)];
 for(const k in g)R(p)[k]+=g[k];
@@ -40,6 +40,6 @@ S.cs.forEach(p=>{if(p.rr&&p.rr.end<=now){p.dm=p.dm.filter(x=>x!==p.rr.k);toast(`
 while(p.q&&p.q.end<=now){const e=p.q.end;p.b[p.q.k]++;toast(`${B[p.q.k].n} de ${U(p.id).name} mejorado`,p.id,'b');delete p.q;startNext(p,e);ch=true}
 p.rb+=(rbT(p)-p.rb)*Math.min(1,dt/600);if(dt<=120&&!(S.sh>0)&&p.rb>50&&Math.random()<1-Math.exp(-dt*(p.rb-50)/45000)){attack(p);ch=true}});
 S.cs.forEach(p=>{if(p.rq&&p.rq.end<=now){S.tech[p.rq.k]++;toast('Investigación completada: '+T[p.rq.k].n,p.id,'i');delete p.rq;ch=true}while(p.sq&&p.sq.end<=now){const e=p.sq.end;S.fleet[p.sq.t]++;if(p.sq.t==='r')S.cnt.cor++;toast(SH[p.sq.t].n+' construido',p.id,'f');delete p.sq;nextShip(p,e);ch=true}});
-S.mis=S.mis.filter(m=>{if(m.end>now)return true;ch=true;done(m);return false});if(S.rf&&S.rf.exp<=now){delete S.rf;ch=true}if(S.nv<=now){visitor();S.nv=now+(300+Math.random()*300)*1000/(1+.15*S.cs.reduce((a,p)=>a+lv(p,'p'),0));ch=true}sync();return ch}
+S.mis=S.mis.filter(m=>{if(m.end>now)return true;ch=true;done(m);return false});if(S.rf&&S.rf.exp<=now){delete S.rf;ch=true}if(S.nv<=now){visitor();S.nv=now+(300+Math.random()*300)*1000/(1+.15*S.cs.reduce((a,p)=>a+lv(p,'p'),0));ch=true}if(evento(now,dt))ch=true;sync();return ch}
 
 function genRU(){const r=rng(Date.now()),sy=['Gor','Skar','Vyl','Drax','Nor','Hesk','Ruk','Thal'];return Array.from({length:8},(_,i)=>{const d=i+1+(i>1&&r()<.4?1:0);return{id:100+i,name:sy[Math.floor(r()*8)]+sy[Math.floor(r()*8)].toLowerCase()+'-R'+(i+1),dist:d,rich:[0,1,2].map(()=>Math.max(2,Math.min(12,Math.round(2+r()*6+d*.35))))}})}

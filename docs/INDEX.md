@@ -29,7 +29,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `tS(t,p)`
 - `cost(b,f,L)`
 - `cap(p)` · p.dm,p.b
-- `prod(p,i)` · S.tech
+- `prod(p,i)` · S.tech · p.st
 - `lv(p,k)` · p.dm,p.b
 - `rbT(p)` · p.rb0,p.b
 - `defRed(p)` · p.rb,p.b
@@ -49,8 +49,12 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast
-- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip
+- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento
 - `genRU()` · → rng
+
+## eventos.js
+- `warnP(p)` · p.b,p.dm
+- `evento(now,dt)` · S.ne,S.ev,S.cs,S.tech · p.st,p.dm,p.b · → warnP,prod,toast
 
 ## actions.js
 - `change()` · → render
@@ -76,7 +80,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## storage.js
 - `DB`
-- `norm(p)` · p.bq,p.sqq,p.b,p.rb0,p.rb,p.dm,p.q,p.rr
+- `norm(p)` · p.bq,p.sqq,p.b,p.rb0,p.rb,p.dm,p.q,p.rr,p.st
 - `key()`
 - `save()` · Firebase · → advance
 - `BK`
@@ -86,7 +90,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob · p.b · localStorage getItem:je_sp · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne · p.b · localStorage getItem:je_sp · → genRU,obOk
 - `load(c)` · S.t · Firebase; localStorage setItem:je_code · → tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 

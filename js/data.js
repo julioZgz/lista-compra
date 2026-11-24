@@ -14,7 +14,8 @@ k:{n:'Parque',d:'Reduce un 4% por nivel la rebelión hacia la que tiende este pl
 w:{n:'Murallas',d:'Cada nivel reduce un 4% la probabilidad de que los rebeldes ganen un ataque.',b:{m:200,c:50},f:1.6,max:10},
 t:{n:'Torretas láser',d:'Cada nivel reduce un 6% la probabilidad de que los rebeldes ganen un ataque.',b:{m:220,c:120,g:60},f:1.6,max:10},
 p:{n:'Puerto comercial',d:'Cada nivel atrae un 15% más de visitas, aumenta un 5% lo que dejan los mercaderes y reduce la llegada de refugiados.',b:{m:200,c:150,g:30},f:1.7,max:5},
-d:{n:'Fábrica de drones',d:'Cada nivel reduce un 8% los tiempos de este planeta y da +5% de producción.',b:{m:240,c:140,g:40},f:1.7,max:10}};
+d:{n:'Fábrica de drones',d:'Cada nivel reduce un 8% los tiempos de este planeta y da +5% de producción.',b:{m:240,c:140,g:40},f:1.7,max:10},
+v:{n:'Estación de vigilancia',d:'Cada nivel aumenta un 8% la probabilidad de recibir preaviso de los eventos de este planeta: la tormenta solar dura la mitad y el meteorito no hace daño.',b:{m:180,c:160,g:50},f:1.6,max:10}};
 const T={p:{n:'Propulsión',d:'Más alcance (+2 de distancia) y viajes más rápidos.',b:{c:100,g:60},f:1.9,max:8},
 c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel.',b:{c:200,g:120},f:2,max:6},
 m:{n:'Flotas coordinadas',d:'Una misión simultánea más por nivel.',b:{c:250,g:150},f:2,max:6},
@@ -28,4 +29,4 @@ e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:1
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
 r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia.',b:{m:300,c:200,g:100},s:2}};
-const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40},ST={e:30,c:90,r:60},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));
+const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40,v:50},ST={e:30,c:90,r:60},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));
