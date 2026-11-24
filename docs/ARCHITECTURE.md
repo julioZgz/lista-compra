@@ -3,7 +3,7 @@
 Juego estático (HTML + JS clásico + CSS); hoy sin build ni librerías. Publicado en GitHub Pages (https://juliozgz.github.io/utilidades/). Persistencia: Firebase Realtime Database por REST (`fetch`, sin SDK) + localStorage. Única petición externa: Google Fonts.
 
 ## Orden de carga y reglas por módulo
-Los scripts se cargan en este orden desde `index.html` (`js/<m>.js?v=N`). Un módulo solo puede usar lo de los anteriores **al cargarse**; en ejecución todo es global.
+Los scripts se cargan en este orden desde la lista `MODS` de `index.html` (un `<script>` inline escribe `js/<m>.js?v=BUILD`). Un módulo solo puede usar lo de los anteriores **al cargarse**; en ejecución todo es global.
 
 | # | Módulo | Qué es | No debe |
 |---|--------|--------|---------|
@@ -35,8 +35,8 @@ Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. 
 - Pestañas (`V`): b Edificios · i Investigar · f Flota · m Mapa · r Saqueos · x Comercio · q Colas (`tabVis` decide cuáles se ven).
 - Imágenes en `img/`. Rutas: en CSS son relativas a `css/` (`../img/x`); en JS, relativas a `index.html` (`img/x`).
 - Sprite `img/edificios.webp`: 1000×1000, cuadrícula 5×5. Fila = edificio (`SPM`: l laboratorio 0, s astillero 1, c mina de cristal 2, g gas 3, a almacén 4); columna = `floor((nivel-1)/2)` limitado a 0–4. Los demás edificios usan icono SVG (`BI`).- Nombres de archivo `.js` en inglés (nuevos y renombrados; las funciones nuevas también). Los nombres antiguos en español (`evento`, `warnP`…) no se renombran sin pedirlo.
-- Caché: al cambiar un .js o el CSS, subir su `?v=` en `index.html`.
-- Archivo nuevo: `js/x.js` con cabecera de 3 líneas + su `<script>` en el sitio correcto del orden (antes de `render.js` si es lógica o vista).
+- Caché: al cambiar cualquier .js o el CSS, subir `BUILD` en `index.html` (un solo número para todos los JS y el CSS; `BUILD` y `MODS` son globales de index.html).
+- Archivo nuevo: `js/x.js` con cabecera de 3 líneas + su nombre en la lista `MODS` de `index.html`, en el sitio correcto del orden (antes de `render` si es lógica o vista).
 
 ## Zonas sensibles (reglas y compatibilidad)
 `data.js`, `rules.js`, `engine.js`, `norm`/`prep` en `storage.js` y los textos de juego. Se tocan solo si lo pedido lo requiere, avisando antes de qué cambia exactamente; el resto debe quedar idéntico.
