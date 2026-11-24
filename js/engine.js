@@ -13,10 +13,10 @@ cs:[{id:0,b:{m:1,c:1,g:0,a:0,s:0,l:0,u:0,d:0,h:0,o:0,k:0,w:0,t:0},r:{m:400,c:200
 
 function done(m){const u=U(m.to);
 if(m.k==='x'){const kl=m.to>=100?S.rk:S.known;if(!kl.includes(m.to))kl.push(m.to);S.fleet.e++;toast('Exploración de '+u.name+' completada',null,m.to>=100?'r':'m')}
-else if(m.k==='r'){const def=Math.ceil(u.dist/2)+1,ch=Math.max(.15,Math.min(.95,.5+.15*(m.n-def))),key='p'+m.to,cnt=S.rd[key]||0;
-if(Math.random()<ch){const f=Math.pow(.85,cnt),l={};[0,1,2].forEach(i=>{l['mcg'[i]]=Math.round(m.n*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1))});S.rd[key]=cnt+1;S.cnt.sac++;if(!S.cnt.sacT.includes(m.to))S.cnt.sacT.push(m.to);const t=S.cs[0];for(const k in l)R(t)[k]+=l[k];S.fleet.r+=m.n;
+else if(m.k==='r'){const ch=rdPct(m.n,u),key='p'+m.to,cnt=S.rd[key]||0;
+if(Math.random()<ch){const l=rdLoot(m.n,u).real;S.rd[key]=cnt+1;S.cnt.sac++;if(!S.cnt.sacT.includes(m.to))S.cnt.sacT.push(m.to);const t=S.cs[0];for(const k in l)R(t)[k]+=l[k];S.fleet.r+=m.n;
 S.ev=`Saqueo en ${u.name}: botín de ${l.m} de metal, ${l.c} de cristal y ${l.g} de gas.`;toast(S.ev,null,'r')}
-else{const lost=Math.ceil(m.n/2);S.fleet.r+=m.n-lost;S.ev=`Saqueo fallido en ${u.name}: pierdes ${lost} corsario(s).`;toast(S.ev,null,'r')}}
+else{const lost=rdLost(m.n);S.fleet.r+=m.n-lost;S.ev=`Saqueo fallido en ${u.name}: pierdes ${lost} corsario(s).`;toast(S.ev,null,'r')}}
 else if(S.cs.length<1+S.tech.c){S.cs.push({id:m.to,b:{m:0,c:0,g:0,a:0,s:0,l:0,u:0,d:0,h:0,o:0,k:0,w:0,t:0},r:{m:150,c:80,g:0}});norm(S.cs[S.cs.length-1]);toast('Nueva colonia: '+u.name,m.to,'b')}
 else{S.fleet.c++;toast('No hay capacidad para colonizar '+u.name,null,'m')}}
 function visitor(){const lvl=S.cs.reduce((a,p)=>a+lv(p,'p'),0);

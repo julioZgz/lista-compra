@@ -25,7 +25,11 @@ d:{n:'Ingeniería defensiva',d:'Permite subir Murallas y Torretas láser hasta e
 l:{n:'Logística',d:'Permite subir el Almacén y la Fábrica de drones hasta el doble del nivel de esta tecnología. El nivel 1 desbloquea la sección Colas.',b:{m:150,c:120},f:1.9,max:6},
 y:{n:'Tácticas de combate',d:'Desbloquea la sección Saqueos y, con ella, la posibilidad de saquear puestos rivales.',b:{m:250,c:180,g:100},f:2,max:1},
 q:{n:'Planificación',d:'Cada nivel añade un hueco en las colas de obras y de naves de todos tus planetas. Pagas al encolar y cancelar devuelve todo.',b:{m:200,c:200,g:80},f:2,max:5},
-e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:100},f:1.9,max:10}};
+e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:100},f:1.9,max:10},
+b:{n:'Bodegas de carga',d:'Cada nivel aumenta un 25% la capacidad de carga de los corsarios (base 300 por nave), que limita el botín de los saqueos.',b:{m:250,c:200,g:100},f:1.9,max:5},
+a:{n:'Armamento',d:'Cada nivel aumenta un 10% el poder de ataque de las expediciones de saqueo y, con él, la probabilidad de éxito.',b:{m:300,c:200,g:150},f:2,max:5},
+f:{n:'Blindaje de campaña',d:'Cada nivel reduce un 10% los corsarios que se pierden en un saqueo fallido (del 50% al 20%). Nivel 1: 3 saqueos exitosos; nivel 2: 6; nivel 3: 9.',b:{m:300,c:250,g:150},f:2,max:3},
+r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
 r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia.',b:{m:300,c:200,g:100},s:2}};

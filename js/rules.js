@@ -31,3 +31,6 @@ const tot=()=>{const r={m:0,c:0,g:0};S.cs.forEach(p=>{if(!p.nj)for(const k in r)
 const slots=()=>1+(S.tech.q||0),used=p=>(p.q?1:0)+(p.bq||[]).length,sUsed=p=>(p.sq?1:0)+(p.sqq||[]).length;
 const vb=p=>{const b={...p.b};if(p.q)b[p.q.k]++;(p.bq||[]).forEach(it=>b[it.k]++);return b};
 const need=u=>Math.max(0,Math.ceil((u.dist-2)/2));
+const rdPct=(n,u)=>Math.max(.15,Math.min(.95,.5+.15*(n*(1+.1*(S.tech.a||0))-(Math.ceil(u.dist/2)+1)))),rdLost=n=>Math.ceil(n*(50-10*(S.tech.f||0))/100);
+const rdLoot=(n,u)=>{const f=Math.pow(.85+.03*(S.tech.r||0),S.rd['p'+u.id]||0),mx={},real={};let t=0;[0,1,2].forEach(i=>{const v=Math.round(n*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1));mx['mcg'[i]]=v;t+=v});const cp=Math.round(n*300*(1+.25*(S.tech.b||0))),q=Math.min(1,cp/Math.max(1,t));for(const k in mx)real[k]=Math.round(mx[k]*q);return{mx,real,t,cap:cp}};
+const trq=(k,L)=>k==='f'&&S.cnt.sac<3*(L+1)?`Requiere ${3*(L+1)} saqueos exitosos`:k==='r'&&S.cnt.sacT.length<L+2?`Requiere haber saqueado con éxito ${L+2} planetas rivales distintos`:'';

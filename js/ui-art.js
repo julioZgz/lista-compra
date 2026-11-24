@@ -32,7 +32,11 @@ c:`<path d="M8 38a16 16 0 0132 0z"/><path d="M4 38h40M24 22v-8M24 14h8l-3 3 3 3h
 x:`<circle cx="24" cy="24" r="15"/><path d="M24 14v20M19 19h8a3 3 0 010 6h-6a3 3 0 000 6h9"/>`,
 n:`<circle cx="10" cy="14" r="4"/><circle cx="38" cy="14" r="4"/><circle cx="24" cy="36" r="4"/><path d="M14 14h20M12 18l10 15M36 18L26 33"/>`,
 m:`<path d="M24 6v10M12 20h24M12 20v10M36 20v10M8 40h8M32 40h8M20 30h8"/><circle cx="24" cy="6" r="2"/>`,
-e:`<path d="M27 4L10 27h12l-3 17 19-24H26z"/>`};
+e:`<path d="M27 4L10 27h12l-3 17 19-24H26z"/>`,
+b:`<path d="M8 16l16-8 16 8v18l-16 8-16-8z"/><path d="M8 16l16 8 16-8M24 24v18"/>`,
+a:`<circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="2"/><path d="M24 4v10M24 34v10M4 24h10M34 24h10"/>`,
+f:`<path d="M24 6l15 6v10c0 9-6 15-15 18C15 37 9 31 9 22V12z"/><path d="M24 16v14M17 23h14"/>`,
+r:`<circle cx="10" cy="36" r="4"/><circle cx="38" cy="12" r="4"/><path d="M14 36h12a6 6 0 000-12h-4a6 6 0 010-12h12"/>`};
 const SI={e:`<path d="M24 4l6 14v16l-6 6-6-6V18z"/><circle cx="24" cy="20" r="2.5"/><path d="M18 30l-8 6M30 30l8 6"/>`,
 c:`<rect x="14" y="10" width="20" height="26" rx="5"/><path d="M14 28l-8 10M34 28l8 10M20 36v6M28 36v6M18 18h12M18 24h12"/>`,
 r:`<path d="M24 6l16 34-16-8-16 8z"/><path d="M24 14v18"/>`};

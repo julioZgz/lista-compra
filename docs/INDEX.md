@@ -42,11 +42,14 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `slots()` · S.tech · p.q,p.bq,p.sq,p.sqq
 - `vb(p)` · p.b,p.q,p.bq
 - `need(u)`
+- `rdPct(n,u)` · S.tech · % de éxito de un saqueo (usa Armamento); `rdLost(n)` · S.tech · corsarios perdidos si falla (Blindaje)
+- `rdLoot(n,u)` · S.tech,S.rd · botín máximo, capacidad de carga y botín real (Bodegas, Rutas)
+- `trq(k,L)` · S.cnt · texto del requisito de saqueos de una tecnología ('' si se cumple)
 
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast,rdPct,rdLoot,rdLost
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast
 - `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento
@@ -64,7 +67,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `build(k)` · p.dm,p.q,p.bq · → cost,afford,maxL,slots
 - `cancelQ(i)` · p.bq
 - `cancelSQ(i)` · p.sqq
-- `research(k)` · S.tech,S.cs · p.rq · → cost,afford
+- `research(k)` · S.tech,S.cs · p.rq · → cost,afford,trq
 - `ship(t)` · p.sq,p.sqq · → afford,slots
 - `repair(k)` · p.rr,p.dm · → afford,repC
 - `accel()` · p.rr · → afford,repC
@@ -111,8 +114,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## raids.js
 - `raid(to,n)` · S.tech,S.fleet,S.mis · → change,need
 - `MR`
-- `pctN(n,u)`
-- `mUpd()`
+- `pctN(n,u)` · → rdPct
+- `mUpd()` · → rdLoot,pctN,fmt
 - `openRaid(id)` · S.fleet,S.tech · → fmtT
 - `mStep(d)` · S.fleet
 - `mSl(v)` · S.fleet
@@ -180,7 +183,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.rd · → fmtT,planet,need,send,openRaid
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
