@@ -11,4 +11,4 @@ function tin(v){TA=Math.max(0,Math.floor(+v||0));tp()}
 function tmax(){TA=Math.floor(R(P(SP))[TF]);render()}
 function tp(){const e=$('#tp');if(e)e.textContent=`Recibes ${rate()} de ${RN[TT]}`}
 function trade(){const p=P(SP),g=rate();if(TA<1||g<1||R(p)[TF]<TA){toast('No tienes suficiente '+RN[TF]);return}
-R(p)[TF]-=TA;R(p)[TT]+=g;S.cnt.trd++;toast(`Cambiados ${TA} de ${RN[TF]} por ${g} de ${RN[TT]}`);change()}
+R(p)[TF]-=TA;R(p)[TT]+=g;S.cnt.trd++;toast(`Cambiados ${TA} de ${RN[TF]} por ${g} de ${RN[TT]}`);const y=window.scrollY;change();window.scrollTo(0,y)}
