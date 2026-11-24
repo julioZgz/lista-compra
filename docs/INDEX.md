@@ -44,7 +44,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `need(u)`
 - `rdPct(n,u)` · S.tech · % de éxito de un saqueo (usa Armamento); `rdLost(n)` · S.tech · corsarios perdidos si falla (Blindaje)
 - `rdLoot(n,u)` · S.tech,S.rd · botín máximo, capacidad de carga y botín real (Bodegas, Rutas)
-- `trq(k,L)` · S.cnt · texto del requisito de saqueos de una tecnología, con el progreso («llevas X»); '' si se cumple
+- `trq(k,L)` · S.cnt · texto del requisito de saqueos de una tecnología ('' si se cumple)
 
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
