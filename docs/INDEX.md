@@ -104,7 +104,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `DB`
 - `norm(p)` · p.bq,p.sqq,p.b,p.rb0,p.rb,p.dm,p.q,p.rr,p.st
 - `key()`
-- `save()` · Firebase · → advance
+- `ET` (ETag de la última carga/guardado; global de módulo, no va en S), `SV` (guardando), `CK` (comprobando)
+- `save()` · Firebase · PUT con if-match=ET; si responde 412 avisa y recarga · → advance,toast,load
+- `checkNew()` · Firebase · al volver a primer plano, sin cambios pendientes, recarga si el ETag cambió · → load
 - `BK`
 - `autoBackup()` · Firebase; localStorage getItem:lk,setItem:lk
 - `dlBackup()` · → advance
@@ -113,7 +115,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
 - `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx · p.b · localStorage getItem:je_sp · → genRU,obOk
-- `load(c)` · S.t · Firebase; localStorage setItem:je_code · → tot,showAway,newGame,advance,render
+- `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · → tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
 ## raids.js
@@ -203,6 +205,6 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## main.js
 - (arranque) setInterval(()=>tick(),1000);
 - (arranque) setInterval(()=>{if(dirty)save()},15000);
-- (arranque) document.addEventListener('visibilitychange',()=>{if(documen
+- (arranque) document.addEventListener('visibilitychange',()=>{if(documen… (oculta: guarda si dirty; visible: checkNew)
 - (arranque) render();
 - (arranque) if(code)load(code);

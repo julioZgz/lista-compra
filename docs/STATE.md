@@ -3,6 +3,7 @@
 ## Dónde se guarda
 - **Firebase** (base en `DB`, REST): `juego_espacial/<key>.json` = partida completa `S`; `juego_espacial_copias/<key>/s0..s2.json` = copias rotativas (cada 30 min tras guardar); `…/previa.json` = copia de la partida actual antes de restaurar otra. `<key>` = el código de partida saneado (`key()`).
 - **localStorage**: `je_code` (código de partida), `je_sp` (planeta seleccionado), `je_v` (pestaña), `je_bk_<code>` (hora de la última copia automática). Escriben: `je_code` storage (`load`, `logout`); `je_sp`/`je_v` navegación en `ui-core` (`go`, `selPlanet`, `goTo`, `toast`); lectura al arrancar en `state.js` y `prep`.
+- Concurrencia (varios dispositivos o pestañas): Firebase devuelve un ETag en cada GET/PUT; `storage.js` lo guarda en la variable de módulo `ET` (nunca en `S`) y `save()` hace PUT con `if-match`. Si otro dispositivo guardó antes (412), no se pisa: se avisa y se recarga con `load`. `restState` guarda sin condición (`ET=null`). Si el navegador no puede leer el ETag, `ET` queda en null y se guarda como antes. Al volver a primer plano `checkNew()` recarga si hay versión nueva y no hay cambios pendientes.
 - Guardado: `save()` (storage) tras `advance(Date.now())`; automático cada 15 s si `dirty`, y al ocultar la pestaña (`main.js`).
 
 ## Forma de `S` (partida)

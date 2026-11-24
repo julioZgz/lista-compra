@@ -4,6 +4,6 @@
  * Movido tal cual de juego-espacial.html original; ver ARCHITECTURE.md. */
 setInterval(()=>tick(),1000);
 setInterval(()=>{if(dirty)save()},15000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&dirty)save()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(dirty)save()}else checkNew()});
 render();
 if(code)load(code);
