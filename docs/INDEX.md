@@ -80,16 +80,17 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## dismantle.js
 - `DSP`
-- `DSQ`
+- `DSM`
 - `dsRet(t,n)`
-- `dsFix(t)` · S.fleet
-- `dsLab(t)` · → dsRet,fmt
-- `dsUpd(t)` · → dsLab
-- `dsStep(t,d)` · S.fleet · → dsUpd
-- `dsIn(t,v)` · S.fleet · → dsUpd
-- `dsAll(t)` · S.fleet · → dsUpd
-- `dsEx(t)` · S.fleet,S.cs · → dsFix,dsLab
-- `dismantle(t)` · S.fleet,S.cs · → dsRet,toast,change
+- `dsPl(t,n)`
+- `dsTxt(t,n)` · → dsRet,fmt
+- `dsUpd()` · → dsTxt
+- `dsEx(t)` · S.fleet
+- `dsOpen(t)` · S.fleet,S.cs · → dsUpd
+- `dsStep(d)` · S.fleet · → dsUpd
+- `dsSl(v)` · S.fleet · → dsUpd
+- `dsSend()` · → closeM,dismantle
+- `dismantle(t,n)` · S.fleet,S.cs · → dsRet,toast,change
 
 ## storage.js
 - `DB`
