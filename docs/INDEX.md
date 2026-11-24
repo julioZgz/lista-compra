@@ -170,7 +170,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
-- `tick(skip)` · S.sh · p.rb · → afford,fmt,fmtT,rbT,defRed,advance,obReady
+- `tick(skip)` · S.sh · p.rb,p.st,p.b · → warnP,lv,afford,fmt,fmtT,rbT,defRed,advance,obReady
 
 ## main.js
 - (arranque) setInterval(()=>tick(),1000);

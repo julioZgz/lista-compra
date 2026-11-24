@@ -14,7 +14,7 @@ ${view(p)}
 function tick(skip){if(!S)return;if(!skip&&advance(Date.now()))dirty=true,render();
 const p=P(SP),rp=p;
 const nb=$('#obn');if(nb)nb.textContent=obReady()?'¡Recompensa disponible!':'';
-const ri=$('#rbi');if(ri){ri.textContent=(p.rb>=40?'⚠ ':'')+`Rebelión ${p.rb.toFixed(0)}% (→ ${rbT(p).toFixed(0)}%) · Defensas −${Math.round(defRed(p)*100)}% a los rebeldes`+(p.rb>50?` · éxito rebelde ${Math.round(rebWin(p)*100)}%`:' · sin ataques')+(S.sh>0?` · 🛡️ ${fmtT(Math.round(S.sh/1000))}`:'');ri.style.color=p.rb>50?'#ff8a8a':p.rb>=40?'#ffb547':''}
+const ri=$('#rbi');if(ri){ri.textContent=(p.rb>=40?'⚠ ':'')+`Rebelión ${p.rb.toFixed(0)}% (→ ${rbT(p).toFixed(0)}%) · Defensas −${Math.round(defRed(p)*100)}% a los rebeldes`+(p.rb>50?` · éxito rebelde ${Math.round(rebWin(p)*100)}%`:' · sin ataques')+(S.sh>0?` · 🛡️ ${fmtT(Math.round(S.sh/1000))}`:'')+(lv(p,'v')>0?` · Preaviso ${Math.round(warnP(p)*100)}%`:'')+(p.st>Date.now()?` · ⛈ tormenta ${fmtT(Math.ceil((p.st-Date.now())/1000))}`:'');ri.style.color=p.rb>50?'#ff8a8a':p.rb>=40?'#ffb547':''}
 for(let i=0;i<3;i++){const k='mcg'[i],r=R(p)[k],c=capN(p,k),e=$('#rv'+i);if(e){e.textContent=fmt(r)+' / '+fmt(c);e.className=r>=c?'full':'';$('#rp'+i).textContent='+'+prodN(p,i).toFixed(1)+'/s'}}
 document.querySelectorAll('[data-cost]').forEach(b=>{if(!b.dataset.off)b.disabled=!afford(R(rp),JSON.parse(b.dataset.cost))});
 document.querySelectorAll('.ch[data-n]').forEach(e=>{const k=e.dataset.k,n=+e.dataset.n,miss=n-R(rp)[k];let t=`${fmt(n)} ${RN[k]}`;
