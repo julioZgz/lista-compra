@@ -41,7 +41,7 @@ input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--ln);backg
 .ch.lack{border-color:#ff8a8a;background:#3a1d24}
 .tab.warn{border-color:#ffb547;color:#ffb547}
 .hd .tab.on{background:#1d4d41;border-width:2px;border-color:var(--ok);color:#fff;font-weight:700}
-.ic.sp{width:76px;height:76px;border:0;display:block;background:url(edificios.webp) no-repeat;background-size:500% 500%;background-position:calc(var(--c)*25%) calc(var(--r)*25%)}
+.ic.sp{width:76px;height:76px;border:0;display:block;background:url(../img/edificios.webp) no-repeat;background-size:500% 500%;background-position:calc(var(--c)*25%) calc(var(--r)*25%)}
 .ic.sp.off{opacity:.4;filter:grayscale(1)}.ic.sp.dmg{filter:grayscale(.7) brightness(.65)}
 .ind{display:inline-flex;gap:2px;margin-left:4px}.ind i{font-style:normal;font-size:12px;opacity:.25;filter:grayscale(1)}.ind i.on{opacity:1;filter:none}
 .tip{display:none}.tip.show{display:block}

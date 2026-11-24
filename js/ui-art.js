@@ -5,7 +5,7 @@
 const icon=(p,c)=>`<div class="ic ${c||''}"><svg viewBox="0 0 48 48" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${p}</svg></div>`;
 const SPM={l:0,s:1,c:2,g:3,a:4};
 let SPR=false;
-if(typeof Image!=='undefined'){const spr=new Image();spr.onload=()=>{SPR=true;if(S)render()};spr.src='edificios.webp'}
+if(typeof Image!=='undefined'){const spr=new Image();spr.onload=()=>{SPR=true;if(S)render()};spr.src='img/edificios.webp'}
 const bic=(k,L,dm)=>SPR&&k in SPM?`<div class="ic sp${L?'':' off'}${dm?' dmg':''}" style="--c:${Math.max(0,Math.min(4,Math.floor((L-1)/2)))};--r:${SPM[k]}"></div>`:icon(BI[k],k in IDX?k:'');
 const BI={z:`<path d="M24 6l16 8v10c0 10-8 16-16 18C16 40 8 34 8 24V14z"/><path d="M18 24l4 4 8-9"/>`,
 m:`<path d="M6 40L18 18l8 12 6-8 10 18z"/><path d="M14 8l20 8M24 6l-6 12"/>`,
