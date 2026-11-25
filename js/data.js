@@ -29,7 +29,7 @@ e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:1
 b:{n:'Bodegas de carga',d:'Cada nivel aumenta un 25% la capacidad de carga de los corsarios (base 300 por nave), que limita el botín de los saqueos.',b:{m:250,c:200,g:100},f:1.9,max:5},
 a:{n:'Armamento',d:'Cada nivel aumenta un 10% el poder de ataque de las expediciones de saqueo y, con él, la probabilidad de éxito.',b:{m:300,c:200,g:150},f:2,max:5},
 f:{n:'Blindaje de campaña',d:'Cada nivel reduce un 10% los corsarios que se pierden en un saqueo fallido (del 50% al 20%). Nivel 1: 3 saqueos exitosos; nivel 2: 6; nivel 3: 9.',b:{m:300,c:250,g:150},f:2,max:3},
-r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3},
+r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). El desgaste se recupera del todo en 24 horas sin saquear. Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3},
 v:{n:'Ingeniería naval',d:'Desbloquea el Acorazado, la nave de saqueo más poderosa. Exige Bodegas de carga 5, Armamento 5, Blindaje de campaña 3 y Rutas de saqueo 3.',b:{m:600,c:500,g:300},f:2,max:1}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},

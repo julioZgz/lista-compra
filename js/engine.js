@@ -14,7 +14,7 @@ cs:[{id:0,b:{m:1,c:1,g:0,a:0,s:0,l:0,u:0,d:0,h:0,o:0,k:0,w:0,t:0},r:{m:400,c:200
 function done(m){const u=U(m.to);
 if(m.k==='x'){const kl=m.to>=100?S.rk:S.known;if(!kl.includes(m.to))kl.push(m.to);S.fleet.e++;toast('Exploración de '+u.name+' completada',null,m.to>=100?'r':'m')}
 else if(m.k==='r'){const fl=mFl(m),ch=rdPct(fl,u),key='p'+m.to,cnt=S.rd[key]||0;
-if(Math.random()<ch){const l=rdLoot(fl,u).real;S.rd[key]=cnt+1;cxPlan(m.to,cnt+1);S.cnt.sac++;if(!S.cnt.sacT.includes(m.to))S.cnt.sacT.push(m.to);const t=S.cs[0];for(const k in l)R(t)[k]+=l[k];rdTy().forEach(x=>{S.fleet[x]=(S.fleet[x]||0)+(fl[x]||0)});
+if(Math.random()<ch){const l=rdLoot(fl,u).real;S.rd[key]=cnt+1;S.wr[key]={w:wrW(m.to,m.end)+1,t:m.end};cxPlan(m.to,cnt+1);S.cnt.sac++;if(!S.cnt.sacT.includes(m.to))S.cnt.sacT.push(m.to);const t=S.cs[0];for(const k in l)R(t)[k]+=l[k];rdTy().forEach(x=>{S.fleet[x]=(S.fleet[x]||0)+(fl[x]||0)});
 S.ev=`Saqueo en ${u.name}: botín de ${l.m} de metal, ${l.c} de cristal y ${l.g} de gas.`;if(!S.un.k&&Math.random()<.12){S.un.k=1;S.ev+=' ¡Recompensa del saqueo: has desbloqueado el Carguero!'}toast(S.ev,null,'r')}
 else{const lo={};rdTy().forEach(x=>{const n=fl[x]||0,e=rdLost(n,x),i=Math.floor(e);lo[x]=Math.min(n,x==='r'?Math.ceil(e):i+(Math.random()<e-i?1:0));S.fleet[x]=(S.fleet[x]||0)+n-lo[x]});const lt=rdTy().filter(x=>lo[x]>0).map(x=>`${lo[x]} ${SH[x].n.toLowerCase()}${lo[x]>1?'s':''}`);S.ev=`Saqueo fallido en ${u.name}: `+(m.f?(lt.length?`pierdes ${lt.join(', ')}.`:'no pierdes ninguna nave.'):`pierdes ${lo.r} corsario(s).`);toast(S.ev,null,'r')}}
 else if(S.cs.length<1+S.tech.c){S.cs.push({id:m.to,b:{m:0,c:0,g:0,a:0,s:0,l:0,u:0,d:0,h:0,o:0,k:0,w:0,t:0},r:{m:150,c:80,g:0}});norm(S.cs[S.cs.length-1]);toast('Nueva colonia: '+u.name,m.to,'b')}

@@ -32,7 +32,8 @@ const slots=()=>1+(S.tech.q||0),used=p=>(p.q?1:0)+(p.bq||[]).length,sUsed=p=>(p.
 const vb=p=>{const b={...p.b};if(p.q)b[p.q.k]++;(p.bq||[]).forEach(it=>b[it.k]++);return b};
 const need=u=>Math.max(0,Math.ceil((u.dist-2)/2));
 const rdPct=(fl,u)=>Math.max(.15,Math.min(.95,.5+.15*(rdPw(fl)*(1+.1*(S.tech.a||0))-(Math.ceil(u.dist/2)+1)))),rdLost=(n,t)=>n*SH[t].ls*(50-10*(S.tech.f||0))/5000;
-const rdLoot=(fl,u)=>{const n=rdN(fl),f=Math.pow(.85+.03*(S.tech.r||0),S.rd['p'+u.id]||0),mx={},real={};let t=0;[0,1,2].forEach(i=>{const v=Math.round(n*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1));mx['mcg'[i]]=v;t+=v});const cp=Math.round(rdCg(fl)*(1+.25*(S.tech.b||0))),q=Math.min(1,cp/Math.max(1,t));for(const k in mx)real[k]=Math.round(mx[k]*q);return{mx,real,t,cap:cp}};
+const RDN=10,wrW=(id,now=Date.now())=>{const e=S.wr&&S.wr['p'+id];return e?e.w*Math.max(0,Math.min(1,1-(now-e.t)/864e5)):0},wrP=id=>Math.round(100*(1-Math.pow(.85+.03*(S.tech.r||0),wrW(id))));
+const rdLoot=(fl,u)=>{const f=Math.pow(.85+.03*(S.tech.r||0),wrW(u.id)),mx={},real={};let t=0;[0,1,2].forEach(i=>{const v=Math.round(RDN*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1));mx['mcg'[i]]=v;t+=v});const cp=Math.round(rdCg(fl)*(1+.25*(S.tech.b||0))),q=Math.min(1,cp/Math.max(1,t));for(const k in mx)real[k]=Math.round(mx[k]*q);return{mx,real,t,cap:cp}};
 const trq=(k,L)=>k==='f'&&S.cnt.sac<3*(L+1)?`Requiere ${3*(L+1)} saqueos exitosos (llevas ${S.cnt.sac})`:k==='r'&&S.cnt.sacT.length<L+2?`Requiere haber saqueado con éxito ${L+2} planetas rivales distintos (llevas ${S.cnt.sacT.length})`:k==='v'&&trN()?'Requiere '+trN():'';
 const trN=()=>[['b',5],['a',5],['f',3],['r',3]].filter(([k,m])=>(S.tech[k]||0)<m).map(([k,m])=>`${T[k].n} ${m} (tienes ${S.tech[k]||0})`).join(', ');
 const rdTy=()=>Object.keys(SH).filter(t=>SH[t].pw),rdN=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0),0),rdPw=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0)*SH[t].pw,0),rdCg=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0)*SH[t].cg,0);
