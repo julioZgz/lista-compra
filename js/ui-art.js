@@ -44,7 +44,8 @@ c:`<rect x="14" y="10" width="20" height="26" rx="5"/><path d="M14 28l-8 10M34 2
 r:`<path d="M24 6l16 34-16-8-16 8z"/><path d="M24 14v18"/>`,
 f:`<path d="M24 4l8 14v14l-8 10-8-10V18z"/><path d="M16 28l-8 8M32 28l8 8M24 14v16"/>`,
 k:`<rect x="12" y="12" width="24" height="26" rx="3"/><path d="M12 22h24M20 38v4M28 38v4M18 6h12"/>`,
-a:`<path d="M24 4l10 12v18l-10 10-10-10V16z"/><path d="M8 22l6 4v10l-6-6zM40 22l-6 4v10l6-6zM24 12v22"/>`};
+a:`<path d="M24 4l10 12v18l-10 10-10-10V16z"/><path d="M8 22l6 4v10l-6-6zM40 22l-6 4v10l6-6zM24 12v22"/>`,
+s:`<path d="M6 32h36l-5 9H11z"/><rect x="12" y="18" width="10" height="10"/><rect x="26" y="18" width="10" height="10"/><path d="M17 18v10M31 18v10M22 41v3M26 41v3"/>`};
 let gid=0;
 function planet(id,sz,unk){
 if(unk)return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="22" fill="#111c31" stroke="#2a3b5e" stroke-width="2" stroke-dasharray="4 4"/><text x="32" y="41" text-anchor="middle" font-size="24" fill="#93a4c4" font-family="Chakra Petch,sans-serif">?</text></svg>`;

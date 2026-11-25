@@ -4,7 +4,7 @@
  */
 const DSP=.5;let DSM=null;
 const dsRet=(t,n)=>{const r={};for(const k of['m','c','g'])r[k]=Math.floor((SH[t].b[k]||0)*DSP*n);return r};
-const dsPl=(t,n)=>{const s=SH[t].n.toLowerCase();return n===1?s:s+(/[aeiou]$/.test(s)?'s':'es')};
+const dsPl=(t,n)=>{const s=SH[t].n.toLowerCase();return n===1?s:SH[t].pl||s+(/[aeiou]$/.test(s)?'s':'es')};
 const dsTxt=(t,n)=>Object.entries(dsRet(t,n)).map(([x,v])=>fmt(v)+' '+RN[x].toLowerCase()).join(', ');
 function dsUpd(){$('#dsn').textContent=DSM.n+' '+dsPl(DSM.t,DSM.n);$('#dsr').textContent=dsTxt(DSM.t,DSM.n);$('#dsl').value=DSM.n}
 function dsEx(t){return S.fleet[t]>0?`<button class=go style="margin-top:8px;background:#e8a86a" onclick="dsOpen('${t}')">Desmantelar</button>`:''}
