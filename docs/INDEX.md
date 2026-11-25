@@ -106,6 +106,17 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `dsSend()` · → closeM,dismantle
 - `dismantle(t,n)` · S.fleet,S.cs · → dsRet,toast,change
 
+## demolish.js
+- `DBP`
+- `DBM` (estado del modal: edificio; no se guarda)
+- `dbWhy(p,k)` · p.b,p.q,p.bq,p.nj · motivo por el que no se puede bajar un nivel ('' si se puede): obra o cola del propio edificio, Hangar con la colonia en red, o requisito de otro edificio (incluidos los encolados) · → vb,RQ
+- `dbRet(p,k)` · p.b · 50 % del coste del nivel que se quita · → cost
+- `dbTx(c)` · → fmt
+- `dbEx(p,k)` · p.b · botón «Desmantelar nivel N» de la tarjeta (deshabilitado con el motivo; nada si el nivel es 0) · → dbWhy
+- `dbOpen(k)` · p.b · modal de confirmación; con el Almacén avisa si la capacidad nueva queda por debajo de lo almacenado · → dbWhy,dbRet,dbTx,fmt,U,P,CM
+- `dbSend()` · → closeM,demolish
+- `demolish(k)` · p.b · R(p) · baja un nivel y suma el 50 % del coste a los recursos de la colonia · → dbWhy,dbRet,dbTx,toast,change
+
 ## convoy.js
 - `CVM`
 - `cvLim()` · S.tech,S.cs · máximo por recurso: carga máxima del nivel y lo disponible en el planeta seleccionado · → cvMax
@@ -223,7 +234,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,send,openRaid,rdTy,rdN,wrP
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,spEx
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,spEx,dbEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
