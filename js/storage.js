@@ -8,7 +8,7 @@ function norm(p){p.bq=p.bq||[];p.sqq=p.sqq||[];for(const k of['o','k','w','t','p
 const key=()=>encodeURIComponent(code.replace(/[.$#\[\]\/]/g,'_'));
 let ET=null,SV=0,CK=0;
 async function save(){if(!S||!code||SV)return;SV=1;advance(Date.now());
-try{const r=await fetch(`${DB}/juego_espacial/${key()}.json`,{method:'PUT',headers:ET?{'if-match':ET}:{},body:JSON.stringify(S),keepalive:true});
+try{if(!await seOk()){SV=0;return}const r=await fetch(`${DB}/juego_espacial/${key()}.json`,{method:'PUT',headers:ET?{'if-match':ET}:{},body:JSON.stringify(S),keepalive:true});
 if(r.status===412){SV=0;st='Partida actualizada en otro dispositivo';setSt();toast('Partida actualizada en otro dispositivo: recargando');load(code);return}
 if(!r.ok)throw 0;ET=r.headers.get('ETag');dirty=false;st='Guardado';autoBackup()}
 catch(e){st='Sin guardar (revisa la conexión o las reglas de Firebase)'}SV=0;setSt()}
@@ -30,9 +30,9 @@ m.innerHTML=`<div class=card style="width:100%;max-width:420px;max-height:80vh;o
 function setSt(){const e=$('#st');if(e)e.textContent=st}
 function prep(){S.mis=S.mis||[];S.known=S.known||[0];S.fleet.r=S.fleet.r||0;for(const k of['f','k','a','s'])S.fleet[k]=S.fleet[k]||0;S.un=S.un||{};S.rd=S.rd||{};S.wr=S.wr||{};for(const k in S.rd)if(!S.wr[k])S.wr[k]={w:S.rd[k],t:Date.now()};S.ru=S.ru||genRU();S.rk=S.rk||[];for(const k in T)S.tech[k]=S.tech[k]||0;S.cs.forEach(norm);S.cs.forEach(p=>{p.b.u=p.b.u||0;p.b.d=p.b.d||0;p.b.h=p.b.h||0});S.net=S.net||{m:0,c:0,g:0};if(S.rq){S.cs[0].rq=S.rq;delete S.rq}if(S.sq){S.cs[0].sq=S.sq;delete S.sq}S.nv=S.nv||Date.now()+(300+Math.random()*300)*1000;{const sv=+localStorage.getItem('je_sp');SP=S.cs.some(c=>c.id===sv)?sv:S.cs[0].id}S.cnt=S.cnt||{};for(const k of['rep','sac','trd','ref','cor','rp'])S.cnt[k]=S.cnt[k]||0;S.cnt.sacT=S.cnt.sacT||[];S.acc=S.acc||0;S.sh=S.sh||0;S.ne=S.ne||Date.now()+(1200+Math.random()*1200)*1000;S.hist=S.hist||[];S.cx=S.cx||[];
 if(!S.ob){S.ob={};for(const c of OB){let i=0;while(i<c.l.length&&obOk(c.l[i]))i++;S.ob[c.id]=i}}}
-async function load(c){code=c.trim();if(!code)return;localStorage.setItem('je_code',code);err='';st='Cargando…';S=null;render();
+async function load(c){const fresh=!S;code=c.trim();if(!code)return;localStorage.setItem('je_code',code);err='';st='Cargando…';S=null;render();
 try{let r;try{r=await fetch(`${DB}/juego_espacial/${key()}.json`,{headers:{'X-Firebase-ETag':'true'}})}catch(e){r=await fetch(`${DB}/juego_espacial/${key()}.json`)}
-if(!r.ok)throw 0;ET=r.headers.get('ETag');const d=await r.json();
+if(!r.ok)throw 0;ET=r.headers.get('ETag');const d=await r.json();if(fresh)await seClaim();
 S=d||newGame();prep();const away=d?Date.now()-S.t:0,t0=tot();LOG=[];advance(Date.now());const evl=LOG;LOG=null;dirty=!d;if(away>9e5)showAway(away,t0,evl);st=d?'Partida cargada':'Partida nueva';if(!d)save()}
 catch(e){S=null;err='No se pudo conectar con Firebase. Comprueba las reglas de la base de datos.'}render()}
 function logout(){code='';S=null;localStorage.removeItem('je_code');render()}

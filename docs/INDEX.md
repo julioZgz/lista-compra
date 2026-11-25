@@ -153,7 +153,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `norm(p)` · p.bq,p.sqq,p.b,p.rb0,p.rb,p.dm,p.q,p.rr,p.st
 - `key()`
 - `ET` (ETag de la última carga/guardado; global de módulo, no va en S), `SV` (guardando), `CK` (comprobando)
-- `save()` · Firebase · PUT con if-match=ET; si responde 412 avisa y recarga · → advance,toast,load
+- `save()` · Firebase · PUT con if-match=ET; antes comprueba la sesión (`seOk`); si responde 412 avisa y recarga · → seOk,advance,toast,load
 - `checkNew()` · Firebase · al volver a primer plano, sin cambios pendientes, recarga si el ETag cambió · → load
 - `BK`
 - `autoBackup()` · Firebase; localStorage getItem:lk,setItem:lk
@@ -163,8 +163,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
 - `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un,S.wr · p.b · localStorage getItem:je_sp · → genRU,obOk
-- `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · → tot,showAway,newGame,advance,render
+- `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · si `S` era nulo (login/arranque) reclama la sesión con `seClaim` · → seClaim,tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
+
+## session.js
+- `SES` (id de esta carga de página, `ok` reclamada, `at` última comprobación, `out` expulsado; no se guarda) · `seUrl()`
+- `seClaim()` · Firebase PUT `juego_espacial_sesion/<key>` = `{sid,ts}`; reinicia `SES.out`
+- `seCheck()` · Firebase GET; si el `sid` es otro → `seKick`; si la reclamación falló, la reintenta; un fallo de red no expulsa · → seClaim,seKick
+- `seOk()` · ¿se puede guardar? usa la última comprobación si tiene <10 s o la pestaña está oculta · → seCheck
+- `seKick()` / `seDrop()` · S,dirty,err · expulsa: espera a que acabe un guardado en curso (`SV`), descarta lo pendiente y vuelve al login con aviso · → render
+- `seBack()` · al volver a primer plano: comprueba la sesión y luego `checkNew` · → seCheck,checkNew
 
 ## raids.js
 - `raid(to,f)` · S.tech,S.fleet,S.mis · `f` = {modelo:cantidad}; la misión guarda `n` (total) y `f` · → change,need,rdN,rdTy
@@ -254,6 +262,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## main.js
 - (arranque) setInterval(()=>tick(),1000);
 - (arranque) setInterval(()=>{if(dirty)save()},15000);
-- (arranque) document.addEventListener('visibilitychange',()=>{if(documen… (oculta: guarda si dirty; visible: checkNew)
+- (arranque) document.addEventListener('visibilitychange',()=>{if(documen… (oculta: guarda si dirty; visible: seBack)
+- (arranque) setInterval(()=>{if(!document.hidden)seCheck()},20000);
 - (arranque) render();
 - (arranque) if(code)load(code);
