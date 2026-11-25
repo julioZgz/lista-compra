@@ -42,7 +42,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `slots()` · S.tech · p.q,p.bq,p.sq,p.sqq
 - `vb(p)` · p.b,p.q,p.bq
 - `need(u)`
-- `rdPct(fl,u)` · S.tech · % de éxito de un saqueo según el poder de la flota `fl` (usa Armamento); `rdLost(n,t)` · S.tech · pérdidas esperadas de `n` naves del modelo `t` si falla (Blindaje)
+- `rdDef(u)` · poder del puesto rival, `⌈dist²/2⌉+2` (3, 4, 7, 10, 15, 20, 27, 34 para dist 1-8); lo usan `rdPct` y la etiqueta «Defensa» de Saqueos
+- `rdPct(fl,u)` · S.tech · % de éxito de un saqueo según el poder de la flota `fl` (usa Armamento) frente a `rdDef(u)`; `rdLost(n,t)` · S.tech · pérdidas esperadas de `n` naves del modelo `t` si falla (Blindaje)
 - `rdLoot(fl,u)` · S.tech,S.wr · botín máximo fijo del planeta (calculado con `RDN`=10 naves y su desgaste), capacidad de carga (suma por modelo) y botín real = el menor de ambos (Bodegas, Rutas) · `wrW(id,now)` · S.wr · desgaste actual en saqueos (baja lineal hasta 0 en 24 h) · `wrP(id)` · S.tech,S.wr · % de reducción del botín
 - `trq(k,L)` · S.cnt,S.tech · texto del requisito de una tecnología ('' si se cumple): saqueos (f, r), niveles de mejoras de saqueo (v) o de Colonización y Propulsión (i); `trN()` · S.tech · lo que falta para Ingeniería naval
 - `rdTy()` modelos de saqueo (los de `SH` con `pw`) · `rdN(fl)` nº de naves · `rdPw(fl)` poder · `rdCg(fl)` carga base · `mFl(m)` flota de una misión (`m.f`, o `{r:m.n}` si es antigua) · `mTx(m)` texto «N corsarios/naves»
@@ -243,7 +244,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx
-- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,send,openRaid,rdTy,rdN,wrP
+- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,send,openRaid,rdTy,rdN,wrP,rdDef
 - `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,spEx,dbEx,rcEx
 
 ## render.js
