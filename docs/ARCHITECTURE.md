@@ -19,18 +19,19 @@ Los scripts se cargan en este orden desde la lista `MODS` de `index.html` (un `<
 | 10 | demolish | desmantelar edificios: botón en la tarjeta del edificio + modal de confirmación; baja un nivel y devuelve el 50 % del coste de ese nivel a la propia colonia (`demolish`, `db*`) | tocar colas, guardado, fórmulas |
 | 11 | convoy | convoyes de colonización: botón de colonizar + modal para elegir los recursos que viajan con el colonizador (`cvOpen`, `cvTake`, `cv*`); salen del planeta de origen | tocar colas, guardado, fórmulas |
 | 12 | supply | naves de suministros: botón en Flota (`spEx`) y modal para elegir origen, naves y carga hacia una colonia sin red (`spOpen`, `spTake`, `sp*`); la misión sale con `k:'s'` y la llegada se resuelve en engine (`supDone`) | tocar colas, guardado, fórmulas |
-| 13 | storage | Firebase, copias, archivos, migración (`norm`, `prep`), `load/save/logout` | reglas de juego |
-| 14 | raids | saqueos: `raid`, modal de envío | colas, guardado |
-| 15 | trade | comercio | colas, guardado |
-| 16 | objectives | objetivos y recompensas | colas, guardado |
-| 17 | history | historial de eventos recientes (`histAdd`, `histRes`, `histOpen`, `HLBL`): últimos 5 naturales, visitas, ataques rebeldes y contraataques rivales; modal desde Mapa | tocar colas, recursos, reglas, `S.ev`, guardado |
-| 18 | ui-art | iconos SVG, sprite, planetas | mutar S |
-| 19 | ui-core | componentes (`card`, `toast`…), colas, navegación | fórmulas |
-| 20 | ui-views | contenido de cada pestaña (`view`, `queueView`, `raidView`) | mutar S directo |
-| 21 | render | `render()` y `tick()` (cada segundo) | lógica de juego |
-| 22 | main | temporizadores y arranque (`render()`, `load(code)`) | cualquier otra cosa |
+| 13 | recall | cancelar misiones en vuelo (explorar, colonizar, saquear): botón en Flota → Misiones en curso (`rcEx`) + modal de confirmación; la misión pasa a una de vuelta `k:'b'` que dura el tiempo ya recorrido y al llegar devuelve naves y recursos (`recall`, `rcDone`, `rc*`) | tocar colas, guardado, fórmulas |
+| 14 | storage | Firebase, copias, archivos, migración (`norm`, `prep`), `load/save/logout` | reglas de juego |
+| 15 | raids | saqueos: `raid`, modal de envío | colas, guardado |
+| 16 | trade | comercio | colas, guardado |
+| 17 | objectives | objetivos y recompensas | colas, guardado |
+| 18 | history | historial de eventos recientes (`histAdd`, `histRes`, `histOpen`, `HLBL`): últimos 5 naturales, visitas, ataques rebeldes y contraataques rivales; modal desde Mapa | tocar colas, recursos, reglas, `S.ev`, guardado |
+| 19 | ui-art | iconos SVG, sprite, planetas | mutar S |
+| 20 | ui-core | componentes (`card`, `toast`…), colas, navegación | fórmulas |
+| 21 | ui-views | contenido de cada pestaña (`view`, `queueView`, `raidView`) | mutar S directo |
+| 22 | render | `render()` y `tick()` (cada segundo) | lógica de juego |
+| 23 | main | temporizadores y arranque (`render()`, `load(code)`) | cualquier otra cosa |
 
-Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. Acoplamientos que ya existían y se mantienen: `engine`→`toast`, `norm`, `key`, `startNext`, `nextShip`; `actions`→`toast`, `selPlanet`, `render`; `storage`→`card`, `showAway`, `toast`, `closeM`, `render`; `ui-core`→`actions` (botones). Nuevos: `engine`→`evento` y `events`→`toast` (mismo patrón que `visitor`/`attack`); `dismantle`→`toast`, `change`, `closeM` (mismo patrón que `actions`/`raids`). `engine`→`cxPlan`/`cxRun` y `counter`→`toast`, `histAdd` (mismo patrón que `events`); `engine`, `events`, `counter` y `actions` → `histAdd`/`histRes` (history.js se carga después; solo se llaman en ejecución) y `history`→`closeM`, `fmtT`, `U` (mismo patrón que `dismantle`). `convoy`→`send`, `closeM`, `fmt`, `U`, `P`, `R` (mismo patrón que `dismantle`); `actions`→`cvTake` y `ui-views`→`cvOpen` (solo en ejecución). `supply`→`sendSupply`, `closeM`, `fmt`, `fmtT`, `U`, `P`, `R` (mismo patrón que `convoy`); `actions`→`spTake` y `ui-views`→`spEx` (solo en ejecución). `demolish`→`toast`, `change`, `closeM`, `RQ`, `vb`, `cost`, `fmt`, `U`, `P`, `R` (mismo patrón que `dismantle`); `ui-views`→`dbEx` (solo en ejecución). No “arreglarlos” sin pedirlo.
+Dirección de dependencias: `util/state/data/rules` no llaman a nada de arriba. Acoplamientos que ya existían y se mantienen: `engine`→`toast`, `norm`, `key`, `startNext`, `nextShip`; `actions`→`toast`, `selPlanet`, `render`; `storage`→`card`, `showAway`, `toast`, `closeM`, `render`; `ui-core`→`actions` (botones). Nuevos: `engine`→`evento` y `events`→`toast` (mismo patrón que `visitor`/`attack`); `dismantle`→`toast`, `change`, `closeM` (mismo patrón que `actions`/`raids`). `engine`→`cxPlan`/`cxRun` y `counter`→`toast`, `histAdd` (mismo patrón que `events`); `engine`, `events`, `counter` y `actions` → `histAdd`/`histRes` (history.js se carga después; solo se llaman en ejecución) y `history`→`closeM`, `fmtT`, `U` (mismo patrón que `dismantle`). `convoy`→`send`, `closeM`, `fmt`, `U`, `P`, `R` (mismo patrón que `dismantle`); `actions`→`cvTake` y `ui-views`→`cvOpen` (solo en ejecución). `supply`→`sendSupply`, `closeM`, `fmt`, `fmtT`, `U`, `P`, `R` (mismo patrón que `convoy`); `actions`→`spTake` y `ui-views`→`spEx` (solo en ejecución). `demolish`→`toast`, `change`, `closeM`, `RQ`, `vb`, `cost`, `fmt`, `U`, `P`, `R` (mismo patrón que `dismantle`); `ui-views`→`dbEx` (solo en ejecución). `recall`→`toast`, `change`, `closeM`, `fmtT`, `U`, `P`, `R`, `mFl`, `mTx`, `rdTy` (mismo patrón que `convoy`); `engine`→`rcDone` y `ui-views`→`rcEx` (solo en ejecución). No “arreglarlos” sin pedirlo.
 
 ## Convenciones técnicas que no se pueden romper
 - Cientos de `onclick="fn(...)"` inline → toda función llamada desde HTML debe ser **global** (declaración top-level). Nada de ES modules ni `type="module"`.

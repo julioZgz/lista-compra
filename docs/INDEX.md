@@ -53,11 +53,11 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone
 - `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · → toast,P,R,U
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora la tecnología `i` (Convoyes) al sumar niveles · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
-- `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
+- `advance(now)` · próxima visita a los 15-30 min (÷ (1 + 0,15 × niveles de Puerto comercial)) · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
 - `genRU()` · → rng
 
 ## events.js
@@ -136,6 +136,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `spPick(o)` · `spSet(k,v)` · `spStep(k,d)` · `spSl(k,v)`
 - `spSend()` · → closeM,sendSupply
 - `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» de la ficha de la nave `s` en Flota (deshabilitado con el motivo si la colonia está en red, falta nave, otra colonia o hueco de misión) · → spT,fmtT
+
+## recall.js
+- `RCM` (estado del modal: misión elegida por `to` y `end`; no se guarda)
+- `rcFind(to,end)` · S.mis · misión de exploración, colonización o saqueo identificada por objetivo y hora de llegada (no por posición)
+- `rcT(m)` · S.tech · segundos totales de la misión (×2 en saqueos) · `rcEl(m)` · tiempo ya recorrido (con la Propulsión actual, acotado) · `rcOff(m)` · saqueo ya pasada la mitad (ya vuelve; no se puede cancelar) · `rcNm(m)` nombre del objetivo
+- `rcEx(m)` · S.mis · botón «Cancelar misión» de cada misión en Flota (deshabilitado «Ya está de vuelta» en saqueos pasada la mitad)
+- `rcOpen(to,end)` · S.mis · modal de confirmación con el tiempo de vuelta · → rcFind,rcOff,rcEl,fmtT,mTx,U,P
+- `rcSend()` · → closeM,recall
+- `recall(to,end)` · S.mis · sustituye la misión por una de vuelta `{k:'b',w,to,end,n?,f?,res?,o?}` que llega en el tiempo ya recorrido · → rcFind,rcOff,rcEl,toast,change
+- `rcDone(m)` · S.fleet · llegada de una misión de vuelta: explorador, colonizador (y sus recursos a `R(origen)`) o flota de saqueo vuelven a `S.fleet` · → toast,mFl,rdTy,P,R,U
 
 ## storage.js
 - `DB`
@@ -234,7 +244,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,send,openRaid,rdTy,rdN,wrP
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,spEx,dbEx
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,spEx,dbEx,rcEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view

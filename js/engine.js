@@ -11,7 +11,7 @@ rich:[0,1,2].map(()=>Math.max(2,Math.min(12,Math.round(2+r()*6+dist*.35))))})}
 return{t:Date.now(),net:{m:0,c:0,g:0},u,tech:{p:0,c:0,e:0},fleet:{e:1,c:0},known:[0],mis:[],
 cs:[{id:0,b:{m:1,c:1,g:0,a:0,s:0,l:0,u:0,d:0,h:0,o:0,k:0,w:0,t:0},r:{m:400,c:200,g:0}}]}}
 
-function done(m){const u=U(m.to);
+function done(m){if(m.k==='b')return rcDone(m);const u=U(m.to);
 if(m.k==='x'){const kl=m.to>=100?S.rk:S.known;if(!kl.includes(m.to))kl.push(m.to);S.fleet.e++;toast('Exploración de '+u.name+' completada',null,m.to>=100?'r':'m')}
 else if(m.k==='r'){const fl=mFl(m),ch=rdPct(fl,u),key='p'+m.to,cnt=S.rd[key]||0;
 if(Math.random()<ch){const l=rdLoot(fl,u).real;S.rd[key]=cnt+1;S.wr[key]={w:wrW(m.to,m.end)+1,t:m.end};cxPlan(m.to,cnt+1);S.cnt.sac++;if(!S.cnt.sacT.includes(m.to))S.cnt.sacT.push(m.to);const t=S.cs[0];for(const k in l)R(t)[k]+=l[k];rdTy().forEach(x=>{S.fleet[x]=(S.fleet[x]||0)+(fl[x]||0)});
@@ -46,6 +46,6 @@ S.cs.forEach(p=>{if(p.rr&&p.rr.end<=now){p.dm=p.dm.filter(x=>x!==p.rr.k);toast(`
 while(p.q&&p.q.end<=now){const e=p.q.end;p.b[p.q.k]++;toast(`${B[p.q.k].n} de ${U(p.id).name} mejorado`,p.id,'b');delete p.q;startNext(p,e);ch=true}
 p.rb+=(rbT(p)-p.rb)*Math.min(1,dt/600);if(dt<=120&&!(S.sh>0)&&p.rb>50&&Math.random()<1-Math.exp(-dt*(p.rb-50)/45000)){attack(p);ch=true}});
 S.cs.forEach(p=>{if(p.rq&&p.rq.end<=now){S.tech[p.rq.k]++;toast('Investigación completada: '+T[p.rq.k].n,p.id,'i');delete p.rq;ch=true}while(p.sq&&p.sq.end<=now){const e=p.sq.end;S.fleet[p.sq.t]++;if(p.sq.t==='r')S.cnt.cor++;toast(SH[p.sq.t].n+(SH[p.sq.t].fm?' construida':' construido'),p.id,'f');delete p.sq;nextShip(p,e);ch=true}});
-S.mis=S.mis.filter(m=>{if(m.end>now)return true;ch=true;done(m);return false});if(S.rf&&S.rf.exp<=now){histRes('Los refugiados se marcharon sin que decidieras.');delete S.rf;ch=true}if(S.nv<=now){visitor();S.nv=now+(300+Math.random()*300)*1000/(1+.15*S.cs.reduce((a,p)=>a+lv(p,'p'),0));ch=true}if(evento(now,dt))ch=true;if(cxRun(now,dt))ch=true;sync();return ch}
+S.mis=S.mis.filter(m=>{if(m.end>now)return true;ch=true;done(m);return false});if(S.rf&&S.rf.exp<=now){histRes('Los refugiados se marcharon sin que decidieras.');delete S.rf;ch=true}if(S.nv<=now){visitor();S.nv=now+(900+Math.random()*900)*1000/(1+.15*S.cs.reduce((a,p)=>a+lv(p,'p'),0));ch=true}if(evento(now,dt))ch=true;if(cxRun(now,dt))ch=true;sync();return ch}
 
 function genRU(){const r=rng(Date.now()),sy=['Gor','Skar','Vyl','Drax','Nor','Hesk','Ruk','Thal'];return Array.from({length:8},(_,i)=>{const d=i+1+(i>1&&r()<.4?1:0);return{id:100+i,name:sy[Math.floor(r()*8)]+sy[Math.floor(r()*8)].toLowerCase()+'-R'+(i+1),dist:d,rich:[0,1,2].map(()=>Math.max(2,Math.min(12,Math.round(2+r()*6+d*.35))))}})}
