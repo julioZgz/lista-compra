@@ -14,7 +14,7 @@ return a.length?`<p class=st>En marcha en todos tus planetas: ${a.length}. Toca 
 function raidView(){let h=`<p class=st>${rdTy().filter(t=>t==='r'||S.fleet[t]>0).map(t=>SH[t].n+'s: '+S.fleet[t]).join(' · ')} · Misiones: ${S.mis.length}/${1+S.tech.m}</p>`;
 S.ru.forEach(u=>{const kn=S.rk.includes(u.id),bm=S.mis.find(m=>m.to===u.id),n=need(u),secs=Math.ceil(u.dist*20/(1+.25*S.tech.p)),wp=wrP(u.id),wc=wp<10?'#6fcf97':wp<30?'#f2c94c':'#ff8a8a';
 const fr=S.mis.length>=1+S.tech.m?'Sin misiones libres (Flotas coordinadas)':S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:'';let btn;
-if(bm)btn=`<button class=go disabled>${{x:'Explorando',r:'Saqueando'}[bm.k]} (<span data-end="${bm.end}"></span>)</button>`;
+if(bm)btn=`<button class=go disabled>${{x:'Explorando',r:'Saqueando'}[bm.k]} (<span data-end="${bm.end}"></span>)</button>`+rcEx(bm);
 else if(!kn){const off=fr||(S.fleet.e<1?'Necesitas un explorador':'');btn=`<button class=go ${off?'disabled':''} onclick="send('x',${u.id})">${off||`Explorar (${fmtT(secs)})`}</button>`}
 else{const off=fr||(rdN(S.fleet)<1?'Necesitas corsarios':'');btn=`<button class=go style="background:#e8a86a" ${off?'disabled':''} onclick="openRaid(${u.id})">${off||'Saquear'}</button>`}
 h+=`<div class=card><div class=pl>${planet(u.id,60,!kn)}<div><b>${kn?u.name:'Puesto sin explorar'}</b><div class=st>Distancia ${u.dist}${kn?` · Defensa ${Math.ceil(u.dist/2)+1} · Desgaste <b style="color:${wc}">${wp}%</b>`:''}</div></div></div><div style="margin-top:8px">${btn}</div></div>`});return h}
@@ -43,7 +43,7 @@ let info=kn?`Máx. de minas: metal ${u.rich[0]}, cristal ${u.rich[1]}, gas ${u.r
 if(own)btn=`<button class=go onclick="selPlanet(${u.id});go('b')">Ir a la colonia</button>`;
 else{const k=kn?'c':'x',lab=kn?'Colonizar':'Explorar',have=kn?S.fleet.c:S.fleet.e,slot=!kn||S.cs.length+S.mis.filter(m=>m.k==='c').length<1+S.tech.c;
 const off=busy?`En camino (<span data-end="${bm.end}"></span>)`:S.mis.length>=1+S.tech.m?'Sin misiones libres (Flotas coordinadas)':S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:have<1?`Necesitas un ${kn?'colonizador':'explorador'}`:!slot?'Sin capacidad: investiga Colonización':'';
-btn=`<button class=go ${off?'disabled':''} onclick="${k==='c'&&S.tech.i>0?`cvOpen(${u.id})`:`send('${k}',${u.id})`}">${off||lab+' ('+fmtT(secs)+')'}</button>`}
+btn=`<button class=go ${off?'disabled':''} onclick="${k==='c'&&S.tech.i>0?`cvOpen(${u.id})`:`send('${k}',${u.id})`}">${off||lab+' ('+fmtT(secs)+')'}</button>`+(bm?rcEx(bm):'')}
 h+=`<div class=card><div class=pl>${planet(u.id,60,!kn&&!own)}<div><b>${kn||own?u.name:'Planeta sin explorar'}</b><div class=st>Distancia ${u.dist} · ${info}</div></div></div>${own?'<div class=tag>Colonizado</div>':''}<div style="margin-top:8px">${btn}</div></div>`})}
 if(V==='b'&&p.id)h+=`<button class=go style="background:#ff8a8a" onclick="abandon()">Abandonar colonia</button>`;
 return h}
