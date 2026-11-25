@@ -31,7 +31,8 @@ a:{n:'Armamento',d:'Cada nivel aumenta un 10% el poder de ataque de las expedici
 f:{n:'Blindaje de campaña',d:'Cada nivel reduce un 10% los corsarios que se pierden en un saqueo fallido (del 50% al 20%). Nivel 1: 3 saqueos exitosos; nivel 2: 6; nivel 3: 9.',b:{m:300,c:250,g:150},f:2,max:3},
 r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). El desgaste se recupera del todo en 24 horas sin saquear. Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3},
 v:{n:'Ingeniería naval',d:'Desbloquea el Acorazado, la nave de saqueo más poderosa. Exige Bodegas de carga 5, Armamento 5, Blindaje de campaña 3 y Rutas de saqueo 3.',b:{m:600,c:500,g:300},f:2,max:1},
-i:{n:'Convoyes de colonización',d:'Cada colonizador puede llevar recursos de su planeta de origen a la colonia nueva: hasta 500 / 1.500 / 3.000 de cada uno (niveles 1 / 2 / 3). Exige Colonización y Propulsión 2, 4 y 6.',b:{m:300,c:300,g:150},f:2,max:3}};
+i:{n:'Convoyes de colonización',d:'Cada colonizador puede llevar recursos de su planeta de origen a la colonia nueva: hasta 500 / 1.500 / 3.000 de cada uno (niveles 1 / 2 / 3). Exige Colonización y Propulsión 2, 4 y 6.',b:{m:300,c:300,g:150},f:2,max:3},
+h:{n:'Mantenimiento estelar',d:'Cada nivel reduce un 15% el tiempo de reparación de los edificios dañados (−60% en el nivel 4). Exige Laboratorio 3 y reparaciones hechas: nivel 1, 3; nivel 2, 8; nivel 3, 15; nivel 4, 25.',b:{m:250,c:250,g:120},f:1.8,max:4}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
 r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia. Poder 1, carga 300, pérdida base al fallar 50%.',b:{m:300,c:200,g:100},s:2,pw:1,cg:300,ls:50},

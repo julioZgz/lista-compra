@@ -24,7 +24,7 @@ if((k==='a'||k==='d')&&tL>2*(S.tech.l||0))o.push(`Logística ${Math.ceil(tL/2)}`
 if(k==='t'){nd('l',4);nd('w',tL)}
 return o};
 const reqTxt=k=>(!'zok'.includes(k)?' Máx. nivel: Centro de mando + 2.':'')+({m:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',c:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',g:' Máx. nivel: el doble del Almacén (sin límite con Almacén 10).',l:' Máx. nivel: Universidad + 2.',h:' Requiere Almacén 5 y Astillero 1.',v:' Requiere Laboratorio 2.',p:' Requiere Almacén 4 y Astillero 2.',w:' Requiere Mina de metal 3. Máx. nivel: el doble de Ingeniería defensiva.',a:' Máx. nivel: el doble de Logística.',d:' Máx. nivel: el doble de Logística.',t:' Requiere Laboratorio 4 y nivel igual o menor que las Murallas. Máx. nivel: el doble de Ingeniería defensiva.'}[k]||'');
-const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/10)])),repT=(p,k)=>Math.max(30,Math.round(300/ef(p)));
+const repC=(p,k)=>Object.fromEntries(Object.entries(cost(B[k].b,B[k].f,p.b[k]-1)).map(([x,v])=>[x,Math.ceil(v/10)])),repT=(p,k)=>Math.max(5,Math.round(.25*tB(k,Math.max(0,p.b[k]-1),p)*(1-.15*(S.tech.h||0))));
 const CM={m:1,c:.75,g:.5},capK=(p,k)=>Math.round(CM[k]*cap(p)),capN=(p,k)=>p.nj?mem().reduce((a,q)=>a+capK(q,k),0):capK(p,k),prodN=(p,i)=>p.nj?mem().reduce((a,q)=>a+prod(q,i),0):prod(p,i);
 const maxL=(p,k)=>k in IDX?U(p.id).rich[IDX[k]]:B[k].max;
 const tot=()=>{const r={m:0,c:0,g:0};S.cs.forEach(p=>{if(!p.nj)for(const k in r)r[k]+=p.r[k]});for(const k in r)r[k]+=S.net[k]||0;return r};
@@ -34,7 +34,7 @@ const need=u=>Math.max(0,Math.ceil((u.dist-2)/2));
 const rdPct=(fl,u)=>Math.max(.15,Math.min(.95,.5+.15*(rdPw(fl)*(1+.1*(S.tech.a||0))-(Math.ceil(u.dist/2)+1)))),rdLost=(n,t)=>n*SH[t].ls*(50-10*(S.tech.f||0))/5000;
 const RDN=10,wrW=(id,now=Date.now())=>{const e=S.wr&&S.wr['p'+id];return e?e.w*Math.max(0,Math.min(1,1-(now-e.t)/864e5)):0},wrP=id=>Math.round(100*(1-Math.pow(.85+.03*(S.tech.r||0),wrW(id))));
 const rdLoot=(fl,u)=>{const f=Math.pow(.85+.03*(S.tech.r||0),wrW(u.id)),mx={},real={};let t=0;[0,1,2].forEach(i=>{const v=Math.round(RDN*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1));mx['mcg'[i]]=v;t+=v});const cp=Math.round(rdCg(fl)*(1+.25*(S.tech.b||0))),q=Math.min(1,cp/Math.max(1,t));for(const k in mx)real[k]=Math.round(mx[k]*q);return{mx,real,t,cap:cp}};
-const trq=(k,L)=>k==='f'&&S.cnt.sac<3*(L+1)?`Requiere ${3*(L+1)} saqueos exitosos (llevas ${S.cnt.sac})`:k==='r'&&S.cnt.sacT.length<L+2?`Requiere haber saqueado con éxito ${L+2} planetas rivales distintos (llevas ${S.cnt.sacT.length})`:k==='v'&&trN()?'Requiere '+trN():k==='i'&&trC(L)?'Requiere '+trC(L):'';
+const trq=(k,L)=>k==='f'&&S.cnt.sac<3*(L+1)?`Requiere ${3*(L+1)} saqueos exitosos (llevas ${S.cnt.sac})`:k==='r'&&S.cnt.sacT.length<L+2?`Requiere haber saqueado con éxito ${L+2} planetas rivales distintos (llevas ${S.cnt.sacT.length})`:k==='v'&&trN()?'Requiere '+trN():k==='i'&&trC(L)?'Requiere '+trC(L):k==='h'&&(S.cnt.rp||0)<[3,8,15,25][L]?`Requiere ${[3,8,15,25][L]} reparaciones (llevas ${S.cnt.rp||0})`:'';
 const trN=()=>[['b',5],['a',5],['f',3],['r',3]].filter(([k,m])=>(S.tech[k]||0)<m).map(([k,m])=>`${T[k].n} ${m} (tienes ${S.tech[k]||0})`).join(', ');
 const rdTy=()=>Object.keys(SH).filter(t=>SH[t].pw),rdN=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0),0),rdPw=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0)*SH[t].pw,0),rdCg=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0)*SH[t].cg,0);
 const mFl=m=>m.f||{r:m.n},mTx=m=>m.f&&Object.keys(m.f).some(t=>t!=='r')?m.n+' naves':m.n+' corsarios';

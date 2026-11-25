@@ -28,7 +28,7 @@ S.ev=w===2?`Convoy de suministros perdido en ruta a ${nm}: se pierde toda la car
 function visitor(){const lvl=S.cs.reduce((a,p)=>a+lv(p,'p'),0);
 if(!S.rf&&Math.random()<.3/(1+.1*lvl)){const q=S.cs[Math.floor(Math.random()*S.cs.length)],pool=R(q),c={};for(const k of['m','c','g'])c[k]=Math.floor(pool[k]*.15);
 S.rf={pid:q.id,c,exp:Date.now()+600000};S.ev=`Llegan refugiados a ${U(q.id).name}: decide si los aceptas.`;histAdd('v',q.id,S.ev,1);toast(S.ev,q.id,'b');return}
-let pw=0;S.cs.forEach(p=>{for(const k in p.b)if(k!=='v')pw+=p.b[k]});for(const k in S.tech)if(k!=='i')pw+=2*S.tech[k];
+let pw=0;S.cs.forEach(p=>{for(const k in p.b)if(k!=='v')pw+=p.b[k]});for(const k in S.tech)if(k!=='i'&&k!=='h')pw+=2*S.tech[k];
 const f=(.6+Math.random()*.8)*(1+.05*lvl),g={m:Math.round((40+pw*14)*f),c:Math.round((30+pw*10)*f),g:Math.round((12+pw*4)*f)};
 const p=S.cs[Math.floor(Math.random()*S.cs.length)],who=['Unos mercaderes','Unos peregrinos','Una nave a la deriva'][Math.floor(Math.random()*3)];
 for(const k in g)R(p)[k]+=g[k];
@@ -42,7 +42,7 @@ function advance(now){const dt=Math.min((now-S.t)/1000,172800);S.t=now;if(dt<=0)
 S.cs.forEach(p=>{if(p.nj)return;for(let i=0;i<3;i++){const k='mcg'[i],c=capK(p,k);if(R(p)[k]<c)R(p)[k]=Math.min(c,R(p)[k]+prod(p,i)*dt)}});
 if(S.cs.some(p=>p.nj)){const m=mem();for(let i=0;i<3;i++){const k='mcg'[i],c=m.reduce((a,p)=>a+capK(p,k),0);if(S.net[k]<c)S.net[k]=Math.min(c,S.net[k]+m.reduce((a,p)=>a+prod(p,i),0)*dt)}}
 let ch=false;
-S.cs.forEach(p=>{if(p.rr&&p.rr.end<=now){p.dm=p.dm.filter(x=>x!==p.rr.k);toast(`${B[p.rr.k].n} de ${U(p.id).name} reparado`,p.id,'b');delete p.rr;ch=true}
+S.cs.forEach(p=>{if(p.rr&&p.rr.end<=now){p.dm=p.dm.filter(x=>x!==p.rr.k);S.cnt.rp=(S.cnt.rp||0)+1;toast(`${B[p.rr.k].n} de ${U(p.id).name} reparado`,p.id,'b');delete p.rr;ch=true}
 while(p.q&&p.q.end<=now){const e=p.q.end;p.b[p.q.k]++;toast(`${B[p.q.k].n} de ${U(p.id).name} mejorado`,p.id,'b');delete p.q;startNext(p,e);ch=true}
 p.rb+=(rbT(p)-p.rb)*Math.min(1,dt/600);if(dt<=120&&!(S.sh>0)&&p.rb>50&&Math.random()<1-Math.exp(-dt*(p.rb-50)/45000)){attack(p);ch=true}});
 S.cs.forEach(p=>{if(p.rq&&p.rq.end<=now){S.tech[p.rq.k]++;toast('Investigación completada: '+T[p.rq.k].n,p.id,'i');delete p.rq;ch=true}while(p.sq&&p.sq.end<=now){const e=p.sq.end;S.fleet[p.sq.t]++;if(p.sq.t==='r')S.cnt.cor++;toast(SH[p.sq.t].n+(SH[p.sq.t].fm?' construida':' construido'),p.id,'f');delete p.sq;nextShip(p,e);ch=true}});
