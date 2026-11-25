@@ -11,7 +11,7 @@ if(!p.q)p.q={k,end:Date.now()+tB(k,L,p)*1000,c};else p.bq.push({k,L,c});change()
 function cancelQ(i){const p=P(SP),it=p.bq[i];if(!it)return;for(const x in it.c)R(p)[x]+=it.c[x];p.bq.splice(i,1);reval(p);change()}
 function cancelSQ(i){const p=P(SP),it=p.sqq[i];if(!it)return;for(const x in it.c)R(p)[x]+=it.c[x];p.sqq.splice(i,1);change()}
 function research(k){const p=P(SP),L=S.tech[k];if(p.rq||S.cs.some(q=>q.rq&&q.rq.k===k)||L>=T[k].max||lv(p,'l')<L+1||trq(k,L))return;const c=cost(T[k].b,T[k].f,L);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rq={k,end:Date.now()+tT(k,L,p)*1000,c};change()}
-function ship(t){const p=P(SP),d=SH[t];if(sUsed(p)>=slots()||lv(p,'s')<d.s||!afford(R(p),d.b))return;for(const x in d.b)R(p)[x]-=d.b[x];if(!p.sq)p.sq={t,end:Date.now()+tS(t,p)*1000,c:d.b};else p.sqq.push({t,c:d.b});change()}
+function ship(t){const p=P(SP),d=SH[t];if(!shUn(t)||sUsed(p)>=slots()||lv(p,'s')<d.s||!afford(R(p),d.b))return;for(const x in d.b)R(p)[x]-=d.b[x];if(!p.sq)p.sq={t,end:Date.now()+tS(t,p)*1000,c:d.b};else p.sqq.push({t,c:d.b});change()}
 function repair(k){const p=P(SP);if(p.rr||!p.dm.includes(k))return;const c=repC(p,k);if(!afford(R(p),c))return;for(const x in c)R(p)[x]-=c[x];p.rr={k,end:Date.now()+repT(p,k)*1000,c};change()}
 function accel(){const p=P(SP),r=p.rr;if(!r||r.acc)return;const c=repC(p,r.k);if(!afford(R(p),c))return;for(const x in c){R(p)[x]-=c[x];r.c[x]=(r.c[x]||0)+c[x]}r.acc=1;r.end=Date.now()+Math.max(0,r.end-Date.now())/2;change()}
 function cancelRR(){const p=P(SP);if(!p.rr)return;for(const x in p.rr.c)R(p)[x]+=p.rr.c[x];delete p.rr;change()}

@@ -29,8 +29,12 @@ e:{n:'Eficiencia',d:'+10% de producción en todas las minas.',b:{m:200,c:200,g:1
 b:{n:'Bodegas de carga',d:'Cada nivel aumenta un 25% la capacidad de carga de los corsarios (base 300 por nave), que limita el botín de los saqueos.',b:{m:250,c:200,g:100},f:1.9,max:5},
 a:{n:'Armamento',d:'Cada nivel aumenta un 10% el poder de ataque de las expediciones de saqueo y, con él, la probabilidad de éxito.',b:{m:300,c:200,g:150},f:2,max:5},
 f:{n:'Blindaje de campaña',d:'Cada nivel reduce un 10% los corsarios que se pierden en un saqueo fallido (del 50% al 20%). Nivel 1: 3 saqueos exitosos; nivel 2: 6; nivel 3: 9.',b:{m:300,c:250,g:150},f:2,max:3},
-r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3}};
+r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3},
+v:{n:'Ingeniería naval',d:'Desbloquea el Acorazado, la nave de saqueo más poderosa. Exige Bodegas de carga 5, Armamento 5, Blindaje de campaña 3 y Rutas de saqueo 3.',b:{m:600,c:500,g:300},f:2,max:1}};
 const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
 c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
-r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia.',b:{m:300,c:200,g:100},s:2}};
-const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40,v:50},ST={e:30,c:90,r:60},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));
+r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia. Poder 1, carga 300, pérdida base al fallar 50%.',b:{m:300,c:200,g:100},s:2,pw:1,cg:300,ls:50},
+f:{n:'Fragata',d:'Nave de combate pesada: más poder y menos pérdidas que el corsario, pero carga menos. Poder 2, carga 200, pérdida base al fallar 40%.',b:{m:600,c:400,g:200},s:2,pw:2,cg:200,ls:40,fm:1},
+k:{n:'Carguero',d:'Casi no combate, pero lleva mucho botín. Poder 0,5, carga 800, pérdida base al fallar 30%. Puede conseguirse como recompensa al saquear con éxito.',b:{m:500,c:350,g:150},s:2,pw:.5,cg:800,ls:30},
+a:{n:'Acorazado',d:'La nave de saqueo más poderosa. Poder 4, carga 600, pérdida base al fallar 20%.',b:{m:1400,c:950,g:500},s:4,pw:4,cg:600,ls:20}};
+const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40,v:50},ST={e:30,c:90,r:60,f:90,k:75,a:150},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));

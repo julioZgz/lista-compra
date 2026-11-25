@@ -18,4 +18,4 @@ function dsStep(d){DSM.n=Math.max(1,Math.min(S.fleet[DSM.t],DSM.n+d));dsUpd()}
 function dsSl(v){DSM.n=Math.max(1,Math.min(S.fleet[DSM.t],Math.floor(+v||1)));dsUpd()}
 function dsSend(){const t=DSM.t,n=DSM.n;DSM=null;closeM();dismantle(t,n)}
 function dismantle(t,n){n=Math.min(n|0,S.fleet[t]);if(n<1)return;const h=S.cs[0],c=dsRet(t,n);S.fleet[t]-=n;for(const k in c)R(h)[k]+=c[k];
-toast(`Desmantelad${n===1?'o':'os'} ${n} ${dsPl(t,n)}: +${c.m} de metal, ${c.c} de cristal y ${c.g} de gas en ${U(h.id).name}`);const y=window.scrollY;change();window.scrollTo(0,y)}
+toast(`Desmantelad${SH[t].fm?(n===1?'a':'as'):(n===1?'o':'os')} ${n} ${dsPl(t,n)}: +${c.m} de metal, ${c.c} de cristal y ${c.g} de gas en ${U(h.id).name}`);const y=window.scrollY;change();window.scrollTo(0,y)}

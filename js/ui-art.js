@@ -36,10 +36,14 @@ e:`<path d="M27 4L10 27h12l-3 17 19-24H26z"/>`,
 b:`<path d="M8 16l16-8 16 8v18l-16 8-16-8z"/><path d="M8 16l16 8 16-8M24 24v18"/>`,
 a:`<circle cx="24" cy="24" r="12"/><circle cx="24" cy="24" r="2"/><path d="M24 4v10M24 34v10M4 24h10M34 24h10"/>`,
 f:`<path d="M24 6l15 6v10c0 9-6 15-15 18C15 37 9 31 9 22V12z"/><path d="M24 16v14M17 23h14"/>`,
-r:`<circle cx="10" cy="36" r="4"/><circle cx="38" cy="12" r="4"/><path d="M14 36h12a6 6 0 000-12h-4a6 6 0 010-12h12"/>`};
+r:`<circle cx="10" cy="36" r="4"/><circle cx="38" cy="12" r="4"/><path d="M14 36h12a6 6 0 000-12h-4a6 6 0 010-12h12"/>`,
+v:`<path d="M24 6l16 10v16L24 42 8 32V16z"/><path d="M24 14v20M16 22h16"/>`};
 const SI={e:`<path d="M24 4l6 14v16l-6 6-6-6V18z"/><circle cx="24" cy="20" r="2.5"/><path d="M18 30l-8 6M30 30l8 6"/>`,
 c:`<rect x="14" y="10" width="20" height="26" rx="5"/><path d="M14 28l-8 10M34 28l8 10M20 36v6M28 36v6M18 18h12M18 24h12"/>`,
-r:`<path d="M24 6l16 34-16-8-16 8z"/><path d="M24 14v18"/>`};
+r:`<path d="M24 6l16 34-16-8-16 8z"/><path d="M24 14v18"/>`,
+f:`<path d="M24 4l8 14v14l-8 10-8-10V18z"/><path d="M16 28l-8 8M32 28l8 8M24 14v16"/>`,
+k:`<rect x="12" y="12" width="24" height="26" rx="3"/><path d="M12 22h24M20 38v4M28 38v4M18 6h12"/>`,
+a:`<path d="M24 4l10 12v18l-10 10-10-10V16z"/><path d="M8 22l6 4v10l-6-6zM40 22l-6 4v10l6-6zM24 12v22"/>`};
 let gid=0;
 function planet(id,sz,unk){
 if(unk)return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="22" fill="#111c31" stroke="#2a3b5e" stroke-width="2" stroke-dasharray="4 4"/><text x="32" y="41" text-anchor="middle" font-size="24" fill="#93a4c4" font-family="Chakra Petch,sans-serif">?</text></svg>`;

@@ -42,14 +42,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `slots()` · S.tech · p.q,p.bq,p.sq,p.sqq
 - `vb(p)` · p.b,p.q,p.bq
 - `need(u)`
-- `rdPct(n,u)` · S.tech · % de éxito de un saqueo (usa Armamento); `rdLost(n)` · S.tech · corsarios perdidos si falla (Blindaje)
-- `rdLoot(n,u)` · S.tech,S.rd · botín máximo, capacidad de carga y botín real (Bodegas, Rutas)
-- `trq(k,L)` · S.cnt · texto del requisito de saqueos de una tecnología ('' si se cumple)
+- `rdPct(fl,u)` · S.tech · % de éxito de un saqueo según el poder de la flota `fl` (usa Armamento); `rdLost(n,t)` · S.tech · pérdidas esperadas de `n` naves del modelo `t` si falla (Blindaje)
+- `rdLoot(fl,u)` · S.tech,S.rd · botín máximo (por nº de naves), capacidad de carga (suma por modelo) y botín real (Bodegas, Rutas)
+- `trq(k,L)` · S.cnt,S.tech · texto del requisito de una tecnología ('' si se cumple): saqueos (f, r) o niveles de mejoras de saqueo (v); `trN()` · S.tech · lo que falta para Ingeniería naval
+- `rdTy()` modelos de saqueo (los de `SH` con `pw`) · `rdN(fl)` nº de naves · `rdPw(fl)` poder · `rdCg(fl)` carga base · `mFl(m)` flota de una misión (`m.f`, o `{r:m.n}` si es antigua) · `mTx(m)` texto «N corsarios/naves»
+- `shUn(t)` · S.cnt,S.un,S.tech · ¿modelo desbloqueado? · `shUnT(t)` · texto de cómo se desbloquea, con progreso
 
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech · → norm,toast,rdPct,rdLoot,rdLost,cxPlan
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.cnt,S.cs,S.ev,S.tech,S.un · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
 - `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
@@ -73,7 +75,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `cancelQ(i)` · p.bq
 - `cancelSQ(i)` · p.sqq
 - `research(k)` · S.tech,S.cs · p.rq · → cost,afford,trq
-- `ship(t)` · p.sq,p.sqq · → afford,slots
+- `ship(t)` · p.sq,p.sqq · → afford,slots,shUn
 - `repair(k)` · p.rr,p.dm · → afford,repC
 - `accel()` · p.rr · → afford,repC
 - `cancelRR()` · p.rr
@@ -114,18 +116,19 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx · p.b · localStorage getItem:je_sp · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un · p.b · localStorage getItem:je_sp · → genRU,obOk
 - `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · → tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
 ## raids.js
-- `raid(to,n)` · S.tech,S.fleet,S.mis · → change,need
+- `raid(to,f)` · S.tech,S.fleet,S.mis · `f` = {modelo:cantidad}; la misión guarda `n` (total) y `f` · → change,need,rdN,rdTy
 - `MR`
-- `pctN(n,u)` · → rdPct
+- `pctN(fl,u)` · → rdPct
 - `mUpd()` · → rdLoot,pctN,fmt
-- `openRaid(id)` · S.fleet,S.tech · → fmtT
-- `mStep(d)` · S.fleet
-- `mSl(v)` · S.fleet
+- `openRaid(id)` · S.fleet,S.tech · una fila −/+ y un slider por modelo en casa · → fmtT,rdTy
+- `mStep(t,d)` · S.fleet · → mFix
+- `mSl(t,v)` · S.fleet · → mFix
+- `mFix(t)` · deja al menos 1 nave en el envío
 - `closeM()`
 - `sendRaid()`
 
@@ -194,9 +197,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `selPlanet(id)` · localStorage setItem:je_sp · → render
 
 ## ui-views.js
-- `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo
-- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.rd · → fmtT,planet,need,send,openRaid
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen
+- `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx
+- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.rd · → fmtT,planet,need,send,openRaid,rdTy,rdN
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view

@@ -31,6 +31,11 @@ const tot=()=>{const r={m:0,c:0,g:0};S.cs.forEach(p=>{if(!p.nj)for(const k in r)
 const slots=()=>1+(S.tech.q||0),used=p=>(p.q?1:0)+(p.bq||[]).length,sUsed=p=>(p.sq?1:0)+(p.sqq||[]).length;
 const vb=p=>{const b={...p.b};if(p.q)b[p.q.k]++;(p.bq||[]).forEach(it=>b[it.k]++);return b};
 const need=u=>Math.max(0,Math.ceil((u.dist-2)/2));
-const rdPct=(n,u)=>Math.max(.15,Math.min(.95,.5+.15*(n*(1+.1*(S.tech.a||0))-(Math.ceil(u.dist/2)+1)))),rdLost=n=>Math.ceil(n*(50-10*(S.tech.f||0))/100);
-const rdLoot=(n,u)=>{const f=Math.pow(.85+.03*(S.tech.r||0),S.rd['p'+u.id]||0),mx={},real={};let t=0;[0,1,2].forEach(i=>{const v=Math.round(n*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1));mx['mcg'[i]]=v;t+=v});const cp=Math.round(n*300*(1+.25*(S.tech.b||0))),q=Math.min(1,cp/Math.max(1,t));for(const k in mx)real[k]=Math.round(mx[k]*q);return{mx,real,t,cap:cp}};
-const trq=(k,L)=>k==='f'&&S.cnt.sac<3*(L+1)?`Requiere ${3*(L+1)} saqueos exitosos (llevas ${S.cnt.sac})`:k==='r'&&S.cnt.sacT.length<L+2?`Requiere haber saqueado con éxito ${L+2} planetas rivales distintos (llevas ${S.cnt.sacT.length})`:'';
+const rdPct=(fl,u)=>Math.max(.15,Math.min(.95,.5+.15*(rdPw(fl)*(1+.1*(S.tech.a||0))-(Math.ceil(u.dist/2)+1)))),rdLost=(n,t)=>n*SH[t].ls*(50-10*(S.tech.f||0))/5000;
+const rdLoot=(fl,u)=>{const n=rdN(fl),f=Math.pow(.85+.03*(S.tech.r||0),S.rd['p'+u.id]||0),mx={},real={};let t=0;[0,1,2].forEach(i=>{const v=Math.round(n*(40+25*u.dist)*u.rich[i]/6*f*(i===2?.5:1));mx['mcg'[i]]=v;t+=v});const cp=Math.round(rdCg(fl)*(1+.25*(S.tech.b||0))),q=Math.min(1,cp/Math.max(1,t));for(const k in mx)real[k]=Math.round(mx[k]*q);return{mx,real,t,cap:cp}};
+const trq=(k,L)=>k==='f'&&S.cnt.sac<3*(L+1)?`Requiere ${3*(L+1)} saqueos exitosos (llevas ${S.cnt.sac})`:k==='r'&&S.cnt.sacT.length<L+2?`Requiere haber saqueado con éxito ${L+2} planetas rivales distintos (llevas ${S.cnt.sacT.length})`:k==='v'&&trN()?'Requiere '+trN():'';
+const trN=()=>[['b',5],['a',5],['f',3],['r',3]].filter(([k,m])=>(S.tech[k]||0)<m).map(([k,m])=>`${T[k].n} ${m} (tienes ${S.tech[k]||0})`).join(', ');
+const rdTy=()=>Object.keys(SH).filter(t=>SH[t].pw),rdN=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0),0),rdPw=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0)*SH[t].pw,0),rdCg=fl=>rdTy().reduce((a,t)=>a+(fl[t]||0)*SH[t].cg,0);
+const mFl=m=>m.f||{r:m.n},mTx=m=>m.f&&Object.keys(m.f).some(t=>t!=='r')?m.n+' naves':m.n+' corsarios';
+const shUn=t=>t==='f'?S.cnt.sac>=10:t==='k'?!!(S.un&&S.un.k):t==='a'?(S.tech.v||0)>=1:true;
+const shUnT=t=>t==='f'?`Se desbloquea con 10 saqueos exitosos (llevas ${S.cnt.sac})`:t==='k'?'Se consigue como recompensa al saquear con éxito':t==='a'?'Se desbloquea investigando Ingeniería naval':'';
