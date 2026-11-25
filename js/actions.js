@@ -20,10 +20,10 @@ if(a&&p){const pool=R(p);for(const k in f.c)pool[k]=Math.max(0,pool[k]-f.c[k]);p
 function cancelB(){const p=P(SP);if(!p.q)return;for(const x in p.q.c)R(p)[x]+=p.q.c[x];delete p.q;startNext(p,Date.now());change()}
 function cancelR(){const h=P(SP);if(!h.rq)return;for(const x in h.rq.c)R(h)[x]+=h.rq.c[x];delete h.rq;change()}
 function cancelS(){const p=P(SP);if(!p.sq)return;for(const x in p.sq.c)R(p)[x]+=p.sq.c[x];delete p.sq;nextShip(p,Date.now());change()}
-function send(k,to){const u=U(to);if(S.tech.p<need(u)||S.mis.length>=1+S.tech.m)return;
+function send(k,to,res){const u=U(to);let rs=null;if(S.tech.p<need(u)||S.mis.length>=1+S.tech.m)return;
 if(k==='x'){if(S.fleet.e<1)return;S.fleet.e--}
-else{if(S.fleet.c<1||S.cs.length+S.mis.filter(m=>m.k==='c').length>=1+S.tech.c)return;S.fleet.c--}
-S.mis.push({k,to,end:Date.now()+Math.ceil(u.dist*20/(1+.25*S.tech.p))*1000});change()}
+else{if(S.fleet.c<1||S.cs.length+S.mis.filter(m=>m.k==='c').length>=1+S.tech.c)return;rs=cvTake(res);S.fleet.c--}
+const ms={k,to,end:Date.now()+Math.ceil(u.dist*20/(1+.25*S.tech.p))*1000};if(rs){ms.res=rs;ms.o=SP}S.mis.push(ms);change()}
 
 function refundOf(p){const r={m:0,c:0,g:0};for(const k in B)for(let l=0;l<p.b[k];l++){const c=cost(B[k].b,B[k].f,l);for(const x in c)r[x]+=Math.floor(c[x]/2)}for(const x in r)r[x]+=Math.floor(R(p)[x]);for(const q of[p.q,p.rq,p.sq,p.rr])if(q)for(const x in q.c)r[x]+=q.c[x];return r}
 function abandon(){const p=P(SP);if(!p||!p.id||S.mis.some(m=>m.to===p.id))return toast('No puedes abandonarla con misiones en curso hacia ella');const r=refundOf(p);

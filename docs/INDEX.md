@@ -44,15 +44,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `need(u)`
 - `rdPct(fl,u)` · S.tech · % de éxito de un saqueo según el poder de la flota `fl` (usa Armamento); `rdLost(n,t)` · S.tech · pérdidas esperadas de `n` naves del modelo `t` si falla (Blindaje)
 - `rdLoot(fl,u)` · S.tech,S.wr · botín máximo fijo del planeta (calculado con `RDN`=10 naves y su desgaste), capacidad de carga (suma por modelo) y botín real = el menor de ambos (Bodegas, Rutas) · `wrW(id,now)` · S.wr · desgaste actual en saqueos (baja lineal hasta 0 en 24 h) · `wrP(id)` · S.tech,S.wr · % de reducción del botín
-- `trq(k,L)` · S.cnt,S.tech · texto del requisito de una tecnología ('' si se cumple): saqueos (f, r) o niveles de mejoras de saqueo (v); `trN()` · S.tech · lo que falta para Ingeniería naval
+- `trq(k,L)` · S.cnt,S.tech · texto del requisito de una tecnología ('' si se cumple): saqueos (f, r), niveles de mejoras de saqueo (v) o de Colonización y Propulsión (i); `trN()` · S.tech · lo que falta para Ingeniería naval
 - `rdTy()` modelos de saqueo (los de `SH` con `pw`) · `rdN(fl)` nº de naves · `rdPw(fl)` poder · `rdCg(fl)` carga base · `mFl(m)` flota de una misión (`m.f`, o `{r:m.n}` si es antigua) · `mTx(m)` texto «N corsarios/naves»
 - `shUn(t)` · S.cnt,S.un,S.tech · ¿modelo desbloqueado? · `shUnT(t)` · texto de cómo se desbloquea, con progreso
+- `trC(L)` · S.tech · lo que falta de Colonización y Propulsión para el nivel L+1 de Convoyes ('' si se cumple; lo usa `trq`) · `cvMax()` · S.tech · carga máxima por recurso de un colonizador (0 / 500 / 1.500 / 3.000 según el nivel de Convoyes)
 
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan
-- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · → toast,histAdd
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R
+- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora la tecnología `i` (Convoyes) al sumar niveles · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
 - `advance(now)` · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
 - `genRU()` · → rng
@@ -83,7 +84,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `cancelB()` · p.q
 - `cancelR()`
 - `cancelS()` · p.sq
-- `send(k,to)` · S.tech,S.mis,S.fleet,S.cs · → need
+- `send(k,to,res)` · S.tech,S.mis,S.fleet,S.cs · `res` {m,c,g} opcional, solo al colonizar: se descuenta del planeta seleccionado y la misión guarda `res` y `o` (origen) · → need,cvTake
 - `refundOf(p)` · p.b,p.q,p.rq,p.sq,p.rr · → cost
 - `abandon()` · S.mis,S.cs · → toast,selPlanet
 - `useAcc(kind)` · S.acc
@@ -101,6 +102,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `dsSl(v)` · S.fleet · → dsUpd
 - `dsSend()` · → closeM,dismantle
 - `dismantle(t,n)` · S.fleet,S.cs · → dsRet,toast,change
+
+## convoy.js
+- `CVM`
+- `cvLim()` · S.tech,S.cs · máximo por recurso: carga máxima del nivel y lo disponible en el planeta seleccionado · → cvMax
+- `cvTake(res)` · S.cs · descuenta `res` (acotado) del planeta seleccionado y lo devuelve; null si no queda nada · → cvLim
+- `cvUpd()` · → fmt
+- `cvOpen(to)` · S.tech,S.cs · una fila −/+ y un slider por recurso, inicial 0 · → cvLim,cvMax,fmt,U,P
+- `cvStep(k,d)` · → cvLim,cvUpd
+- `cvSl(k,v)` · → cvLim,cvUpd
+- `cvSend()` · → closeM,send
 
 ## storage.js
 - `DB`
@@ -199,7 +210,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,send,openRaid,rdTy,rdN,wrP
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
