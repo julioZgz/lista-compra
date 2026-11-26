@@ -62,7 +62,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · → toast,P,R,U
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora las tecnologías `i` (Convoyes), `h` (Mantenimiento) y `s` (Espionaje) al sumar niveles de tecnología, y el edificio `v` (Estación de vigilancia) al sumar niveles de edificios · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
-- `advance(now)` · próxima visita a los 15-30 min (÷ (1 + 0,15 × niveles de Puerto comercial)) · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
+- `advance(now)` · próxima visita a los 15-30 min (÷ (1 + 0,15 × niveles de Puerto comercial)) · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun,rtRun
 - `genRU()` · → rng
 
 ## events.js
@@ -140,8 +140,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `spFix()` recorta la carga al cambiar origen o naves · `spUpd()` · → fmt,spLim
 - `spOpen(to)` · S.fleet,S.cs · modal con origen (botones), naves y una fila −/+ y un slider por recurso (−/+ de 10 en 10) · → spT,fmtT,fmt,U,P
 - `spPick(o)` · `spSet(k,v)` · `spStep(k,d)` · `spSl(k,v)`
-- `spSend()` · → closeM,sendSupply
-- `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» de la ficha de la nave `s` en Flota (deshabilitado «Pedir suministros · motivo» si la colonia está en red, falta nave, otra colonia o hueco de misión) · → spT,fmtT
+- `spRp(v)` · casilla «Repetir el envío automáticamente» del modal (`SUM.rp`)
+- `spSend()` · → closeM,sendSupply,rtAdd · si la casilla está marcada y el envío salió, crea la ruta recurrente con la carga real de la misión
+- `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» de la ficha de la nave `s` en Flota (deshabilitado «Pedir suministros · motivo» si la colonia está en red, falta nave, otra colonia o hueco de misión); debajo añade las rutas de la colonia con `rtEx` · → spT,fmtT,rtEx
+
+## routes.js
+- `rtOf(to)` · S.rt · ruta cuyo destino es `to` · `rtP(id)` · S.cs · colonia por id
+- `rtAdd(to,o,n,res)` · S.rt · crea o sustituye la ruta a `to` (una por destino), activa · → change
+- `rtRun(now)` · S.rt,S.mis,S.fleet,S.tech · la llama `advance` justo después del `filter` de `S.mis` (si se añadiera dentro, se perdería): cancela las rutas cuyo destino ya no existe o entró en la red o cuyo origen ya no existe; para cada ruta activa sin misión `k:'s'` suya en vuelo, la pausa con aviso si faltan naves, hueco de misión o carga completa en el origen, y si no, relanza (como `sendSupply`) · como mucho un relanzamiento por ruta y llamada · → rtP,spTake,spT,toast,R,U
+- `rtEx(p)` · S.rt · líneas «🔁 Ruta A → B · naves · carga · estado» con botones Pausar/Reanudar y Cancelar de las rutas cuyo origen o destino es `p` · → fmt,U
+- `rtTog(to)` · `rtDel(to)` · S.rt · pausan/reanudan y cancelan una ruta · → change
 
 ## recall.js
 - `RCM` (estado del modal: misión elegida por `to` y `end`; no se guarda)
@@ -175,7 +183,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un,S.wr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten y en `S.ark` las seis partes del Arca · S.ark · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.rt,S.un,S.wr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten y en `S.ark` las seis partes del Arca · S.ark · → genRU,obOk
 - `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · si `S` era nulo (login/arranque) reclama la sesión con `seClaim` · → seClaim,tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
