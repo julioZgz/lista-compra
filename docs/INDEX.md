@@ -42,6 +42,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `slots()` · S.tech · p.q,p.bq,p.sq,p.sqq
 - `vb(p)` · p.b,p.q,p.bq
 - `need(u)`
+- `avT(p,c)` · S.net · p.nj,p.r · segundos hasta poder pagar el coste `c` (máximo de los recursos que faltan; con red usa `R`, `capN`, `prodN`); 0 si ya se puede, -1 si `c` supera la capacidad del almacén, -2 si falta un recurso sin producción
 - `rdDef(u)` · poder del puesto rival, `⌈dist²/2⌉+2` (3, 4, 7, 10, 15, 20, 27, 34 para dist 1-8); lo usan `rdPct` y la etiqueta «Defensa» de Saqueos
 - `rdPct(fl,u)` · S.tech · % de éxito de un saqueo según el poder de la flota `fl` (usa Armamento) frente a `rdDef(u)`; `rdLost(n,t)` · S.tech · pérdidas esperadas de `n` naves del modelo `t` si falla (Blindaje)
 - `rdLoot(fl,u)` · S.tech,S.wr · botín máximo fijo del planeta (calculado con `RDN`=10 naves y su desgaste), capacidad de carga (suma por modelo) y botín real = el menor de ambos (Bodegas, Rutas) · `wrW(id,now)` · S.wr · desgaste actual en saqueos (baja lineal hasta 0 en 24 h) · `wrP(id)` · S.tech,S.wr · % de reducción del botín
@@ -268,7 +269,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
-- `tick(skip)` · S.sh · p.rb,p.st,p.b · → warnP,lv,afford,fmt,fmtT,rbT,defRed,advance,obReady
+- `tick(skip)` · S.sh · p.rb,p.st,p.b · → warnP,lv,afford,fmt,fmtT,rbT,defRed,advance,obReady,avSet
+- `avTx(s)` · texto corto de un tiempo (45 s, 3 min, 2 h) · `avSet(b,c,p)` · añade « · en X» / «Sube el Almacén» / «Sin producción» al botón deshabilitado por recursos (solo `build`, `research`, `ship`, sin hijos); guarda el texto original en `data-t0` y lo restaura al poder pagar · → avT,avTx
 
 ## main.js
 - (arranque) setInterval(()=>tick(),1000);

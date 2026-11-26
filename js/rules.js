@@ -44,3 +44,4 @@ const shUnT=t=>t==='f'?`Se desbloquea con 10 saqueos exitosos (llevas ${S.cnt.sa
 const trC=L=>['c','p'].filter(k=>(S.tech[k]||0)<2*(L+1)).map(k=>`${T[k].n} ${2*(L+1)} (tienes ${S.tech[k]||0})`).join(', '),cvMax=()=>[0,500,1500,3000][S.tech.i||0]||0;
 const SUC=500,SUR={tot:.1,par:.2,lo:[.3,.7],ship:.3},spT=to=>Math.ceil(Math.max(1,U(to).dist)*20/(1+.25*S.tech.p)*1.5),spTx=m=>' ('+m.n+(m.n>1?' naves':' nave')+')';
 const exDf=id=>1+(id*7)%5,exPc=(k,id,n)=>{const p=Math.max(.1,Math.min(.9,(k==='x'?.5+.08*(S.tech.s||0):.4+.08*(S.tech.c||0))-.08*(exDf(id)-1)));return Math.min(.95,1-Math.pow(1-p,n))},exTx=m=>m.n>1&&'xc'.includes(m.k)?' ('+m.n+')':'';
+const avT=(p,c)=>{let t=0;for(const k in c){const m=c[k]-R(p)[k];if(m<=0)continue;if(c[k]>capN(p,k))return -1;const q=prodN(p,IDX[k]);if(q<=0)return -2;t=Math.max(t,m/q)}return t};
