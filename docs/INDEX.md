@@ -280,3 +280,6 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - (arranque) setInterval(()=>{if(!document.hidden)seCheck()},20000);
 - (arranque) render();
 - (arranque) if(code)load(code);
+
+## test/smoke.html (herramienta aparte; no es un módulo ni entra en `MODS`)
+- (script inline) `run()` · abre `../index.html` en un iframe, anula `fetch`/`save`/`seClaim`/`seCheck`/`checkNew`/`autoBackup` dentro de él, inyecta el JSON elegido en `S` (`prep`, `norm` por colonia, `advance`) y recorre colonias × pestañas (`selPlanet`, `go`, `tick`) y los modales `openObj`/`histOpen` · localStorage: guarda, borra y restaura `je_code`,`je_v`,`je_sp` · informa de errores de JS, pestañas vacías y textos con undefined/NaN

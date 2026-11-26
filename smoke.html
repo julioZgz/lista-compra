@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smoke test · Colonias Estelares</title>
+<!-- Smoke test: abre ../index.html en un iframe, le inyecta una partida exportada (JSON),
+     recorre colonias × 7 pestañas + modales y avisa de errores de JS, pestañas vacías y textos con undefined/NaN.
+     Lee/escribe: solo el iframe y localStorage (je_code/je_v/je_sp, que restaura al acabar). No entra en MODS.
+     No debe: guardar en Firebase (red, save y sesión quedan anulados en el iframe). Requiere http(s), no file://. -->
+<style>
+body{font:14px/1.4 system-ui,sans-serif;background:#0b1220;color:#dbe4f3;max-width:780px;margin:20px auto;padding:0 12px}
+h1{font-size:18px}.b{background:#e8a86a;color:#111;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+#sum{font-size:16px;font-weight:700;margin:14px 0}.ok{color:#6fd48a}.ko{color:#ff7b7b}.wa{color:#e8c46a}
+table{border-collapse:collapse;width:100%;margin-top:8px}td,th{border-bottom:1px solid #26344f;padding:4px 6px;text-align:left;font-size:13px}
+iframe{width:420px;height:520px;border:1px solid #26344f;border-radius:8px;margin-top:12px;background:#000}
+code{background:#16213a;padding:1px 4px;border-radius:4px}
+</style>
+<h1>Smoke test · Colonias Estelares</h1>
+<p>1) Exporta tu partida (copia de seguridad, JSON). 2) Elígela aquí. El test no guarda nada en Firebase.</p>
+<p><input type="file" id="f" accept=".json,application/json"> <button class="b" id="go" disabled>Ejecutar</button></p>
+<div id="sum"></div><div id="out"></div><div id="fr"></div>
+<script>
+const TABS=[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['r','Saqueos'],['x','Comercio'],['q','Colas']];
+const LS=['je_code','je_v','je_sp'];let saved=null,txt='';
+const lsOut=()=>{if(saved)LS.forEach(k=>saved[k]==null?localStorage.removeItem(k):localStorage.setItem(k,saved[k]));saved=null};
+addEventListener('pagehide',lsOut);
+f.onchange=()=>{const r=new FileReader();r.onload=()=>{txt=r.result;go.disabled=false};r.readAsText(f.files[0])};
+go.onclick=()=>run().catch(e=>{sum.innerHTML='<span class=ko>Fallo del test: '+e.message+'</span>';lsOut()});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function run(){
+  go.disabled=true;out.innerHTML='';sum.textContent='Ejecutando…';
+  let o=JSON.parse(txt);if(o&&o.S&&!o.cs)o=o.S;
+  if(!o||!Array.isArray(o.cs))throw new Error('el JSON no parece una partida (falta «cs»)');
+  saved={};LS.forEach(k=>saved[k]=localStorage.getItem(k));LS.forEach(k=>localStorage.removeItem(k));
+  const fr=document.createElement('iframe');fr.src='../index.html?smoke='+Date.now();document.getElementById('fr').append(fr);
+  await new Promise(r=>fr.onload=r);await sleep(400);
+  const w=fr.contentWindow,ev=c=>w.eval(c),errs=[];
+  w.addEventListener('error',e=>errs.push(e.message));
+  w.addEventListener('unhandledrejection',e=>errs.push('promesa: '+(e.reason&&e.reason.message||e.reason)));
+  const ce=w.console.error;w.console.error=(...a)=>{errs.push('console.error: '+a.join(' '));ce.apply(w.console,a)};
+  w.fetch=()=>Promise.reject(new Error('red bloqueada en el test'));
+  for(const n of ['save','seClaim','seCheck','checkNew','autoBackup'])try{ev(n+'=function(){}')}catch(e){}
+  const rows=[];let bad=0;
+  const step=(name,fn)=>{const n0=errs.length;let st='ok',msg='';
+    try{const r=fn();if(r){st=r.st;msg=r.msg}}catch(e){st='ko';msg=e.message}
+    if(errs.length>n0){st='ko';msg+=' '+errs.slice(n0).join(' | ')}
+    if(st==='ko')bad++;rows.push([name,st,msg])};
+  ev('S='+JSON.stringify(JSON.stringify(o)).replace(/^/,'JSON.parse(')+')');
+  step('prep',()=>{ev('dirty=false');ev('prep()')});
+  step('norm',()=>ev('S.cs.forEach(p=>norm(p))'));
+  step('advance',()=>ev('advance(Date.now())'));
+  const n=ev('S.cs.length');
+  for(let i=0;i<n;i++){
+    const id=ev('S.cs['+i+'].id');
+    step('colonia '+id,()=>ev('selPlanet('+JSON.stringify(id)+')'));
+    for(const [k,nm] of TABS)step(nm+' (colonia '+id+')',()=>{
+      ev("go('"+k+"')");ev('tick()');
+      const t=w.document.body.innerText||'',bd=t.match(/\bundefined\b|\bNaN\b|\[object Object\]/);
+      if(t.trim().length<40)return{st:'ko',msg:'pestaña vacía'};
+      if(bd)return{st:'wa',msg:'contiene «'+bd[0]+'»'};
+    });
+  }
+  for(const [nm,c] of [['Objetivos','openObj()'],['Historial','histOpen()']])
+    step('modal '+nm,()=>{ev(c);const t=w.document.getElementById('md');ev('closeM()')});
+  fr.remove();lsOut();
+  const wa=rows.filter(r=>r[1]==='wa').length;
+  sum.innerHTML=bad?'<span class=ko>✗ '+bad+' fallo(s)</span>':'<span class=ok>✓ Todo bien</span>'+(wa?' <span class=wa>· '+wa+' aviso(s)</span>':'')+' <span style="font-weight:400">· '+n+' colonia(s) × 7 pestañas + 2 modales</span>';
+  const show=rows.filter(r=>r[1]!=='ok');
+  out.innerHTML=show.length?'<table><tr><th>Paso</th><th>Resultado</th></tr>'+show.map(r=>'<tr><td>'+r[0]+'</td><td class='+r[1]+'>'+(r[1]==='ko'?'✗ ':'⚠ ')+r[2]+'</td></tr>').join('')+'</table>':'';
+  go.disabled=false;
+}
+</script>
+</html>
