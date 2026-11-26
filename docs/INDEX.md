@@ -214,7 +214,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `tin(v)`
 - `tmax()` · → render
 - `tp()`
-- `trade()` · S.cnt · → toast,change
+- `trade()` · S.cnt · avisos separados: sin cantidad, sin materiales (con lo que hay en `R(p)`) y cantidad que no da ni 1 · → toast,change,fmt
 
 ## objectives.js
 - `lvM(k)` · S.cs · p.b
