@@ -174,7 +174,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un,S.wr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un,S.wr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten y en `S.ark` las seis partes del Arca · S.ark · → genRU,obOk
 - `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · si `S` era nulo (login/arranque) reclama la sesión con `seClaim` · → seClaim,tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
@@ -226,6 +226,15 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `histRes(x)` · S.hist · pone el resultado en la última entrada con `f`
 - `histOpen()` · S.hist · → $,U,fmtT
 
+## ark.js
+- `ARKIMG` (false hasta que existan las imágenes `img/arca/<parte><nivel>.webp`) · `AKC` coste por nivel (igual para todas las partes: 120k/90k/60k, 240k/180k/120k, 480k/360k/240k, 960k/720k/480k, 1,92M/1,44M/960k de metal/cristal/gas) · `AK` las 6 partes `{k,n,i,d,l}` (s Superestructura, m Motores, c Criogenia, h Hábitat, w Coraza, a Armamento; 5 niveles con nombre cada una; la parte i exige Superestructura i)
+- `arkLv(k)` · S.ark · `arkN()` niveles sumados · `arkPct()` % del Arca
+- `arkWhy(i)` · S.cs · motivo por el que no se puede subir la parte i ('' si se puede): nivel máximo, Hogar fuera de la red, Superestructura insuficiente, `capN` por debajo del coste («Sube el Almacén») o recursos de `R(Hogar)` insuficientes · → R,capN
+- `arkSvg()` dibujo provisional con una capa por parte (opacidad según nivel) · `arkImg()` capas `img/arca/` si `ARKIMG`, si no `arkSvg`
+- `arkBtn()` · S.ark · botón «🛸 El Arca · X %» (lo pone `view` al principio de Edificios) · `arkCard(x,i)` tarjeta de una parte
+- `arkOpen()` · S.ark,S.cs · ventana dedicada sobre `#md`: dibujo, progreso global, recursos de la red y una tarjeta por parte · → arkImg,arkCard,R,fmt
+- `arkBuy(k)` · S.ark · R(Hogar) · paga el coste del siguiente nivel, sube la parte, toast, `dirty`, reabre la ventana conservando el scroll y `render()` · → arkWhy,toast,arkOpen,render
+
 ## ui-art.js
 - `icon(p,c)`
 - `SPM`
@@ -266,7 +275,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `aR(a,r)` · antepone la acción al motivo de un botón deshabilitado («Encolar nivel 3 · Requiere Almacén 2»); '' si no hay motivo; helper declarado junto a `DW`
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
