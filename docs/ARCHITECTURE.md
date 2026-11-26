@@ -7,7 +7,7 @@ Los scripts se cargan en este orden desde la lista `MODS` de `index.html` (un `<
 
 | # | Módulo | Qué es | No debe |
 |---|--------|--------|---------|
-| 1 | util | helpers puros (`$`, `fmt`, `fmtT`, `afford`, `rng`) | depender de S |
+| 1 | util | helpers puros (`$`, `fmt`, `fmtT`, `afford`, `rng`, `semC`) | depender de S |
 | 2 | state | globales de sesión (`S SP V code dirty st err LOG`), `P U R mem` | lógica o HTML |
 | 3 | data | tablas: recursos, `B` edificios, `T` tecnologías, `SH` naves, tiempos | lógica de UI/guardado |
 | 4 | rules | fórmulas (coste, tiempo, producción, capacidad, rebelión, requisitos) | mutar S, DOM, toast |

@@ -13,7 +13,7 @@ S.mis.forEach(m=>{const u=U(m.to),oc=m.to>=100&&!S.rk.includes(m.to);a.push({e:m
 a.sort((x,y)=>x.e-y.e);
 return a.length?`<p class=st>En marcha en todos tus planetas: ${a.length}. Toca una para ir a ella.</p>`+a.map(x=>`<div class=card style="cursor:pointer" onclick="goTo(${x.pid===null?'null':x.pid},'${x.v}')"><div class=row><div class=pl><b style="font-size:20px">${x.i}</b><div><b>${x.t}</b><div class=st>${x.w}</div></div></div><span class=lv ${x.e>1e14?'':`data-end="${x.e}"`}>${x.e>1e14?'en cola':''}</span></div></div>`).join(''):'<p class=st>No hay nada en marcha.</p>'}
 function raidView(){let h=`<p class=st>${rdTy().filter(t=>t==='r'||S.fleet[t]>0).map(t=>SH[t].n+'s: '+S.fleet[t]).join(' · ')} · Misiones: ${S.mis.length}/${1+S.tech.m}</p>`;
-S.ru.forEach(u=>{const kn=S.rk.includes(u.id),bm=S.mis.find(m=>m.to===u.id),n=need(u),secs=Math.ceil(u.dist*20/(1+.25*S.tech.p)),wp=wrP(u.id),wc=wp<10?'#6fcf97':wp<30?'#f2c94c':'#ff8a8a';
+S.ru.forEach(u=>{const kn=S.rk.includes(u.id),bm=S.mis.find(m=>m.to===u.id),n=need(u),secs=Math.ceil(u.dist*20/(1+.25*S.tech.p)),wp=wrP(u.id),wc=semC(wp,10,30);
 const fr=S.mis.length>=1+S.tech.m?'Sin misiones libres (Flotas coordinadas)':S.tech.p<n?`Fuera de alcance: Propulsión ${n}`:'';let btn;
 if(bm)btn=`<button class=go disabled>${{x:'Explorando',r:'Saqueando'}[bm.k]} (<span data-end="${bm.end}"></span>)</button>`+rcEx(bm);
 else if(!kn){const off=fr||(S.fleet.e<1?'Necesitas un explorador':'');btn=`<button class=go ${off?'disabled':''} onclick="exOpen(${u.id})">${off?`Explorar · ${off}`:`Explorar (${fmtT(secs)})`}</button>`}

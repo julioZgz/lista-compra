@@ -8,7 +8,7 @@ S.mis.push({k:'r',to,n,f:fl,end:Date.now()+2*Math.ceil(u.dist*20/(1+.25*S.tech.p
 let MR=null;
 const pctN=(f,u)=>Math.round(100*rdPct(f,u));
 const mFix=t=>{if(rdN(MR.f)<1)MR.f[t]=1};
-function mUpd(){const u=U(MR.id),r=rdLoot(MR.f,u);$('#mp').textContent=pctN(MR.f,u)+'%';$('#mxm').textContent=fmt(r.t);$('#mxc').textContent=fmt(r.cap);$('#mxr').textContent=`${fmt(r.real.m)} metal · ${fmt(r.real.c)} cristal · ${fmt(r.real.g)} gas${r.cap<r.t?' (limitado por la carga)':''}`}
+function mUpd(){const u=U(MR.id),r=rdLoot(MR.f,u);const pc=pctN(MR.f,u);$('#mp').textContent=pc+'%';$('#mp').style.color=semC(pc,70,40);$('#mxm').textContent=fmt(r.t);$('#mxc').textContent=fmt(r.cap);$('#mxr').textContent=`${fmt(r.real.m)} metal · ${fmt(r.real.c)} cristal · ${fmt(r.real.g)} gas${r.cap<r.t?' (limitado por la carga)':''}`}
 function openRaid(id){const u=U(id),h={};rdTy().forEach(t=>{if(S.fleet[t]>0)h[t]=S.fleet[t]});const ts=Object.keys(h);if(!ts.length)return;MR={id,f:{...h}};
 qtyOpen({t:`Saquear ${u.name}`,i:`Defensa ${rdDef(u)} · ida y vuelta ${fmtT(2*Math.ceil(u.dist*20/(1+.25*S.tech.p)))}`,
 rows:ts.map(t=>({h:ts.length>1?`<div class=st style="margin-top:8px">${SH[t].n} · poder ${SH[t].pw} · carga ${SH[t].cg} · disponibles ${h[t]}</div>`:'',mn:ts.length>1?0:1,mx:()=>S.fleet[t],get:()=>MR.f[t],set:v=>{MR.f[t]=Math.max(0,Math.min(S.fleet[t],Math.floor(+v||0)));mFix(t)},fm:n=>n+' '+SH[t].n.toLowerCase()+'s'})),

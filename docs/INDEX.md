@@ -9,6 +9,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `fmt(n)`
 - `fmtT(s)`
 - `rng(a)`
+- `semC(v,g,y)` · color semántico (verde `#6fcf97` / amarillo `#f2c94c` / rojo `#ff8a8a`): con `g>y` más alto es mejor (≥g verde, ≥y amarillo), con `g<y` más bajo es mejor (<g verde, <y amarillo); lo usan `raidView` (desgaste) y `mUpd` (éxito)
 
 ## state.js
 - `S` · localStorage getItem:je_v,getItem:je_code
@@ -190,10 +191,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `raid(to,f)` · S.tech,S.fleet,S.mis · `f` = {modelo:cantidad}; la misión guarda `n` (total) y `f` · → change,need,rdN,rdTy
 - `MR`
 - `pctN(fl,u)` · → rdPct
-- `mUpd()` · → rdLoot,pctN,fmt
-- `openRaid(id)` · S.fleet,S.tech · una fila −/+ y un slider por modelo en casa · → fmtT,rdTy
-- `mStep(t,d)` · S.fleet · → mFix
-- `mSl(t,v)` · S.fleet · → mFix
+- `mUpd()` · → rdLoot,pctN,fmt,semC · pinta el % de éxito con `semC(pc,70,40)`
+- `openRaid(id)` · S.fleet,S.tech · modal sobre el componente `qtyOpen` (según la cabecera de raids.js; no revisado en ui-core): una fila −/+ y un slider por modelo en casa · → qtyOpen,fmtT,rdTy
 - `mFix(t)` · deja al menos 1 nave en el envío
 - `closeM()`
 - `sendRaid()`
@@ -276,7 +275,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `aR(a,r)` · antepone la acción al motivo de un botón deshabilitado («Encolar nivel 3 · Requiere Almacén 2»); '' si no hay motivo; helper declarado junto a `DW`
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
-- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef
+- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC
 - `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
