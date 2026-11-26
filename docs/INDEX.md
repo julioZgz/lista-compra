@@ -174,7 +174,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un,S.wr · p.b · localStorage getItem:je_sp · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.un,S.wr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten · → genRU,obOk
 - `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · si `S` era nulo (login/arranque) reclama la sesión con `seClaim` · → seClaim,tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
@@ -211,13 +211,13 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## objectives.js
 - `lvM(k)` · S.cs · p.b
-- `OB` · S.known,S.cs,S.tech,S.cnt · p.nj,p.rb
+- `OB` · S.known,S.cs,S.tech,S.cnt · p.nj,p.rb · 7 categorías; la última, Maestría (`mae`), tiene 6 niveles de fin de partida
 - `obOk(o)`
-- `rwd(i)`
-- `rwAmt(i)` · S.cs · → prod
+- `rwd(i,id)` · recompensa del nivel `i`; la categoría `mae` tiene tabla propia (60-180 min de producción, aceleradores y escudo)
+- `rwAmt(i,id)` · S.cs · → rwd,prod
 - `obReady()` · S.ob
 - `claim(id)` · S.ob,S.cs,S.acc,S.sh · → toast,render
-- `obCard(c)` · S.ob · → fmt
+- `obCard(c)` · S.ob · → fmt,rwd,rwAmt
 - `openObj()` · S.acc,S.sh · → fmtT,closeM
 
 ## history.js
