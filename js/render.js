@@ -10,7 +10,7 @@ a.innerHTML=`<div class=top><h1>📍 ${U(SP).name}</h1><div class=st><span id=st
 <div class=row style="min-height:30px;margin:2px 0"><div class=st>${p.nj?'🔗 Recursos de la red interplanetaria':''}</div><div onclick="openObj()" style="cursor:pointer;display:flex;align-items:center;gap:6px;flex:none"><span id=obn class=obn></span><span style="font-size:22px">🏅</span></div></div><div class=res>${[0,1,2].map(i=>`<div class=rs><span class="${'mcg'[i]}">${RN['mcg'[i]]}</span><strong id=rv${i}></strong><small id=rp${i}></small></div>`).join('')}</div><div class=st id=rbi style="margin:-6px 0 6px"></div></div>
 ${rfCard()}
 ${view(p)}
-<nav>${[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['r','Saqueos'],['x','Comercio'],['q','Colas']].filter(([k])=>tabVis(k)).map(([k,n])=>`<button class="${V===k?'on':''}" ${tabAct(k,p)?'':'disabled'} onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
+<nav>${[['b','Colonia'],['i','Laboratorio'],['f','Astillero'],['p','Puerto'],['e','Imperio']].filter(([k])=>tabVis(k)).map(([k,n])=>`<button class="${V===k?'on':''}" ${tabAct(k,p)?'':'disabled'} onclick="go('${k}')">${n}</button>`).join('')}</nav>`;const tb=document.querySelector('.tabs'),ta=document.querySelector('.tab.on');if(tb&&ta)tb.scrollLeft=ta.offsetLeft-tb.clientWidth/2+ta.offsetWidth/2;tick(true)}
 function tick(skip){if(!S)return;if(!skip&&advance(Date.now()))dirty=true,render();
 const p=P(SP),rp=p;
 const nb=$('#obn');if(nb)nb.textContent=obReady()?'¡Recompensa disponible!':'';

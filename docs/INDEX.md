@@ -12,7 +12,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `semC(v,g,y)` · color semántico (verde `#6fcf97` / amarillo `#f2c94c` / rojo `#ff8a8a`): con `g>y` más alto es mejor (≥g verde, ≥y amarillo), con `g<y` más bajo es mejor (<g verde, <y amarillo); lo usan `raidView` (desgaste) y `mUpd` (éxito)
 
 ## state.js
-- `S` · localStorage getItem:je_v,getItem:je_code
+- `S` · localStorage getItem:je_v,getItem:je_code · también `V` (pestaña: b Colonia · i Laboratorio · f Astillero · p Puerto · e Imperio), `SUBP`/`SUBE` (sub-pestaña de Puerto: c Colonización, s Saqueos, m Misiones; de Imperio: s Estadísticas, x Comercio, q Colas; no se guardan) y `TABMAP` (ids antiguos m,r,x,q → [pestaña, sub-pestaña]; lo usan state al leer `je_v` y `go`)
 - `P(id)` · S.cs,S.u,S.ru
 - `R(p)` · S.net,S.cs · p.nj,p.r
 - `LOG`
@@ -142,7 +142,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `spPick(o)` · `spSet(k,v)` · `spStep(k,d)` · `spSl(k,v)`
 - `spRp(v)` · casilla «Repetir el envío automáticamente» del modal (`SUM.rp`)
 - `spSend()` · → closeM,sendSupply,rtAdd · si la casilla está marcada y el envío salió, crea la ruta recurrente con la carga real de la misión
-- `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» de la ficha de la nave `s` en Flota (deshabilitado «Pedir suministros · motivo» si la colonia está en red, falta nave, otra colonia o hueco de misión); debajo añade las rutas de la colonia con `rtEx` · → spT,fmtT,rtEx
+- `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» (lo pinta `view` arriba en Colonia, si hay más de una colonia; en una colonia en red solo pinta las rutas con `rtEx`) (deshabilitado «Pedir suministros · motivo» si la colonia está en red, falta nave, otra colonia o hueco de misión); debajo añade las rutas de la colonia con `rtEx` · → spT,fmtT,rtEx
 
 ## routes.js
 - `rtOf(to)` · S.rt · ruta cuyo destino es `to` · `rtP(id)` · S.cs · colonia por id
@@ -155,7 +155,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `RCM` (estado del modal: misión elegida por `to` y `end`; no se guarda)
 - `rcFind(to,end)` · S.mis · misión de exploración, colonización o saqueo identificada por objetivo y hora de llegada (no por posición)
 - `rcT(m)` · S.tech · segundos totales de la misión (×2 en saqueos) · `rcEl(m)` · tiempo ya recorrido (con la Propulsión actual, acotado) · `rcOff(m)` · saqueo ya pasada la mitad (ya vuelve; no se puede cancelar) · `rcNm(m)` nombre del objetivo
-- `rcEx(m)` · S.mis · botón «Cancelar misión» de cada misión en Flota (deshabilitado «Cancelar misión · Ya está de vuelta» en saqueos pasada la mitad)
+- `rcEx(m)` · S.mis · botón «Cancelar misión» de cada misión en Puerto → Misiones en curso (y en Colonización y Saqueos) (deshabilitado «Cancelar misión · Ya está de vuelta» en saqueos pasada la mitad)
 - `rcOpen(to,end)` · S.mis · modal de confirmación con el tiempo de vuelta · → rcFind,rcOff,rcEl,fmtT,mTx,U,P
 - `rcSend()` · → closeM,recall
 - `recall(to,end)` · S.mis · sustituye la misión por una de vuelta `{k:'b',w,to,end,n?,f?,res?,o?}` que llega en el tiempo ya recorrido · → rcFind,rcOff,rcEl,toast,change
@@ -258,8 +258,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `orb(id)`
 
 ## ui-core.js
-- `tabVis(k)` · S.cs,S.tech · p.b
-- `tabAct(k,p)` · p.b
+- `tabVis(k)` · S.tech · solo condiciona m (Propulsión), r (saqueos), x (comercio) y q (laboratorio), que ahora son sub-pestañas; el resto, siempre visible
+- `tabAct(k,p)` · S.cs · p.b · i: la colonia tiene Laboratorio; f: tiene Astillero; p: alguna colonia tiene Astillero
 - `warn(p)` · p.rb,p.dm
 - `chips(c)` · → fmt
 - `chipsS(c)` · → fmt
@@ -277,14 +277,16 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `qc(t,e,f)` · S.acc · → cancelB,cancelR,cancelS,useAcc
 - `strip()` · S.mis,S.cs · p.q,p.rr,p.rq,p.sq
 - `goTo(pid,v)` · localStorage setItem:je_sp
-- `go(v)` · localStorage setItem:je_v · → render
+- `go(v)` · localStorage setItem:je_v · traduce ids antiguos con `TABMAP` (fija `SUBP`/`SUBE`) · → render
+- `subTabs(g,l,c)` · fila de sub-pestañas (`g` p/e, lista `[id,texto]`, actual `c`) · `subGo(g,k)` · cambia `SUBP`/`SUBE` y repinta · → render
 - `selPlanet(id)` · localStorage setItem:je_sp · → render
 
 ## ui-views.js
 - `aR(a,r)` · antepone la acción al motivo de un botón deshabilitado («Encolar nivel 3 · Requiere Almacén 2»); '' si no hay motivo; helper declarado junto a `DW`
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
+- `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · botón «Eventos recientes» y sub-pestañas Estadísticas (próximamente), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histOpen,rcEx
+- `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view

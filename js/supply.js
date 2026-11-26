@@ -1,4 +1,4 @@
-/* supply.js — Naves de suministros: botón en Flota (spEx) y modal para elegir origen, naves y carga hacia una colonia sin red (spOpen, spPick, spSet, spUpd, spSend, sobre qtyOpen de ui-core); spTake descuenta la carga del origen (o de la red si está conectado). La casilla «Repetir envío» crea una ruta recurrente (routes.js: rtAdd); spEx añade las rutas de la colonia (rtEx).
+/* supply.js — Naves de suministros: botón en Colonia (spEx, lo pinta view) y modal para elegir origen, naves y carga hacia una colonia sin red (spOpen, spPick, spSet, spUpd, spSend, sobre qtyOpen de ui-core); spTake descuenta la carga del origen (o de la red si está conectado). La casilla «Repetir envío» crea una ruta recurrente (routes.js: rtAdd); spEx añade las rutas de la colonia (rtEx; en colonias en red view llama solo a rtEx).
  * Lee: S.fleet.s y los recursos del origen (vía R). Escribe: esos recursos (solo en spTake). Estado propio, no se guarda: SUM (destino, origen, naves y carga).
  * NO debe: tocar colas ni guardado, ni definir fórmulas (SUC, SUR y spT están en rules; la llegada se resuelve en engine: supDone).
  */

@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Smoke test · Colonias Estelares</title>
 <!-- Smoke test: abre ../index.html en un iframe, le inyecta una partida exportada (JSON),
-     recorre colonias × 7 pestañas + modales y avisa de errores de JS, pestañas vacías y textos con undefined/NaN.
+     recorre colonias × 5 pestañas (9 vistas con sus sub-pestañas) + modales y avisa de errores de JS, pestañas vacías y textos con undefined/NaN.
      Lee/escribe: solo el iframe y localStorage (je_code/je_v/je_sp, que restaura al acabar). No entra en MODS.
      No debe: guardar en Firebase (red, save y sesión quedan anulados en el iframe). Requiere http(s), no file://. -->
 <style>
@@ -19,7 +19,7 @@ code{background:#16213a;padding:1px 4px;border-radius:4px}
 <p><input type="file" id="f" accept=".json,application/json"> <button class="b" id="go" disabled>Ejecutar</button></p>
 <div id="sum"></div><div id="out"></div><div id="fr"></div>
 <script>
-const TABS=[['b','Edificios'],['i','Investigar'],['f','Flota'],['m','Mapa'],['r','Saqueos'],['x','Comercio'],['q','Colas']];
+const TABS=[["go('b')",'Colonia'],["go('i')",'Laboratorio'],["go('f')",'Astillero'],["go('m')",'Puerto · Colonización'],["go('r')",'Puerto · Saqueos'],["go('p');subGo('p','m')",'Puerto · Misiones'],["go('e');subGo('e','s')",'Imperio · Estadísticas'],["go('x')",'Imperio · Comercio'],["go('q')",'Imperio · Colas']];
 const LS=['je_code','je_v','je_sp'];let saved=null,txt='';
 const lsOut=()=>{if(saved)LS.forEach(k=>saved[k]==null?localStorage.removeItem(k):localStorage.setItem(k,saved[k]));saved=null};
 addEventListener('pagehide',lsOut);
@@ -53,7 +53,7 @@ async function run(){
     const id=ev('S.cs['+i+'].id');
     step('colonia '+id,()=>ev('selPlanet('+JSON.stringify(id)+')'));
     for(const [k,nm] of TABS)step(nm+' (colonia '+id+')',()=>{
-      ev("go('"+k+"')");ev('tick()');
+      ev(k);ev('tick()');
       const t=w.document.body.innerText||'',bd=t.match(/\bundefined\b|\bNaN\b|\[object Object\]/);
       if(t.trim().length<40)return{st:'ko',msg:'pestaña vacía'};
       if(bd)return{st:'wa',msg:'contiene «'+bd[0]+'»'};
@@ -63,7 +63,7 @@ async function run(){
     step('modal '+nm,()=>{ev(c);const t=w.document.getElementById('md');ev('closeM()')});
   fr.remove();lsOut();
   const wa=rows.filter(r=>r[1]==='wa').length;
-  sum.innerHTML=bad?'<span class=ko>✗ '+bad+' fallo(s)</span>':'<span class=ok>✓ Todo bien</span>'+(wa?' <span class=wa>· '+wa+' aviso(s)</span>':'')+' <span style="font-weight:400">· '+n+' colonia(s) × 7 pestañas + 2 modales</span>';
+  sum.innerHTML=bad?'<span class=ko>✗ '+bad+' fallo(s)</span>':'<span class=ok>✓ Todo bien</span>'+(wa?' <span class=wa>· '+wa+' aviso(s)</span>':'')+' <span style="font-weight:400">· '+n+' colonia(s) × 9 vistas + 2 modales</span>';
   const show=rows.filter(r=>r[1]!=='ok');
   out.innerHTML=show.length?'<table><tr><th>Paso</th><th>Resultado</th></tr>'+show.map(r=>'<tr><td>'+r[0]+'</td><td class='+r[1]+'>'+(r[1]==='ko'?'✗ ':'⚠ ')+r[2]+'</td></tr>').join('')+'</table>':'';
   go.disabled=false;
