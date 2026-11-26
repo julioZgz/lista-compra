@@ -21,4 +21,4 @@ function spPick(o){SUM.o=o;spFix();qtyUpd()}
 function spSet(k,v){v=Math.floor(+v||0);if(k==='n'){SUM.n=Math.max(1,Math.min(S.fleet.s,v));spFix()}else SUM.r[k]=Math.max(0,Math.min(spLim(k),v))}
 function spSend(){const s=SUM;SUM=null;closeM();sendSupply(s.to,s.o,s.n,s.r)}
 function spEx(t){if(t!=='s')return'';const p=P(SP),off=S.cs.length<2?'Necesitas otra colonia':p.nj?'Esta colonia ya comparte recursos (red)':S.fleet.s<1?'Necesitas una nave de suministros':S.mis.length>=1+S.tech.m?'Sin misiones libres (Flotas coordinadas)':'';
-return `<button class=go style="margin-top:8px" ${off?'disabled':''} onclick="spOpen(${p.id})">${off||`Pedir suministros (${fmtT(spT(p.id))})`}</button>`}
+return `<button class=go style="margin-top:8px" ${off?'disabled':''} onclick="spOpen(${p.id})">${off?`Pedir suministros · ${off}`:`Pedir suministros (${fmtT(spT(p.id))})`}</button>`}

@@ -116,7 +116,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `dbWhy(p,k)` · p.b,p.q,p.bq,p.nj · motivo por el que no se puede bajar un nivel ('' si se puede): obra o cola del propio edificio, Hangar con la colonia en red, o requisito de otro edificio (incluidos los encolados) · → vb,RQ
 - `dbRet(p,k)` · p.b · 50 % del coste del nivel que se quita · → cost
 - `dbTx(c)` · → fmt
-- `dbEx(p,k)` · p.b · botón «Desmantelar nivel N» de la tarjeta (deshabilitado con el motivo; nada si el nivel es 0) · → dbWhy
+- `dbEx(p,k)` · p.b · botón «Desmantelar nivel N» de la tarjeta (deshabilitado: «Desmantelar nivel N · motivo»; nada si el nivel es 0) · → dbWhy
 - `dbOpen(k)` · p.b · modal de confirmación; con el Almacén avisa si la capacidad nueva queda por debajo de lo almacenado · → dbWhy,dbRet,dbTx,fmt,U,P,CM
 - `dbSend()` · → closeM,demolish
 - `demolish(k)` · p.b · R(p) · baja un nivel y suma el 50 % del coste a los recursos de la colonia · → dbWhy,dbRet,dbTx,toast,change
@@ -140,13 +140,13 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `spOpen(to)` · S.fleet,S.cs · modal con origen (botones), naves y una fila −/+ y un slider por recurso (−/+ de 10 en 10) · → spT,fmtT,fmt,U,P
 - `spPick(o)` · `spSet(k,v)` · `spStep(k,d)` · `spSl(k,v)`
 - `spSend()` · → closeM,sendSupply
-- `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» de la ficha de la nave `s` en Flota (deshabilitado con el motivo si la colonia está en red, falta nave, otra colonia o hueco de misión) · → spT,fmtT
+- `spEx(t)` · S.cs,S.fleet,S.mis · botón «Pedir suministros» de la ficha de la nave `s` en Flota (deshabilitado «Pedir suministros · motivo» si la colonia está en red, falta nave, otra colonia o hueco de misión) · → spT,fmtT
 
 ## recall.js
 - `RCM` (estado del modal: misión elegida por `to` y `end`; no se guarda)
 - `rcFind(to,end)` · S.mis · misión de exploración, colonización o saqueo identificada por objetivo y hora de llegada (no por posición)
 - `rcT(m)` · S.tech · segundos totales de la misión (×2 en saqueos) · `rcEl(m)` · tiempo ya recorrido (con la Propulsión actual, acotado) · `rcOff(m)` · saqueo ya pasada la mitad (ya vuelve; no se puede cancelar) · `rcNm(m)` nombre del objetivo
-- `rcEx(m)` · S.mis · botón «Cancelar misión» de cada misión en Flota (deshabilitado «Ya está de vuelta» en saqueos pasada la mitad)
+- `rcEx(m)` · S.mis · botón «Cancelar misión» de cada misión en Flota (deshabilitado «Cancelar misión · Ya está de vuelta» en saqueos pasada la mitad)
 - `rcOpen(to,end)` · S.mis · modal de confirmación con el tiempo de vuelta · → rcFind,rcOff,rcEl,fmtT,mTx,U,P
 - `rcSend()` · → closeM,recall
 - `recall(to,end)` · S.mis · sustituye la misión por una de vuelta `{k:'b',w,to,end,n?,f?,res?,o?}` que llega en el tiempo ya recorrido · → rcFind,rcOff,rcEl,toast,change

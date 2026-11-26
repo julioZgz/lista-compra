@@ -7,7 +7,7 @@ function dbWhy(p,k){const b=vb(p);if(p.q&&p.q.k===k||(p.bq||[]).some(i=>i.k===k)
 b[k]--;for(const j in B)if(j!==k&&b[j]>0){const m=RQ(p,j,b[j],b).find(s=>s.indexOf(B[k].n+' ')===0);if(m)return`Lo necesita ${B[j].n} ${b[j]} (${m})`}return''}
 const dbRet=(p,k)=>{const c=cost(B[k].b,B[k].f,p.b[k]-1),r={};for(const x in c)r[x]=Math.floor(c[x]*DBP);return r};
 const dbTx=c=>Object.entries(c).map(([x,v])=>fmt(v)+' '+RN[x].toLowerCase()).join(', ');
-function dbEx(p,k){if(!(p.b[k]>0))return'';const w=dbWhy(p,k);return`<button class=go style="margin-top:8px;background:#e8a86a" ${w?'disabled':''} onclick="dbOpen('${k}')">${w||'Desmantelar nivel '+p.b[k]}</button>`}
+function dbEx(p,k){if(!(p.b[k]>0))return'';const w=dbWhy(p,k);return`<button class=go style="margin-top:8px;background:#e8a86a" ${w?'disabled':''} onclick="dbOpen('${k}')">${'Desmantelar nivel '+p.b[k]+(w?' · '+w:'')}</button>`}
 function dbOpen(k){const p=P(SP);if(!p||!(p.b[k]>0)||dbWhy(p,k))return;DBM={k};const L=p.b[k],c=dbRet(p,k),m=$('#md');m.style.display='flex';
 const wa=k==='a'&&!p.nj&&Object.keys(CM).some(x=>R(p)[x]+(c[x]||0)>Math.round(CM[x]*Math.round(1000*Math.pow(1.7,L-1))))?`<p class=st style="color:#ff8a8a">La capacidad de metal baja a ${fmt(Math.round(1000*Math.pow(1.7,L-1)))} (cristal 75%, gas 50%): lo que tengas por encima puede perderse.</p>`:'';
 m.innerHTML=`<div class=card style="width:100%;max-width:420px"><b>Desmantelar un nivel de ${B[k].n.toLowerCase()}</b><p class=st>Nivel ${L} → ${L-1} · recuperas el ${Math.round(DBP*100)}% del coste de ese nivel en ${U(p.id).name}, al instante. No se puede deshacer.</p>

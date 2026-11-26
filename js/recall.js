@@ -9,7 +9,7 @@ const rcEl=(m,now=Date.now())=>Math.max(0,Math.min(rcT(m),rcT(m)-(m.end-now)/100
 const rcOff=m=>m.k==='r'&&2*rcEl(m)>rcT(m);
 const rcNm=m=>m.to>=100&&!S.rk.includes(m.to)?'un puesto rival':U(m.to).name;
 const RCK={x:'exploración',c:'colonización',r:'saqueo'};
-function rcEx(m){if(!'xcr'.includes(m.k))return'';const off=rcOff(m);return`<button class=go style="margin-top:8px;background:#e8a86a" ${off?'disabled':''} onclick="rcOpen(${m.to},${m.end})">${off?'Ya está de vuelta':'Cancelar misión'}</button>`}
+function rcEx(m){if(!'xcr'.includes(m.k))return'';const off=rcOff(m);return`<button class=go style="margin-top:8px;background:#e8a86a" ${off?'disabled':''} onclick="rcOpen(${m.to},${m.end})">${off?'Cancelar misión · Ya está de vuelta':'Cancelar misión'}</button>`}
 function rcOpen(to,end){const m=rcFind(to,end);if(!m)return;if(rcOff(m))return toast('Ya está de vuelta: no se puede cancelar');RCM={to,end};const o=m.res?P(m.o)||S.cs[0]:null,md=$('#md');md.style.display='flex';
 md.innerHTML=`<div class=card style="width:100%;max-width:420px"><b>Cancelar ${RCK[m.k]} de ${rcNm(m)}</b><p class=st>${m.k==='r'?'Vuelven tus '+mTx(m):m.k==='c'?(m.n>1?'Vuelven los '+m.n+' colonizadores':'Vuelve el colonizador'):(m.n>1?'Vuelven los '+m.n+' exploradores':'Vuelve el explorador')} en <b>${fmtT(Math.round(rcEl(m)))}</b> (el tiempo ya recorrido). No pierdes nada${m.k==='r'?' y el saqueo no se llega a hacer':''}.${o?` Los recursos del convoy vuelven a ${U(o.id).name}.`:''}</p>
 <div class=row style="gap:8px;margin-top:6px"><button class=go style="background:#26344f;color:var(--tx)" onclick="closeM()">Mantener</button><button class=go style="background:#e8a86a" onclick="rcSend()">Cancelar misión</button></div></div>`}
