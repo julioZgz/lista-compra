@@ -27,7 +27,7 @@ Los scripts se cargan en este orden desde la lista `MODS` de `index.html` (un `<
 | 18 | trade | comercio | colas, guardado |
 | 19 | objectives | objetivos y recompensas | colas, guardado |
 | 20 | history | historial de eventos recientes (`histAdd`, `histRes`, `histOpen`, `HLBL`): últimos 5 naturales, visitas, ataques rebeldes y contraataques rivales; modal desde Mapa | tocar colas, recursos, reglas, `S.ev`, guardado |
-| 21 | ark | El Arca: proyecto final por partes y niveles (Superestructura, Motores, Criogenia, Hábitat, Coraza, Armamento); botón en Edificios (`arkBtn`), ventana dedicada (`arkOpen`) y compra instantánea de niveles con los recursos de la red (`arkBuy`); estado en `S.ark`; por ahora sin efectos de juego | tocar colas, motor, guardado, fórmulas existentes |
+| 21 | ark | El Arca: proyecto final por partes y niveles (Superestructura, Motores, Criogenia, Hábitat, Coraza, Armamento); botón en Edificios (`arkBtn`), ventana dedicada (`arkOpen`) y compra instantánea de niveles con los recursos de la red (`arkBuy`) y repintado en rojo de lo que falta mientras está abierta (`arkLive`); estado en `S.ark`; por ahora sin efectos de juego | tocar colas, motor, guardado, fórmulas existentes |
 | 22 | ui-art | iconos SVG, sprite, planetas | mutar S |
 | 23 | ui-core | componentes (`card`, `toast`…), colas, navegación | fórmulas |
 | 24 | ui-views | contenido de cada pestaña (`view`, `queueView`, `raidView`) | mutar S directo |
