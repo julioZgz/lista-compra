@@ -10,5 +10,7 @@ function tt(k){TT=k;if(TF===k)TF=RS.find(x=>x!==k);render()}
 function tin(v){TA=Math.max(0,Math.floor(+v||0));tp()}
 function tmax(){TA=Math.floor(R(P(SP))[TF]);render()}
 function tp(){const e=$('#tp');if(e)e.textContent=`Recibes ${rate()} de ${RN[TT]}`}
-function trade(){const p=P(SP),g=rate();if(TA<1||g<1||R(p)[TF]<TA){toast('No tienes suficiente '+RN[TF]);return}
+function trade(){const p=P(SP),g=rate();if(TA<1){toast('Indica una cantidad');return}
+if(R(p)[TF]<TA){toast(`No tienes suficiente ${RN[TF]} (tienes ${fmt(Math.floor(R(p)[TF]))})`);return}
+if(g<1){toast(`Con esa cantidad no recibes ni 1 de ${RN[TT]}`);return}
 R(p)[TF]-=TA;R(p)[TT]+=g;S.cnt.trd++;toast(`Cambiados ${TA} de ${RN[TF]} por ${g} de ${RN[TT]}`);const y=window.scrollY;change();window.scrollTo(0,y)}
