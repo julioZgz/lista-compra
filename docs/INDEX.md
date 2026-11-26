@@ -229,10 +229,11 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ark.js
 - `ARKIMG` (false hasta que existan las imágenes `img/arca/<parte><nivel>.webp`) · `AKC` coste por nivel (igual para todas las partes: 120k/90k/60k, 240k/180k/120k, 480k/360k/240k, 960k/720k/480k, 1,92M/1,44M/960k de metal/cristal/gas) · `AK` las 6 partes `{k,n,i,d,l}` (s Superestructura, m Motores, c Criogenia, h Hábitat, w Coraza, a Armamento; 5 niveles con nombre cada una; la parte i exige Superestructura i)
 - `arkLv(k)` · S.ark · `arkN()` niveles sumados · `arkPct()` % del Arca
-- `arkWhy(i)` · S.cs · motivo por el que no se puede subir la parte i ('' si se puede): nivel máximo, Hogar fuera de la red, Superestructura insuficiente, `capN` por debajo del coste («Sube el Almacén») o recursos de `R(Hogar)` insuficientes · → R,capN
+- `arkReq()` · S.cs · edificios del Hogar exigidos para iniciar el Arca (Almacén, Hangar, Laboratorio, Centro de mando, Astillero): `[nombre, nivel, máximo]`, con el máximo de `maxL` · → maxL
+- `arkWhy(i)` · S.cs · motivo por el que no se puede subir la parte i ('' si se puede): nivel máximo, mientras `arkN()==0` los edificios del Hogar que falten según `arkReq` («Requiere Almacén 12 (tienes 9)»), Hogar fuera de la red, Superestructura insuficiente, `capN` por debajo del coste («Sube el Almacén») o recursos de `R(Hogar)` insuficientes · → R,capN
 - `arkSvg()` dibujo provisional con una capa por parte (opacidad según nivel) · `arkImg()` capas `img/arca/` si `ARKIMG`, si no `arkSvg`
 - `arkBtn()` · S.ark · botón «🛸 El Arca · X %» (lo pone `view` al principio de Edificios) · `arkCard(x,i)` tarjeta de una parte
-- `arkOpen()` · S.ark,S.cs · ventana dedicada sobre `#md`: dibujo, progreso global, recursos de la red y una tarjeta por parte · → arkImg,arkCard,R,fmt
+- `arkOpen()` · S.ark,S.cs · ventana dedicada sobre `#md`: dibujo, progreso global, recursos de la red, sin iniciar la línea «Para empezar, en el Hogar: …» y una tarjeta por parte · → arkImg,arkCard,arkReq,R,fmt
 - `arkBuy(k)` · S.ark · R(Hogar) · paga el coste del siguiente nivel, sube la parte, toast, `dirty`, reabre la ventana conservando el scroll y `render()` · → arkWhy,toast,arkOpen,render
 
 ## ui-art.js
