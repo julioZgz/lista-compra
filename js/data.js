@@ -17,7 +17,7 @@ p:{n:'Puerto comercial',d:'Cada nivel atrae un 15% más de visitas, aumenta un 5
 d:{n:'Fábrica de drones',d:'Cada nivel reduce un 8% los tiempos de este planeta y da +5% de producción.',b:{m:240,c:140,g:40},f:1.7,max:10},
 v:{n:'Estación de vigilancia',d:'Cada nivel aumenta un 8% la probabilidad de recibir preaviso de los eventos de este planeta: la tormenta solar dura la mitad y el meteorito no hace daño.',b:{m:180,c:160,g:50},f:1.6,max:10}};
 const T={p:{n:'Propulsión',d:'Más alcance (+2 de distancia) y viajes más rápidos.',b:{c:100,g:60},f:1.9,max:8},
-c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel.',b:{c:200,g:120},f:2,max:6},
+c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel y aumenta 8 puntos la probabilidad de éxito de cada colonizador (40% base, entre 10% y 90% según la dificultad del planeta).',b:{c:200,g:120},f:2,max:6},
 m:{n:'Flotas coordinadas',d:'Una misión simultánea más por nivel.',b:{c:250,g:150},f:2,max:6},
 n:{n:'Redes de transporte',d:'Permite conectar a una red de recursos compartidos los planetas que tengan Hangar de transporte.',b:{c:400,g:250},f:2,max:1},
 x:{n:'Tácticas comerciales',d:'Reduce 3 puntos por nivel la comisión de los mercaderes (del 20% al 5% en el nivel 5). El nivel 1 desbloquea la sección Comercio.',b:{c:200,g:100},f:1.8,max:5},
@@ -32,9 +32,10 @@ f:{n:'Blindaje de campaña',d:'Cada nivel reduce un 10% los corsarios que se pie
 r:{n:'Rutas de saqueo',d:'Los planetas saqueados repetidamente rinden menos botín (×0,85 por saqueo); cada nivel suaviza ese desgaste (×0,88 / ×0,91 / ×0,94). El desgaste se recupera del todo en 24 horas sin saquear. Exige haber saqueado con éxito 2, 3 y 4 planetas rivales distintos.',b:{m:250,c:300,g:120},f:2,max:3},
 v:{n:'Ingeniería naval',d:'Desbloquea el Acorazado, la nave de saqueo más poderosa. Exige Bodegas de carga 5, Armamento 5, Blindaje de campaña 3 y Rutas de saqueo 3.',b:{m:600,c:500,g:300},f:2,max:1},
 i:{n:'Convoyes de colonización',d:'Cada colonizador puede llevar recursos de su planeta de origen a la colonia nueva: hasta 500 / 1.500 / 3.000 de cada uno (niveles 1 / 2 / 3). Exige Colonización y Propulsión 2, 4 y 6.',b:{m:300,c:300,g:150},f:2,max:3},
-h:{n:'Mantenimiento estelar',d:'Cada nivel reduce un 15% el tiempo de reparación de los edificios dañados (−60% en el nivel 4). Exige Laboratorio 3 y reparaciones hechas: nivel 1, 3; nivel 2, 8; nivel 3, 15; nivel 4, 25.',b:{m:250,c:250,g:120},f:1.8,max:4}};
-const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta.',b:{m:150,c:100,g:40},s:1},
-c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado.',b:{m:600,c:400,g:250},s:2},
+h:{n:'Mantenimiento estelar',d:'Cada nivel reduce un 15% el tiempo de reparación de los edificios dañados (−60% en el nivel 4). Exige Laboratorio 3 y reparaciones hechas: nivel 1, 3; nivel 2, 8; nivel 3, 15; nivel 4, 25.',b:{m:250,c:250,g:120},f:1.8,max:4},
+s:{n:'Espionaje',d:'Cada nivel aumenta 8 puntos la probabilidad de éxito de cada explorador (50% base, entre 10% y 90% según la dificultad del planeta). Con varios exploradores la probabilidad total sube. Los exploradores se gastan siempre al llegar.',b:{c:150,g:100},f:1.9,max:5}};
+const SH={e:{n:'Explorador',d:'Revela los recursos de un planeta. Se gasta siempre al llegar, tenga éxito o no.',b:{m:150,c:100,g:40},s:1},
+c:{n:'Colonizador',d:'Funda una colonia en un planeta explorado. Se gasta siempre al llegar, tenga éxito o no.',b:{m:600,c:400,g:250},s:2},
 r:{n:'Corsario',d:'Nave de combate: saquea planetas explorados y trae botín a tu primera colonia. Poder 1, carga 300, pérdida base al fallar 50%.',b:{m:300,c:200,g:100},s:2,pw:1,cg:300,ls:50},
 f:{n:'Fragata',d:'Nave de combate pesada: más poder y menos pérdidas que el corsario, pero carga menos. Poder 2, carga 200, pérdida base al fallar 40%.',b:{m:600,c:400,g:200},s:2,pw:2,cg:200,ls:40,fm:1},
 k:{n:'Carguero',d:'Casi no combate, pero lleva mucho botín. Poder 0,5, carga 800, pérdida base al fallar 30%. Puede conseguirse como recompensa al saquear con éxito.',b:{m:500,c:350,g:150},s:2,pw:.5,cg:800,ls:30},

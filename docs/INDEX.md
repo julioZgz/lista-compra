@@ -51,12 +51,14 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `trC(L)` · S.tech · lo que falta de Colonización y Propulsión para el nivel L+1 de Convoyes ('' si se cumple; lo usa `trq`) · `cvMax()` · S.tech · carga máxima por recurso de un colonizador (0 / 500 / 1.500 / 3.000 según el nivel de Convoyes)
 - `SUC` carga por nave de suministros (500) · `SUR` riesgo en ruta `{tot .1, par .2, lo [.3,.7], ship .3}` · `spT(to)` · S.tech · segundos de viaje de un envío de suministros (como las demás misiones, con la distancia del destino, mínimo 1, ×1,5) · `spTx(m)` texto «(N naves)» de una misión de suministros
 
+- `exDf(id)` dificultad 1-5 de un planeta (sale de su id; no se guarda) · `exPc(k,id,n)` · S.tech · probabilidad de éxito de explorar (`x`: 50 % + 8 pts × Espionaje) o colonizar (`c`: 40 % + 8 pts × Colonización) con `n` unidades: por unidad, menos 8 pts por punto de dificultad sobre 1 (10 %-90 %); total 1−(1−p)ⁿ, máx. 95 % · `exTx(m)` texto « (N)» de una misión de exploración o colonización con varias unidades
+
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · exploración y colonización con `n`/`pr`: tirada con `m.pr`, se gastan todas las unidades (si falla una colonización, los recursos del convoy vuelven al origen; sin hueco de colonia vuelven los colonizadores; sin `n` = misión antigua, éxito seguro) · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone
 - `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · → toast,P,R,U
-- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora la tecnología `i` (Convoyes) al sumar niveles · → toast,histAdd
+- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora las tecnologías `i` (Convoyes), `h` (Mantenimiento) y `s` (Espionaje) al sumar niveles · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
 - `advance(now)` · próxima visita a los 15-30 min (÷ (1 + 0,15 × niveles de Puerto comercial)) · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun
 - `genRU()` · → rng
@@ -87,7 +89,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `cancelB()` · p.q
 - `cancelR()`
 - `cancelS()` · p.sq
-- `send(k,to,res)` · S.tech,S.mis,S.fleet,S.cs · `res` {m,c,g} opcional, solo al colonizar: se descuenta del planeta seleccionado y la misión guarda `res` y `o` (origen) · → need,cvTake
+- `send(k,to,res,n)` · S.tech,S.mis,S.fleet,S.cs · `res` {m,c,g} opcional, solo al colonizar: se descuenta del planeta seleccionado y la misión guarda `res` y `o` (origen) · `n` unidades (1 por defecto) se descuentan de golpe y la misión guarda `n` y `pr` (con `exPc`) · → need,cvTake,exPc
 - `sendSupply(to,o,n,res)` · S.fleet,S.mis · lanza una misión `{k:'s',to,end,n,res,o}`; valida destino sin red, origen distinto y hueco de misión; la carga se descuenta del origen con `spTake` y las naves de `S.fleet.s` · → spTake,spT,change
 - `refundOf(p)` · p.b,p.q,p.rq,p.sq,p.rr · → cost
 - `abandon()` · S.mis,S.cs · → toast,selPlanet
@@ -119,13 +121,14 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `demolish(k)` · p.b · R(p) · baja un nivel y suma el 50 % del coste a los recursos de la colonia · → dbWhy,dbRet,dbTx,toast,change
 
 ## convoy.js
-- `CVM`
+- `CVM` (estado del modal: destino, nº de colonizadores `n` y recursos; no se guarda)
 - `cvLim()` · S.tech,S.cs · máximo por recurso: carga máxima del nivel y lo disponible en el planeta seleccionado · → cvMax
 - `cvTake(res)` · S.cs · descuenta `res` (acotado) del planeta seleccionado y lo devuelve; null si no queda nada · → cvLim
-- `cvUpd()` · → fmt
-- `cvOpen(to)` · S.tech,S.cs · una fila −/+ y un slider por recurso, inicial 0 · → cvLim,cvMax,fmt,U,P
+- `cvUpd()` · → fmt,exLn
+- `cvOpen(to)` · S.tech,S.cs · cantidad de colonizadores (−/+ y slider, inicial 1) con % de éxito y, si hay Convoyes, una fila −/+ y un slider por recurso, inicial 0 · → cvLim,cvMax,exLn,fmt,U,P
 - `cvStep(k,d)` · → cvLim,cvUpd
 - `cvSl(k,v)` · → cvLim,cvUpd
+- `cvQ(d)` · `cvQs(v)` · cantidad de colonizadores
 - `cvSend()` · → closeM,send
 
 ## supply.js
@@ -146,7 +149,15 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `rcOpen(to,end)` · S.mis · modal de confirmación con el tiempo de vuelta · → rcFind,rcOff,rcEl,fmtT,mTx,U,P
 - `rcSend()` · → closeM,recall
 - `recall(to,end)` · S.mis · sustituye la misión por una de vuelta `{k:'b',w,to,end,n?,f?,res?,o?}` que llega en el tiempo ya recorrido · → rcFind,rcOff,rcEl,toast,change
-- `rcDone(m)` · S.fleet · llegada de una misión de vuelta: explorador, colonizador (y sus recursos a `R(origen)`) o flota de saqueo vuelven a `S.fleet` · → toast,mFl,rdTy,P,R,U
+- `rcDone(m)` · S.fleet · llegada de una misión de vuelta: `n` exploradores, `n` colonizadores (y sus recursos a `R(origen)`) o flota de saqueo vuelven a `S.fleet` · → toast,mFl,rdTy,P,R,U
+
+## expedition.js
+- `EXM` (estado del modal: destino y nº de exploradores; no se guarda)
+- `exLn(k,to,n)` · línea «Éxito X % · dificultad D/5» y gasto de unidades; la usa también convoy · → exPc,exDf
+- `exUpd()` · → exLn
+- `exOpen(to)` · S.fleet,S.tech · modal para elegir cuántos exploradores enviar (inicial 1) con % de éxito; avisa de que se gastan todos · → exUpd,exLn
+- `exStep(d)` · `exSl(v)` · S.fleet · → exUpd
+- `exSend()` · → closeM,send
 
 ## storage.js
 - `DB`
@@ -251,9 +262,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `selPlanet(id)` · localStorage setItem:je_sp · → render
 
 ## ui-views.js
-- `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx
-- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,send,openRaid,rdTy,rdN,wrP,rdDef
-- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,spEx,dbEx,rcEx
+- `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
+- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef
+- `view(p)` · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
