@@ -231,7 +231,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `HLBL`
 - `histAdd(k,pid,x,f)` · S.hist · guarda una entrada (`k` n/v/a/c) y deja las 5 últimas de ese tipo; `f` marca refugiados sin decidir
 - `histRes(x)` · S.hist · pone el resultado en la última entrada con `f`
-- `histOpen()` · S.hist · → $,U,fmtT
+- `histView()` · S.hist · HTML de la lista (5 últimos por tipo) para la sub-pestaña Eventos de Imperio · → U,fmtT · `histOpen()` · pone `SUBE='h'` y va a Imperio · → go
 
 ## ark.js
 - `ARKIMG` (false hasta que existan las imágenes `img/arca/<parte><nivel>.webp`) · `AKC` coste por nivel (igual para todas las partes: 120k/90k/60k, 240k/180k/120k, 480k/360k/240k, 960k/720k/480k, 1,92M/1,44M/960k de metal/cristal/gas) · `AK` las 6 partes `{k,n,i,d,l}` (s Superestructura, m Motores, c Criogenia, h Hábitat, w Coraza, a Armamento; 5 niveles con nombre cada una; la parte i exige Superestructura i)
@@ -285,8 +285,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `aR(a,r)` · antepone la acción al motivo de un botón deshabilitado («Encolar nivel 3 · Requiere Almacén 2»); '' si no hay motivo; helper declarado junto a `DW`
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC
-- `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · botón «Eventos recientes» y sub-pestañas Estadísticas (próximamente), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histOpen,rcEx
-- `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,histOpen,cvOpen,exOpen,spEx,dbEx,rcEx
+- `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · sub-pestañas Estadísticas (próximamente), Eventos (`histView`), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histView,rcEx
+- `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
 - `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
@@ -302,4 +302,4 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - (arranque) if(code)load(code);
 
 ## test/smoke.html (herramienta aparte; no es un módulo ni entra en `MODS`)
-- (script inline) `run()` · abre `../index.html` en un iframe, anula `fetch`/`save`/`seClaim`/`seCheck`/`checkNew`/`autoBackup` dentro de él, inyecta el JSON elegido en `S` (`prep`, `norm` por colonia, `advance`) y recorre colonias × pestañas (`selPlanet`, `go`, `tick`) y los modales `openObj`/`histOpen` · localStorage: guarda, borra y restaura `je_code`,`je_v`,`je_sp` · informa de errores de JS, pestañas vacías y textos con undefined/NaN
+- (script inline) `run()` · abre `../index.html` en un iframe, anula `fetch`/`save`/`seClaim`/`seCheck`/`checkNew`/`autoBackup` dentro de él, inyecta el JSON elegido en `S` (`prep`, `norm` por colonia, `advance`) y recorre colonias × pestañas (`selPlanet`, `go`, `tick`) y el modal `openObj` · localStorage: guarda, borra y restaura `je_code`,`je_v`,`je_sp` · informa de errores de JS, pestañas vacías y textos con undefined/NaN
