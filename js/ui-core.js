@@ -1,4 +1,4 @@
-/* ui-core.js — Componentes UI y navegación: card, chips, toast, showAway, colas (qBlock, bqList…), tabVis/tabAct, go/selPlanet/goTo.
+/* ui-core.js — Componentes UI y navegación: card, chips, toast, showAway, modal de cantidad (qtyOpen, qtyStep, qtySl, qtyUpd), colas (qBlock, bqList…), tabVis/tabAct, go/selPlanet/goTo.
  * localStorage: escribe je_v (go) y je_sp (selPlanet, goTo, toast).
  * NO debe: definir fórmulas; las acciones reales están en actions.
  * Movido tal cual de juego-espacial.html original; ver ARCHITECTURE.md. */
@@ -14,6 +14,15 @@ m.innerHTML=`<div class=card style="width:100%;max-width:420px;max-height:80vh;o
 function toast(t,pid,v){if(LOG){LOG.push(t);return}const e=$('#toast');e.innerHTML='<span style="flex:1"></span><b style="font-size:22px;padding:2px 8px">✕</b>';e.firstChild.textContent=t;e.style.display='flex';
 e.onclick=ev=>{e.style.display='none';if(ev.target.tagName==='B')return;if(pid!=null&&P(pid)){SP=pid;localStorage.setItem('je_sp',pid)}if(v)go(v);else render()};
 clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',6000)}
+/* Modal de cantidad común (raids, dismantle, convoy, supply, expedition). qtyOpen(c): c.t título · c.i texto de contexto · c.pre/c.post HTML antes/después de las filas · c.rows filas −/N/+ con range · c.gt/c.go texto y onclick de la acción (c.gid id, c.gm margen, c.sc con scroll) · c.u() refresca las líneas propias del módulo.
+ * Fila: {mn mínimo del range, mx() máximo, get(), set(v) (clampa y aplica), st paso de −/+ (1), fm(n) texto del número, h HTML antes, x HTML entre el −/+ y el range}. El estado vive en el módulo que abre la modal, nunca en S. */
+let QTY=null;
+function qtyOpen(c){QTY=c;const m=$('#md');m.style.display='flex';
+m.innerHTML=`<div class=card style="width:100%;max-width:420px${c.sc?';max-height:85vh;overflow:auto':''}"><b>${c.t}</b><p class=st>${c.i}</p>${c.pre||''}${c.rows.map((r,i)=>`${r.h||''}<div class=row style="margin:10px 0"><button class=tab onclick="qtyStep(${i},-1)">−</button><b style="font-size:22px"><span id=qn${i}></span></b><button class=tab onclick="qtyStep(${i},1)">+</button></div>${r.x||''}<input type=range id=qs${i} min=${r.mn} max=${r.mx()} step=1 oninput="qtySl(${i},this.value)">`).join('')}${c.post||''}
+<div class=row style="gap:8px;margin-top:${c.gm||6}px"><button class=go style="background:#26344f;color:var(--tx)" onclick="closeM()">Cancelar</button><button class=go${c.gid?` id=${c.gid}`:''} style="background:#e8a86a" onclick="${c.go}">${c.gt}</button></div></div>`;qtyUpd()}
+function qtyUpd(){QTY.rows.forEach((r,i)=>{const v=r.get(),e=$('#qs'+i);$('#qn'+i).textContent=r.fm?r.fm(v):v;e.max=r.mx();e.value=v});QTY.u&&QTY.u()}
+function qtyStep(i,d){const r=QTY.rows[i];r.set(r.get()+(r.st||1)*d);qtyUpd()}
+function qtySl(i,v){QTY.rows[i].set(+v);qtyUpd()}
 let QO=false;
 const qBlock=(h,sm,inner)=>`<div class=card style="cursor:pointer;margin-bottom:6px" onclick="qToggle()"><div class=row><b>${h}</b><span class=lv>${sm} <span id=qa>${QO?'▴':'▾'}</span></span></div></div><div id=qb style="display:${QO?'block':'none'}">${inner}</div>`;
 function qToggle(){QO=!QO;const b=$('#qb'),a=$('#qa');if(b)b.style.display=QO?'block':'none';if(a)a.textContent=QO?'▴':'▾'}
