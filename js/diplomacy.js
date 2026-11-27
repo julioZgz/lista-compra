@@ -19,4 +19,4 @@ function dpPay(id,n){const r=R(P(SP)),c=dpCost(U(id),n);if(n<1||n>cxN(id)||!affo
 for(const k in c)r[k]-=c[k];S.tr['p'+id]=(S.tr['p'+id]||0)+n;
 toast(`Tributo pagado a ${U(id).name}: ${n} ${n>1?'saqueos olvidados':'saqueo olvidado'}. Riesgo de contraataque ${a}% → ${Math.round(100*cxPct(cxN(id)+1))}%`);
 const y=window.scrollY;change();window.scrollTo(0,y)}
-function dpEx(id){const off=cxPct(cxN(id)+1)>0?'':'Sin riesgo de contraataque';return `<button class=go style="margin-top:8px;background:#26344f;color:var(--tx)" ${off?'disabled':''} onclick="dpOpen(${id})">${off?`Diplomacia · ${off}`:'Diplomacia'}</button>`}
+function dpEx(id){const off=cxPct(cxN(id)+1)>0?'':'Sin riesgo de contraataque';return `<button class=go style="margin-top:8px;${off?'background:#26344f;color:var(--tx)':'background:#6fcf97'}" ${off?'disabled':''} onclick="dpOpen(${id})">${off?`Diplomacia · ${off}`:'Diplomacia'}</button>`}
