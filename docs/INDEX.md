@@ -58,8 +58,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · exploración y colonización con `n`/`pr`: tirada con `m.pr`, se gastan todas las unidades (si falla una colonización, los recursos del convoy vuelven al origen; sin hueco de colonia vuelven los colonizadores; sin `n` = misión antigua, éxito seguro) · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone
-- `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · → toast,P,R,U
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · exploración y colonización con `n`/`pr`: tirada con `m.pr`, se gastan todas las unidades (si falla una colonización, los recursos del convoy vuelven al origen; sin hueco de colonia vuelven los colonizadores; sin `n` = misión antigua, éxito seguro) · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` (no se anotan en el historial) · saqueo (`r`), exploración y colonización (`x`) anotan su resultado con `histAdd` · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone,histAdd
+- `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · anota el resultado en el historial (`s`) · → toast,P,R,U,histAdd
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora las tecnologías `i` (Convoyes), `h` (Mantenimiento) y `s` (Espionaje) al sumar niveles de tecnología, y el edificio `v` (Estación de vigilancia) al sumar niveles de edificios · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
 - `advance(now)` · próxima visita a los 15-30 min (÷ (1 + 0,15 × niveles de Puerto comercial)) · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun,rtRun
@@ -229,9 +229,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## history.js
 - `HLBL`
-- `histAdd(k,pid,x,f)` · S.hist · guarda una entrada (`k` n/v/a/c) y deja las 5 últimas de ese tipo; `f` marca refugiados sin decidir
+- `histAdd(k,pid,x,f)` · S.hist · guarda una entrada (`k` n/v/a/c/r/x/s) y deja las 5 últimas de ese tipo; `f` marca refugiados sin decidir
 - `histRes(x)` · S.hist · pone el resultado en la última entrada con `f`
-- `histView()` · S.hist · HTML de la lista (5 últimos por tipo) para la sub-pestaña Eventos de Imperio · → U,fmtT · `histOpen()` · pone `SUBE='h'` y va a Imperio · → go
+- `histView()` · S.hist · HTML de la lista (5 últimos por tipo: n, v, a, c, r saqueos, x exploración y colonización, s suministros) para la sub-pestaña Eventos de Imperio · → U,fmtT · `histOpen()` · pone `SUBE='h'` y va a Imperio · → go
 
 ## stats.js
 - `SK` (['m','c','g']) · `statsTm` (intervalo de repintado; global de módulo, no va en S)
