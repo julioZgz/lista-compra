@@ -4,7 +4,7 @@
  */
 let DPM=null,DPT=0;
 function dpLack(k,v,p){const r=R(p),m=v-r[k],t=RN[k].toLowerCase();if(m<=0)return `<span class=${k}>${fmt(v)} ${t}</span>`;const q=prodN(p,IDX[k]);
-return `<span class=lack style="color:#ff8a8a">${fmt(v)} ${t} · ${v>capN(p,k)?'mejora el almacén':q>0?`faltan ${fmt(m)} (${fmtT(Math.ceil(m/q))})`:`faltan ${fmt(m)}`}</span>`}
+return `<span class=lack style="color:#ff8a8a">${fmt(v)} ${t} · ${v>capN(p,k)?'mejora el almacén':q>0?`en ${fmtT(Math.ceil(m/q))}`:'sin producción'}</span>`}
 function dpUpd(){if(!DPM||!$('#dpc')){clearInterval(DPT);DPT=0;return}
 const id=DPM.id,n=cxN(id),a=Math.round(100*cxPct(n+1)),b=Math.round(100*cxPct(n-DPM.n+1)),c=dpCost(U(id),DPM.n),p=P(SP);
 $('#dpa').textContent=a+'%';$('#dpa').style.color=semC(a,20,40);$('#dpb').textContent=b+'%';$('#dpb').style.color=semC(b,20,40);

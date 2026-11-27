@@ -211,7 +211,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## diplomacy.js
 - `DPM` (estado del modal: puesto y nº de saqueos a olvidar; no se guarda) · `DPT` (intervalo de repintado; se para solo al cerrar)
-- `dpLack(k,v,p)` · coste de un recurso como texto; con `lack` en rojo, «faltan X (tiempo)» o «mejora el almacén» si no se paga con `R(p)` · → fmt,fmtT,prodN,capN
+- `dpLack(k,v,p)` · coste de un recurso como texto; con `lack` en rojo, «en (tiempo)», «sin producción» o «mejora el almacén» si no se paga con `R(p)` · → fmt,fmtT,prodN,capN
 - `dpUpd()` · repinta «Riesgo ahora», «Con este tributo» (con `semC(x,20,40)`) y el coste; se llama cada segundo mientras el modal está abierto · → cxN,cxPct,dpCost,dpLack,semC
 - `dpOpen(id)` · S.rd,S.tr · modal sobre `qtyOpen`: una fila −/+ y un slider (1 al máximo que recuerda el puesto, inicial 1) · → cxN,qtyOpen,dpUpd
 - `dpSend()` · valida con `afford` (si faltan recursos, `toast` y la modal sigue abierta) · → closeM,dpPay
