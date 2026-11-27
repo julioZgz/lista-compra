@@ -12,7 +12,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `semC(v,g,y)` · color semántico (verde `#6fcf97` / amarillo `#f2c94c` / rojo `#ff8a8a`): con `g>y` más alto es mejor (≥g verde, ≥y amarillo), con `g<y` más bajo es mejor (<g verde, <y amarillo); lo usan `raidView` (desgaste) y `mUpd` (éxito)
 
 ## state.js
-- `S` · localStorage getItem:je_v,getItem:je_code · también `V` (pestaña: b Colonia · i Laboratorio · f Astillero · p Puerto · e Imperio), `SUBP`/`SUBE` (sub-pestaña de Puerto: c Colonización, s Saqueos, m Misiones; de Imperio: s Estadísticas, x Comercio, q Colas; no se guardan) y `TABMAP` (ids antiguos m,r,x,q → [pestaña, sub-pestaña]; lo usan state al leer `je_v` y `go`)
+- `S` · localStorage getItem:je_v,getItem:je_code · también `V` (pestaña: b Colonia · i Laboratorio · f Astillero · p Puerto · e Imperio), `SUBP`/`SUBE` (al arrancar: c y s; sub-pestaña de Puerto: c Colonización, s Saqueos, m Misiones; de Imperio: s Estadísticas, x Comercio, q Colas; no se guardan) y `TABMAP` (ids antiguos m,r,x,q → [pestaña, sub-pestaña]; lo usan state al leer `je_v` y `go`)
 - `P(id)` · S.cs,S.u,S.ru
 - `R(p)` · S.net,S.cs · p.nj,p.r
 - `LOG`
@@ -298,6 +298,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `qc(t,e,f)` · S.acc · → cancelB,cancelR,cancelS,useAcc
 - `strip()` · S.mis,S.cs · p.q,p.rr,p.rq,p.sq
 - `goTo(pid,v)` · localStorage setItem:je_sp
+- `tabGo(v)` · entrada desde el menú de secciones: pone `SUBP` (primera visible: c, s o m según `tabVis`) o `SUBE='s'` y llama a `go`; las redirecciones usan `go` directamente (respetan su sub-pestaña) · → tabVis,go
 - `go(v)` · localStorage setItem:je_v · traduce ids antiguos con `TABMAP` (fija `SUBP`/`SUBE`) · → render
 - `subTabs(g,l,c)` · fila de sub-pestañas (`g` p/e, lista `[id,texto]`, actual `c`) · `subGo(g,k)` · cambia `SUBP`/`SUBE` y repinta · → render
 - `selPlanet(id)` · localStorage setItem:je_sp · → render
@@ -310,7 +311,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
-- `render()` · S.cs · p.nj · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
+- `render()` · S.cs · p.nj · el menú de secciones llama a `tabGo` · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
 - `tick(skip)` · S.sh · p.rb,p.st,p.b · → warnP,lv,afford,fmt,fmtT,rbT,defRed,advance,obReady,avSet
 - `avTx(s)` · texto corto de un tiempo (45 s, 3 min, 2 h) · `avSet(b,c,p)` · añade « · en X» / «Sube el Almacén» / «Sin producción» al botón deshabilitado por recursos (solo `build`, `research`, `ship`, sin hijos); guarda el texto original en `data-t0` y lo restaura al poder pagar · → avT,avTx
 

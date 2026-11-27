@@ -1,4 +1,4 @@
-/* ui-core.js — Componentes UI y navegación: card, chips, toast, showAway, modal de cantidad (qtyOpen, qtyStep, qtySl, qtyUpd), colas (qBlock, bqList…), tabVis/tabAct, go/selPlanet/goTo, subTabs/subGo (sub-pestañas de Puerto e Imperio).
+/* ui-core.js — Componentes UI y navegación: card, chips, toast, showAway, modal de cantidad (qtyOpen, qtyStep, qtySl, qtyUpd), colas (qBlock, bqList…), tabVis/tabAct, go/tabGo/selPlanet/goTo, subTabs/subGo (sub-pestañas de Puerto e Imperio).
  * localStorage: escribe je_v (go) y je_sp (selPlanet, goTo, toast).
  * NO debe: definir fórmulas; las acciones reales están en actions.
  * Movido tal cual de juego-espacial.html original; ver ARCHITECTURE.md. */
@@ -37,6 +37,7 @@ S.cs.forEach(p=>{const n=U(p.id).name;p.q&&a.push([`${B[p.q.k].n} (${n})`,p.q.en
 return a.length?`<div class=ms>${a.map(([t,e])=>`<span class=ch>${t} · <span data-end="${e}"></span></span>`).join('')}</div>`:''}
 function goTo(pid,v){if(pid!=null&&P(pid)){SP=pid;localStorage.setItem('je_sp',pid)}go(v)}
 function go(v){QO=false;const x=TABMAP[v];if(x){v=x[0];if(v==='p')SUBP=x[1];else SUBE=x[1]}V=v;localStorage.setItem('je_v',v);render();window.scrollTo(0,0)}
+function tabGo(v){if(v==='p')SUBP=tabVis('m')?'c':tabVis('r')?'s':'m';else if(v==='e')SUBE='s';go(v)}
 function selPlanet(id){QO=false;SP=id;localStorage.setItem('je_sp',id);render()}
 const subTabs=(g,l,c)=>`<div class=tabs style="margin-bottom:8px">${l.map(([k,n])=>`<button class="tab ${k===c?'on':''}" onclick="subGo('${g}','${k}')">${n}</button>`).join('')}</div>`;
 function subGo(g,k){QO=false;if(g==='p')SUBP=k;else SUBE=k;render()}
