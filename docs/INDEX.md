@@ -240,8 +240,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `statsTr(n,f,b)` · fila de la tabla de producción por hora
 - `sn(x)` número con coma decimal
 - `statsFl(t)` · S.fleet,S.mis · total de naves del modelo `t`: las de casa más las que van en misión (`x` exploradores, `c` colonizadores, `r` saqueo con `mFl`, `s` suministros; en las de vuelta `k:'b'` se usa `w`; sin `n` cuenta 1) · → mFl
+- `statsTmp()` · S.acc,S.sh,S.cs · p.st · bloque «Mejoras temporales»: aceleradores, tiempo de escudo restante y una línea por colonia con tormenta solar activa (`p.st` > ahora) con su tiempo restante; solo lectura · → fmtT,U
 - `statsShips()` · S.fleet,S.mis,S.tech · tabla «Naves»: una fila por modelo con `shUn(t)` o alguna unidad; Total (y «N en vuelo»), Poder (`pw` × (1+0,1×Armamento)), Carga (`cg` × (1+0,25×Bodegas); colonizador con `cvMax()`, suministros `SUC`) y Pérdidas (`rdLost(1,t)`), solo el valor con mejoras (sin base); nota con el éxito por unidad (`exPc` con dificultad 1) · → statsFl,sn,fmt,shUn,rdLost,cvMax,exPc
-- `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Naves, almacén de la red y de cada colonia suelta · → statsShips,statsBox,statsTr,prod
+- `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Mejoras temporales, Naves, almacén de la red y de cada colonia suelta · → statsTmp,statsShips,statsBox,statsTr,prod
 - `statsLive()` · se repinta cada 2 s mientras `V==='e'` y `SUBE==='s'` y se para solo al salir · `statsView()` · devuelve `<div id=stb>` y arranca `statsLive`
 
 ## ark.js
