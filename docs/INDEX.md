@@ -233,6 +233,17 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `histRes(x)` · S.hist · pone el resultado en la última entrada con `f`
 - `histView()` · S.hist · HTML de la lista (5 últimos por tipo) para la sub-pestaña Eventos de Imperio · → U,fmtT · `histOpen()` · pone `SUBE='h'` y va a Imperio · → go
 
+## stats.js
+- `SK` (['m','c','g']) · `statsTm` (intervalo de repintado; global de módulo, no va en S)
+- `statsFill(h,cp,q)` · texto y color («Almacén lleno» / «Sin producción» / «Se llena en X») con `semC(min,120,30)` · → semC,fmtT
+- `statsBox(t,p,net)` · S.net · p.r · bloque de almacén (lleno/capacidad, barra, producción por hora) de la red (`net`=1) o de una colonia suelta · → statsFill,capN,capK,prodN,prod,fmt
+- `statsTr(n,f,b)` · fila de la tabla de producción por hora
+- `sn(x)` número con coma decimal · `sba(b,a)` «base → actual» (solo `a` si son iguales)
+- `statsFl(t)` · S.fleet,S.mis · total de naves del modelo `t`: las de casa más las que van en misión (`x` exploradores, `c` colonizadores, `r` saqueo con `mFl`, `s` suministros; en las de vuelta `k:'b'` se usa `w`; sin `n` cuenta 1) · → mFl
+- `statsShips()` · S.fleet,S.mis,S.tech · tabla «Naves»: una fila por modelo con `shUn(t)` o alguna unidad; Total (y «N en vuelo»), Poder (`pw` → ×(1+0,1×Armamento)), Carga (`cg` → ×(1+0,25×Bodegas); colonizador con `cvMax()`, suministros `SUC`) y Pérdidas (`ls` → `rdLost(1,t)`); nota con el éxito por unidad (`exPc` con dificultad 1) · → statsFl,sba,sn,fmt,shUn,rdLost,cvMax,exPc
+- `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Naves, almacén de la red y de cada colonia suelta · → statsShips,statsBox,statsTr,prod
+- `statsLive()` · se repinta cada 2 s mientras `V==='e'` y `SUBE==='s'` y se para solo al salir · `statsView()` · devuelve `<div id=stb>` y arranca `statsLive`
+
 ## ark.js
 - `ARKIMG` (false hasta que existan las imágenes `img/arca/<parte><nivel>.webp`) · `AKC` coste por nivel (igual para todas las partes: 120k/90k/60k, 240k/180k/120k, 480k/360k/240k, 960k/720k/480k, 1,92M/1,44M/960k de metal/cristal/gas) · `AK` las 6 partes `{k,n,i,d,l}` (s Superestructura, m Motores, c Criogenia, h Hábitat, w Coraza, a Armamento; 5 niveles con nombre cada una; la parte i exige Superestructura i)
 - `arkLv(k)` · S.ark · `arkN()` niveles sumados · `arkPct()` % del Arca
@@ -285,7 +296,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `aR(a,r)` · antepone la acción al motivo de un botón deshabilitado («Encolar nivel 3 · Requiere Almacén 2»); '' si no hay motivo; helper declarado junto a `DW`
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC
-- `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · sub-pestañas Estadísticas (próximamente), Eventos (`histView`), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histView,rcEx
+- `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · sub-pestañas Estadísticas (`statsView`), Eventos (`histView`), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histView,rcEx
 - `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
