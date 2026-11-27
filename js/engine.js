@@ -12,7 +12,7 @@ return{t:Date.now(),net:{m:0,c:0,g:0},u,tech:{p:0,c:0,e:0},fleet:{e:1,c:0},known
 cs:[{id:0,b:{m:1,c:1,g:0,a:0,s:0,l:0,u:0,d:0,h:0,o:0,k:0,w:0,t:0},r:{m:400,c:200,g:0}}]}}
 
 function done(m){if(m.k==='b')return rcDone(m);const u=U(m.to);
-if(m.k==='x'){const ok=m.n==null||Math.random()<m.pr;if(ok){const kl=m.to>=100?S.rk:S.known;if(!kl.includes(m.to))kl.push(m.to)}if(m.n==null)S.fleet.e++;const tx=ok?'Exploración de '+u.name+' completada':'Exploración fallida en '+u.name+': se pierde '+(m.n>1?m.n+' exploradores':'el explorador');histAdd('x',m.to,tx);toast(tx,null,m.to>=100?'r':'m')}
+if(m.k==='x'){const ok=m.n==null||Math.random()<m.pr;if(ok){const kl=m.to>=100?S.rk:S.known;if(!kl.includes(m.to))kl.push(m.to)}if(m.n==null)S.fleet.e++;const ev=ok&&m.n!=null?exEvt(m.to,m.end):'',tx=(ok?'Exploración de '+u.name+' completada':'Exploración fallida en '+u.name+': se pierde '+(m.n>1?m.n+' exploradores':'el explorador'))+(ev?'. '+ev:'');histAdd('x',m.to,tx);toast(tx,null,m.to>=100?'r':'m')}
 else if(m.k==='r'){const fl=mFl(m),ch=rdPct(fl,u),key='p'+m.to,cnt=S.rd[key]||0;
 if(Math.random()<ch){const l=rdLoot(fl,u).real;S.rd[key]=cnt+1;S.wr[key]={w:wrW(m.to,m.end)+1,t:m.end};cxPlan(m.to,cnt+1);S.cnt.sac++;if(!S.cnt.sacT.includes(m.to))S.cnt.sacT.push(m.to);const t=S.cs[0];for(const k in l)R(t)[k]+=l[k];rdTy().forEach(x=>{S.fleet[x]=(S.fleet[x]||0)+(fl[x]||0)});
 S.ev=`Saqueo en ${u.name}: botín de ${l.m} de metal, ${l.c} de cristal y ${l.g} de gas.`;if(!S.un.k&&Math.random()<.12){S.un.k=1;S.ev+=' ¡Recompensa del saqueo: has desbloqueado el Carguero!'}histAdd('r',m.to,S.ev);toast(S.ev,null,'r')}

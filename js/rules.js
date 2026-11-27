@@ -7,7 +7,7 @@ const tT=(k,L,p)=>Math.max(5,Math.round(90*Math.pow(1.8,L)/(1+.15*lv(p,'l'))/ef(
 const tS=(t,p)=>Math.max(5,Math.round(ST[t]/(1+.15*lv(p,'s'))/ef(p)));
 const cost=(b,f,L)=>Object.fromEntries(Object.entries(b).map(([k,v])=>[k,Math.round(v*Math.pow(f,L))]));
 const cap=p=>Math.round(1000*Math.pow(1.7,p.dm&&p.dm.includes('a')?Math.floor(p.b.a/2):p.b.a));
-const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*(L*Math.pow(1.15,L)*(1+.1*S.tech.e+.05*(lv(p,'u')+lv(p,'d')))+.2)*(p.st>Date.now()?.5:1)};
+const prod=(p,i)=>{const L=lv(p,'mcg'[i]);return K[i]*(L*Math.pow(1.15,L)*(1+.1*S.tech.e+.05*(lv(p,'u')+lv(p,'d')))+.2)*(p.st>Date.now()?.5:1)*(S.bo>Date.now()?1.25:1)};
 const lv=(p,k)=>p.dm&&p.dm.includes(k)?0:p.b[k];
 const rbT=p=>Math.max(0,Math.min(100,p.rb0+1.5*(p.b.m+p.b.c+p.b.g)-4*(lv(p,'o')+lv(p,'k'))));
 const defRed=p=>Math.min(.9,.04*lv(p,'w')+.06*lv(p,'t')),rebWin=p=>Math.max(.05,Math.min(.95,.5+(p.rb-50)/100+(p.b.m+p.b.c+p.b.g)/100))*(1-defRed(p));
@@ -44,4 +44,5 @@ const shUnT=t=>t==='f'?`Se desbloquea con 10 saqueos exitosos (llevas ${S.cnt.sa
 const trC=L=>['c','p'].filter(k=>(S.tech[k]||0)<2*(L+1)).map(k=>`${T[k].n} ${2*(L+1)} (tienes ${S.tech[k]||0})`).join(', '),cvMax=()=>[0,500,1500,3000][S.tech.i||0]||0;
 const SUC=500,SUR={tot:.1,par:.2,lo:[.3,.7],ship:.3},spT=to=>Math.ceil(Math.max(1,U(to).dist)*20/(1+.25*S.tech.p)*1.5),spTx=m=>' ('+m.n+(m.n>1?' naves':' nave')+')';
 const exDf=id=>1+(id*7)%5,exPc=(k,id,n)=>{const p=Math.max(.1,Math.min(.9,(k==='x'?.5+.08*(S.tech.s||0):.4+.08*(S.tech.c||0))-.08*(exDf(id)-1)));return Math.min(.95,1-Math.pow(1-p,n))},exTx=m=>m.n>1&&'xc'.includes(m.k)?' ('+m.n+')':'';
+const exEvP=()=>.1+.03*(S.tech.s||0);
 const avT=(p,c)=>{let t=0;for(const k in c){const m=c[k]-R(p)[k];if(m<=0)continue;if(c[k]>capN(p,k))return -1;const q=prodN(p,IDX[k]);if(q<=0)return -2;t=Math.max(t,m/q)}return t};

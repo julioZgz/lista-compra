@@ -30,7 +30,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `tS(t,p)`
 - `cost(b,f,L)`
 - `cap(p)` · p.dm,p.b
-- `prod(p,i)` · S.tech · p.st
+- `prod(p,i)` · S.tech,S.bo · p.st
 - `lv(p,k)` · p.dm,p.b
 - `rbT(p)` · p.rb0,p.b
 - `defRed(p)` · p.rb,p.b
@@ -53,12 +53,12 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `trC(L)` · S.tech · lo que falta de Colonización y Propulsión para el nivel L+1 de Convoyes ('' si se cumple; lo usa `trq`) · `cvMax()` · S.tech · carga máxima por recurso de un colonizador (0 / 500 / 1.500 / 3.000 según el nivel de Convoyes)
 - `SUC` carga por nave de suministros (500) · `SUR` riesgo en ruta `{tot .1, par .2, lo [.3,.7], ship .3}` · `spT(to)` · S.tech · segundos de viaje de un envío de suministros (como las demás misiones, con la distancia del destino, mínimo 1, ×1,5) · `spTx(m)` texto «(N naves)» de una misión de suministros
 
-- `exDf(id)` dificultad 1-5 de un planeta (sale de su id; no se guarda) · `exPc(k,id,n)` · S.tech · probabilidad de éxito de explorar (`x`: 50 % + 8 pts × Espionaje) o colonizar (`c`: 40 % + 8 pts × Colonización) con `n` unidades: por unidad, menos 8 pts por punto de dificultad sobre 1 (10 %-90 %); total 1−(1−p)ⁿ, máx. 95 % · `exTx(m)` texto « (N)» de una misión de exploración o colonización con varias unidades
+- `exDf(id)` dificultad 1-5 de un planeta (sale de su id; no se guarda) · `exPc(k,id,n)` · S.tech · probabilidad de éxito de explorar (`x`: 50 % + 8 pts × Espionaje) o colonizar (`c`: 40 % + 8 pts × Colonización) con `n` unidades: por unidad, menos 8 pts por punto de dificultad sobre 1 (10 %-90 %); total 1−(1−p)ⁿ, máx. 95 % · `exTx(m)` texto « (N)» de una misión de exploración o colonización con varias unidades · `exEvP()` · S.tech · probabilidad de evento al explorar con éxito: 10 % + 3 pts × Espionaje (10-25 %)
 
 ## engine.js
 - `sync()` · S.cs,S.tech,S.net · p.nj,p.b · → toast
 - `newGame()` · → rng
-- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · exploración y colonización con `n`/`pr`: tirada con `m.pr`, se gastan todas las unidades (si falla una colonización, los recursos del convoy vuelven al origen; sin hueco de colonia vuelven los colonizadores; sin `n` = misión antigua, éxito seguro) · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` (no se anotan en el historial) · saqueo (`r`), exploración y colonización (`x`) anotan su resultado con `histAdd` · → norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone,histAdd
+- `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · exploración y colonización con `n`/`pr`: tirada con `m.pr` (en exploración con éxito y `n`, `exEvt` puede añadir un evento: su texto va tras el de la exploración, en aviso e historial), se gastan todas las unidades (si falla una colonización, los recursos del convoy vuelven al origen; sin hueco de colonia vuelven los colonizadores; sin `n` = misión antigua, éxito seguro) · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` (no se anotan en el historial) · saqueo (`r`), exploración y colonización (`x`) anotan su resultado con `histAdd` · → exEvt,norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone,histAdd
 - `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · anota el resultado en el historial (`s`) · → toast,P,R,U,histAdd
 - `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora las tecnologías `i` (Convoyes), `h` (Mantenimiento) y `s` (Espionaje) al sumar niveles de tecnología, y el edificio `v` (Estación de vigilancia) al sumar niveles de edificios · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
@@ -68,6 +68,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## events.js
 - `warnP(p)` · p.b,p.dm
 - `evento(now,dt)` · S.ne,S.ev,S.cs,S.tech · p.st,p.dm,p.b · → warnP,prod,toast,histAdd
+- `exEvt(to,end)` · S.tech,S.bo,S.sh,S.cs · evento al explorar con éxito (si sale `exEvP`): piratas (25 % − 3 pts × Espionaje; roban (12 − 2 × Espionaje) % del Hogar, mín. 2 %; el escudo los anula), anomalía (reparto 40:35 con las ruinas; +25 % de producción en todas las colonias durante 20 + 5 × Espionaje min, `S.bo`) o ruinas (15 + 5 × Espionaje min de producción del Hogar); devuelve el texto ('' si no hay) · → exEvP,prod,R,U
 
 ## counter.js
 - `cxPlan(to,n)` · S.cx · con n≥3 saqueos con éxito, probabilidad 15 % +10 % por saqueo extra (máx. 60 %); programa el golpe a 5-10 min
@@ -163,7 +164,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## expedition.js
 - `EXM` (estado del modal: destino y nº de exploradores; no se guarda)
-- `exLn(k,to,n)` · línea «Éxito X % · dificultad D/5» y gasto de unidades; la usa también convoy · → exPc,exDf
+- `exLn(k,to,n)` · línea «Éxito X % · dificultad D/5» y gasto de unidades; la usa también convoy; al explorar añade «Si sale bien, X % de hallazgo» · → exPc,exDf,exEvP
 - `exUpd()` · → exLn
 - `exOpen(to)` · S.fleet,S.tech · modal para elegir cuántos exploradores enviar (inicial 1) con % de éxito; avisa de que se gastan todos · → exUpd,exLn
 - `exStep(d)` · `exSl(v)` · S.fleet · → exUpd
@@ -240,7 +241,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `statsTr(n,f,b)` · fila de la tabla de producción por hora
 - `sn(x)` número con coma decimal
 - `statsFl(t)` · S.fleet,S.mis · total de naves del modelo `t`: las de casa más las que van en misión (`x` exploradores, `c` colonizadores, `r` saqueo con `mFl`, `s` suministros; en las de vuelta `k:'b'` se usa `w`; sin `n` cuenta 1) · → mFl
-- `statsTmp()` · S.acc,S.sh,S.cs · p.st · bloque «Mejoras temporales»: aceleradores, tiempo de escudo restante y una línea por colonia con tormenta solar activa (`p.st` > ahora) con su tiempo restante; solo lectura · → fmtT,U
+- `statsTmp()` · S.acc,S.sh,S.bo,S.cs · p.st · bloque «Mejoras temporales»: aceleradores, tiempo de escudo restante, tiempo restante de la anomalía de exploración y una línea por colonia con tormenta solar activa (`p.st` > ahora) con su tiempo restante; solo lectura · → fmtT,U
 - `statsShips()` · S.fleet,S.mis,S.tech · tabla «Naves»: una fila por modelo con `shUn(t)` o alguna unidad; Total (y «N en vuelo»), Poder (`pw` × (1+0,1×Armamento)), Carga (`cg` × (1+0,25×Bodegas); colonizador con `cvMax()`, suministros `SUC`) y Pérdidas (`rdLost(1,t)`), solo el valor con mejoras (sin base); nota con el éxito por unidad (`exPc` con dificultad 1) · → statsFl,sn,fmt,shUn,rdLost,cvMax,exPc
 - `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Mejoras temporales, Naves, almacén de la red y de cada colonia suelta · → statsTmp,statsShips,statsBox,statsTr,prod
 - `statsLive()` · se repinta cada 2 s mientras `V==='e'` y `SUBE==='s'` y se para solo al salir · `statsView()` · devuelve `<div id=stb>` y arranca `statsLive`

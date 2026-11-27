@@ -3,7 +3,7 @@
  * NO debe: tocar colas ni guardado, ni definir fórmulas (exPc/exDf están en rules).
  */
 let EXM=null;
-const exLn=(k,to,n)=>{const u=k==='x'?'explorador':'colonizador';return`Éxito: <b>${Math.round(100*exPc(k,to,n))} %</b> · dificultad del planeta <b>${exDf(to)}/5</b><br>Se ${n>1?'gastan':'gasta'} <b>${n}</b> ${u}${n>1?'es':''} al llegar, salga bien o mal.`};
+const exLn=(k,to,n)=>{const u=k==='x'?'explorador':'colonizador';return`Éxito: <b>${Math.round(100*exPc(k,to,n))} %</b> · dificultad del planeta <b>${exDf(to)}/5</b><br>Se ${n>1?'gastan':'gasta'} <b>${n}</b> ${u}${n>1?'es':''} al llegar, salga bien o mal.${k==='x'?`<br>Si sale bien, <b>${Math.round(100*exEvP())} %</b> de hallazgo (anomalía, ruinas o piratas).`:''}`};
 function exUpd(){$('#exl').innerHTML=exLn('x',EXM.to,EXM.n)}
 function exOpen(to){const mx=S.fleet.e;if(mx<1)return;EXM={to,n:1};
 qtyOpen({t:`Explorar ${to>=100?'un puesto rival':'un planeta'}`,i:`Tienes ${mx} explorador${mx>1?'es':''}. Con varios, la probabilidad total sube (Espionaje ${S.tech.s||0}).`,
