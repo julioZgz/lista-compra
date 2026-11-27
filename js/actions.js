@@ -27,8 +27,9 @@ const ms={k,to,end:Date.now()+Math.ceil(u.dist*20/(1+.25*S.tech.p))*1000,n,pr:ex
 function sendSupply(to,o,n,res){const d=P(to),s=P(o);if(!d||!s||d.nj||to===o||S.mis.length>=1+S.tech.m)return;n=Math.min(n|0,S.fleet.s);if(n<1)return;const r=spTake(s,n,res);if(!r)return;S.fleet.s-=n;S.mis.push({k:'s',to,end:Date.now()+spT(to)*1000,n,res:r,o});change()}
 
 function refundOf(p){const r={m:0,c:0,g:0};for(const k in B)for(let l=0;l<p.b[k];l++){const c=cost(B[k].b,B[k].f,l);for(const x in c)r[x]+=Math.floor(c[x]/2)}for(const x in r)r[x]+=Math.floor(R(p)[x]);for(const q of[p.q,p.rq,p.sq,p.rr])if(q)for(const x in q.c)r[x]+=q.c[x];return r}
+function abOpen(){const p=P(SP);if(!p||!p.id||S.mis.some(m=>m.to===p.id))return toast('No puedes abandonarla con misiones en curso hacia ella');const r=refundOf(p);
+cfOpen({t:`Abandonar ${U(p.id).name}`,i:`Recibirás en ${U(S.cs[0].id).name}: <b>${fmt(r.m)}</b> de metal, <b>${fmt(r.c)}</b> de cristal y <b>${fmt(r.g)}</b> de gas (la mitad de lo invertido en edificios más lo almacenado). <b>No se puede deshacer.</b>`,g:'Abandonar',c:'#ff8a8a',f:abandon})}
 function abandon(){const p=P(SP);if(!p||!p.id||S.mis.some(m=>m.to===p.id))return toast('No puedes abandonarla con misiones en curso hacia ella');const r=refundOf(p);
-if(!confirm(`Abandonar ${U(p.id).name}? Recibirás en ${U(S.cs[0].id).name}: ${r.m} de metal, ${r.c} de cristal y ${r.g} de gas (la mitad de lo invertido en edificios más lo almacenado). No se puede deshacer.`))return;
 for(const x in r)R(S.cs[0])[x]+=r[x];S.cs=S.cs.filter(c=>c.id!==p.id);dirty=true;selPlanet(S.cs[0].id)}
 /* Guardado en Firebase */
 function useAcc(kind){const p=P(SP),q=p[kind];if(!q||S.acc<1)return;S.acc--;q.end=Date.now()+Math.max(0,q.end-Date.now())/2;change()}

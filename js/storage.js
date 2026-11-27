@@ -19,8 +19,8 @@ async function autoBackup(){const n=Date.now(),lk='je_bk_'+code;if(n-(+localStor
 try{const r=await fetch(`${DB}/juego_espacial_copias/${key()}/s${Math.floor(n/18e5)%3}.json`,{method:'PUT',body:JSON.stringify(S)});if(r.ok)localStorage.setItem(lk,n)}catch(e){}}
 function dlBackup(){advance(Date.now());const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S)],{type:'application/json'}));a.download=`colonias-${code}-${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
 function restState(d){if(!d||!d.cs||!d.u||!d.tech){toast('El archivo no es una partida válida');return}
-if(!confirm('Esto reemplazará tu partida actual por la copia. Antes se guardará una copia "previa" de la actual. ¿Continuar?'))return;
-closeM();try{fetch(`${DB}/juego_espacial_copias/${key()}/previa.json`,{method:'PUT',body:JSON.stringify(S)})}catch(e){}
+cfOpen({t:'Restaurar copia',i:'Esto reemplazará tu partida actual por la copia. Antes se guardará una copia "previa" de la actual.',g:'Restaurar',x:'openBk()',f:()=>restDo(d)})}
+function restDo(d){closeM();try{fetch(`${DB}/juego_espacial_copias/${key()}/previa.json`,{method:'PUT',body:JSON.stringify(S)})}catch(e){}
 S=JSON.parse(JSON.stringify(d));prep();S.t=Date.now();SP=S.cs.some(c=>c.id===SP)?SP:S.cs[0].id;dirty=true;ET=null;toast('Copia restaurada');save();render()}
 function restFile(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{restState(JSON.parse(r.result))}catch(e){toast('El archivo no es una partida válida')}};r.readAsText(f)}
 async function openBk(){const m=$('#md');m.style.display='flex';let lst='';
