@@ -1,7 +1,7 @@
 /* counter.js — Contraataques rivales: tras saquear mucho un puesto, este puede devolver el golpe; se resuelve solo con el escudo y las defensas (defRed).
- * Lee/Escribe: S.cx, S.rd, S.sh, S.cs, S.ev y recursos/edificios de la colonia atacada. Lo llama engine (cxPlan en done, cxRun en advance).
+ * Lee/Escribe: S.cx, S.rd, S.tr, S.sh, S.cs, S.ev y recursos/edificios de la colonia atacada. Lo llama engine (cxPlan en done, cxRun en advance).
  * NO debe: construir HTML, leer localStorage ni guardar. */
-function cxPlan(to,n){if(n<3||Math.random()>=Math.min(.6,.15+.1*(n-3)))return;S.cx.push({from:to,n,end:Date.now()+(300+Math.random()*300)*1000})}
+function cxPlan(to,n){n=cxE(n,to);if(Math.random()>=cxPct(n))return;S.cx.push({from:to,n,end:Date.now()+(300+Math.random()*300)*1000})}
 function cxHit(c){const p=S.cs[Math.floor(Math.random()*S.cs.length)],r=U(c.from).name,z=U(p.id).name;let x;
 if(S.sh>0)x=`Contraataque de ${r} contra ${z}: el escudo lo detiene.`;
 else if(Math.random()>=Math.min(.85,.3+.05*(c.n-2))*(1-defRed(p)))x=`Contraataque de ${r} contra ${z}: tus defensas lo repelen.`;

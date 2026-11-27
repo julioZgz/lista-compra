@@ -53,6 +53,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `trC(L)` · S.tech · lo que falta de Colonización y Propulsión para el nivel L+1 de Convoyes ('' si se cumple; lo usa `trq`) · `cvMax()` · S.tech · carga máxima por recurso de un colonizador (0 / 500 / 1.500 / 3.000 según el nivel de Convoyes)
 - `SUC` carga por nave de suministros (500) · `SUR` riesgo en ruta `{tot .1, par .2, lo [.3,.7], ship .3}` · `spT(to)` · S.tech · segundos de viaje de un envío de suministros (como las demás misiones, con la distancia del destino, mínimo 1, ×1,5) · `spTx(m)` texto «(N naves)» de una misión de suministros
 
+- `cxE(n,id)` · S.tr · contador de saqueos efectivo: `n` menos los olvidados por tributo (mín. 0) · `cxN(id)` · S.rd,S.tr · saqueos que «recuerda» el puesto `id` · `cxPct(n)` probabilidad de que un saqueo con éxito programe un contraataque con `n` saqueos efectivos (0 con n<3; 15 % + 10 % por saqueo extra, máx. 60 %); el riesgo mostrado antes de saquear es `cxPct(cxN(id)+1)` · `dpC(u)` coste de un saqueo olvidado (50 % del botín máximo sin desgaste, con `RDN`) · `dpCost(u,n)` coste de `n`
+
 - `exDf(id)` dificultad 1-5 de un planeta (sale de su id; no se guarda) · `exPc(k,id,n)` · S.tech · probabilidad de éxito de explorar (`x`: 50 % + 8 pts × Espionaje) o colonizar (`c`: 40 % + 8 pts × Colonización) con `n` unidades: por unidad, menos 8 pts por punto de dificultad sobre 1 (10 %-90 %); total 1−(1−p)ⁿ, máx. 95 % · `exTx(m)` texto « (N)» de una misión de exploración o colonización con varias unidades · `exEvP()` · S.tech · probabilidad de evento al explorar con éxito: 10 % + 3 pts × Espionaje (10-25 %)
 
 ## engine.js
@@ -71,7 +73,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `exEvt(to,end)` · S.tech,S.bo,S.sh,S.cs · evento al explorar con éxito (si sale `exEvP`): piratas (25 % − 3 pts × Espionaje; roban (12 − 2 × Espionaje) % del Hogar, mín. 2 %; el escudo los anula), anomalía (reparto 40:35 con las ruinas; +25 % de producción en todas las colonias durante 20 + 5 × Espionaje min, `S.bo`) o ruinas (15 + 5 × Espionaje min de producción del Hogar); devuelve el texto ('' si no hay) · → exEvP,prod,R,U
 
 ## counter.js
-- `cxPlan(to,n)` · S.cx · con n≥3 saqueos con éxito, probabilidad 15 % +10 % por saqueo extra (máx. 60 %); programa el golpe a 5-10 min
+- `cxPlan(to,n)` · S.cx,S.tr · resta los saqueos olvidados (`cxE`) y, con n efectivo ≥3, probabilidad `cxPct(n)` (15 % +10 % por saqueo extra, máx. 60 %); programa el golpe a 5-10 min con el n efectivo · → cxE,cxPct
 - `cxHit(c)` · S.cx,S.sh,S.cs,S.ev · p.dm · resuelve: escudo → nada; si no, 30 % +5 % por saqueo sobre 2 (máx. 85 %) × (1−defRed); roba 20 % y daña un edificio · → defRed,histAdd,toast
 - `cxRun(now,dt)` · S.cx · lanza los pendientes; si dt>120 (ausente) los aplaza 2 min
 
@@ -184,7 +186,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `restFile(inp)` · → toast
 - `openBk()` · Firebase · → fmtT,closeM
 - `setSt()`
-- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.rt,S.un,S.wr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten y en `S.ark` las seis partes del Arca · S.ark · → genRU,obOk
+- `prep()` · S.mis,S.known,S.fleet,S.rd,S.ru,S.rk,S.tech,S.cs,S.net,S.rq,S.sq,S.nv,S.cnt,S.acc,S.sh,S.ob,S.ne,S.hist,S.cx,S.rt,S.un,S.wr,S.tr · p.b · localStorage getItem:je_sp · pone a 0 en `S.ob` las categorías de `OB` que falten y en `S.ark` las seis partes del Arca · S.ark · → genRU,obOk
 - `load(c)` · S.t · Firebase (guarda el ETag en ET); localStorage setItem:je_code · si `S` era nulo (login/arranque) reclama la sesión con `seClaim` · → seClaim,tot,showAway,newGame,advance,render
 - `logout()` · localStorage removeItem:je_code · → render
 
@@ -205,6 +207,15 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `mFix(t)` · deja al menos 1 nave en el envío
 - `closeM()`
 - `sendRaid()`
+
+## diplomacy.js
+- `DPM` (estado del modal: puesto y nº de saqueos a olvidar; no se guarda) · `DPT` (intervalo de repintado; se para solo al cerrar)
+- `dpLack(k,v,p)` · coste de un recurso como texto; con `lack` en rojo, «faltan X (tiempo)» o «mejora el almacén» si no se paga con `R(p)` · → fmt,fmtT,prodN,capN
+- `dpUpd()` · repinta «Riesgo ahora», «Con este tributo» (con `semC(x,20,40)`) y el coste; se llama cada segundo mientras el modal está abierto · → cxN,cxPct,dpCost,dpLack,semC
+- `dpOpen(id)` · S.rd,S.tr · modal sobre `qtyOpen`: una fila −/+ y un slider (1 al máximo que recuerda el puesto, inicial 1) · → cxN,qtyOpen,dpUpd
+- `dpSend()` · valida con `afford` (si faltan recursos, `toast` y la modal sigue abierta) · → closeM,dpPay
+- `dpPay(id,n)` · S.tr · R(p) · descuenta el coste de `R(P(SP))`, suma `n` a `S.tr['p'+id]`, `toast` con el riesgo antes → después y `change()` conservando el scroll · → cxN,cxPct,dpCost,afford,toast,change
+- `dpEx(id)` · botón «Diplomacia» (deshabilitado «Diplomacia · Sin riesgo de contraataque» si `cxPct(cxN(id)+1)` es 0); lo pinta `raidView` · → cxN,cxPct
 
 ## trade.js
 - `TF`
@@ -306,7 +317,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 ## ui-views.js
 - `aR(a,r)` · antepone la acción al motivo de un botón deshabilitado («Encolar nivel 3 · Requiere Almacén 2»); '' si no hay motivo; helper declarado junto a `DW`
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
-- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC
+- `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr,S.rd,S.tr · «Contraataque X %» por puesto con `semC(cp,20,40)` y botón `dpEx` · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC,cxPct,cxN,dpEx
 - `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · sub-pestañas Estadísticas (`statsView`), Eventos (`histView`), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histView,rcEx
 - `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,cvOpen,exOpen,spEx,dbEx,rcEx
 

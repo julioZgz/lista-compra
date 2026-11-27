@@ -46,3 +46,5 @@ const SUC=500,SUR={tot:.1,par:.2,lo:[.3,.7],ship:.3},spT=to=>Math.ceil(Math.max(
 const exDf=id=>1+(id*7)%5,exPc=(k,id,n)=>{const p=Math.max(.1,Math.min(.9,(k==='x'?.5+.08*(S.tech.s||0):.4+.08*(S.tech.c||0))-.08*(exDf(id)-1)));return Math.min(.95,1-Math.pow(1-p,n))},exTx=m=>m.n>1&&'xc'.includes(m.k)?' ('+m.n+')':'';
 const exEvP=()=>.1+.03*(S.tech.s||0);
 const avT=(p,c)=>{let t=0;for(const k in c){const m=c[k]-R(p)[k];if(m<=0)continue;if(c[k]>capN(p,k))return -1;const q=prodN(p,IDX[k]);if(q<=0)return -2;t=Math.max(t,m/q)}return t};
+const cxE=(n,id)=>Math.max(0,n-((S.tr||{})['p'+id]||0)),cxN=id=>cxE((S.rd||{})['p'+id]||0,id),cxPct=n=>n<3?0:Math.min(.6,.15+.1*(n-3));
+const dpC=u=>Object.fromEntries(['m','c','g'].map((k,i)=>[k,Math.round(.5*RDN*(40+25*u.dist)*u.rich[i]/6*(i===2?.5:1))])),dpCost=(u,n)=>Object.fromEntries(Object.entries(dpC(u)).map(([k,v])=>[k,v*n]));
