@@ -15,7 +15,8 @@ w:{n:'Murallas',d:'Cada nivel reduce un 4% la probabilidad de que los rebeldes g
 t:{n:'Torretas láser',d:'Cada nivel reduce un 6% la probabilidad de que los rebeldes ganen un ataque.',b:{m:220,c:120,g:60},f:1.6,max:10},
 p:{n:'Puerto comercial',d:'Cada nivel atrae un 15% más de visitas, aumenta un 5% lo que dejan los mercaderes y reduce la llegada de refugiados.',b:{m:200,c:150,g:30},f:1.7,max:5},
 d:{n:'Fábrica de drones',d:'Cada nivel reduce un 8% los tiempos de este planeta y da +5% de producción.',b:{m:240,c:140,g:40},f:1.7,max:10},
-v:{n:'Estación de vigilancia',d:'Cada nivel aumenta un 8% la probabilidad de recibir preaviso de los eventos de este planeta: la tormenta solar dura la mitad y el meteorito no hace daño.',b:{m:180,c:160,g:50},f:1.6,max:10}};
+v:{n:'Estación de vigilancia',d:'Cada nivel aumenta un 8% la probabilidad de recibir preaviso de los eventos de este planeta: la tormenta solar dura la mitad y el meteorito no hace daño.',b:{m:180,c:160,g:50},f:1.6,max:10},
+r:{n:'Portal al Arca',d:'Conecta esta colonia con el Arca: +10% de producción y −10 a la rebelión hacia la que tiende. El Hogar recibe los mismos bonus con el Arca completa.',b:{m:240000,c:180000,g:120000},f:1,max:1}};
 const T={p:{n:'Propulsión',d:'Más alcance (+2 de distancia) y viajes más rápidos.',b:{c:100,g:60},f:1.9,max:8},
 c:{n:'Colonización',d:'Permite un planeta colonizado más por nivel y aumenta 8 puntos la probabilidad de éxito de cada colonizador (40% base, entre 10% y 90% según la dificultad del planeta).',b:{c:200,g:120},f:2,max:6},
 m:{n:'Flotas coordinadas',d:'Una misión simultánea más por nivel.',b:{c:250,g:150},f:2,max:6},
@@ -41,4 +42,4 @@ f:{n:'Fragata',d:'Nave de combate pesada: más poder y menos pérdidas que el co
 k:{n:'Carguero',d:'Casi no combate, pero lleva mucho botín. Poder 0,5, carga 800, pérdida base al fallar 30%. Puede conseguirse como recompensa al saquear con éxito.',b:{m:500,c:350,g:150},s:2,pw:.5,cg:800,ls:30},
 a:{n:'Acorazado',d:'La nave de saqueo más poderosa. Poder 4, carga 600, pérdida base al fallar 20%.',b:{m:1400,c:950,g:500},s:4,pw:4,cg:600,ls:20},
 s:{n:'Nave de suministros',d:'Lleva recursos entre tus colonias hacia una que no esté en la red. Carga 500 en total por nave y el viaje tarda un 50% más. Riesgo en ruta: 10% de perder toda la carga y las naves; 20% de saqueo parcial (se pierde del 30 al 70% de la carga y cada nave puede destruirse con un 30%).',b:{m:400,c:300,g:120},s:2,fm:1,pl:'naves de suministros'}};
-const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40,v:50},ST={e:30,c:90,r:60,f:90,k:75,a:150,s:75},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));
+const BT={m:15,c:15,g:15,a:40,s:60,l:60,u:50,d:50,h:60,o:40,k:30,w:40,t:50,p:50,z:40,v:50,r:1800},ST={e:30,c:90,r:60,f:90,k:75,a:150,s:75},ef=p=>1+.1*S.tech.e+.08*(lv(p,'u')+lv(p,'d'));

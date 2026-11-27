@@ -30,9 +30,10 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `tS(t,p)`
 - `cost(b,f,L)`
 - `cap(p)` · p.dm,p.b
-- `prod(p,i)` · S.tech,S.bo · p.st
+- `prod(p,i)` · S.tech,S.bo · p.st · ×1,10 si `arkBn(p)`
 - `lv(p,k)` · p.dm,p.b
-- `rbT(p)` · p.rb0,p.b
+- `rbT(p)` · p.rb0,p.b · −10 si `arkBn(p)`
+- `arkDone()` · S.ark · ¿las 6 partes del Arca al nivel 5? · `arkBn(p)` · p.id,p.b,p.dm · ¿recibe el bonus del Arca (+10 % producción, −10 rebelión)? Hogar (`id` 0) con el Arca completa; colonia con Portal al Arca (`r`, sin dañar) y el Arca completa
 - `defRed(p)` · p.rb,p.b
 - `RQ(p,k,tL,b=p.b)` · S.tech · p.b
 - `reqTxt(k)`
@@ -62,7 +63,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `newGame()` · → rng
 - `done(m)` · S.rk,S.known,S.fleet,S.rd,S.wr,S.cnt,S.cs,S.ev,S.tech,S.un · exploración y colonización con `n`/`pr`: tirada con `m.pr` (en exploración con éxito y `n`, `exEvt` puede añadir un evento: su texto va tras el de la exploración, en aviso e historial), se gastan todas las unidades (si falla una colonización, los recursos del convoy vuelven al origen; sin hueco de colonia vuelven los colonizadores; sin `n` = misión antigua, éxito seguro) · saqueo con flota mixta; en éxito, 12 % de desbloquear el Carguero; colonización: los recursos del convoy (`m.res`) se suman a la colonia nueva o, sin hueco, vuelven al planeta de origen (`m.o`) · misiones de vuelta (`k:'b'`) → `rcDone` (no se anotan en el historial) · saqueo (`r`), exploración y colonización (`x`) anotan su resultado con `histAdd` · → exEvt,norm,toast,rdPct,rdLoot,rdLost,rdTy,mFl,cxPlan,P,R,supDone,rcDone,histAdd
 - `supDone(m)` · S.fleet,S.ev · llegada de una misión de suministros (`m.k==='s'`): 70 % llega todo y las naves vuelven; 20 % saqueo parcial (se pierde 30-70 % de la carga, cada nave 30 %); 10 % pérdida total · suma la carga a `R(destino)` (si el destino ya no existe, al origen o al hogar) · anota el resultado en el historial (`s`) · → toast,P,R,U,histAdd
-- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora las tecnologías `i` (Convoyes), `h` (Mantenimiento) y `s` (Espionaje) al sumar niveles de tecnología, y el edificio `v` (Estación de vigilancia) al sumar niveles de edificios · → toast,histAdd
+- `visitor()` · S.cs,S.rf,S.ev,S.tech · p.b · el botín ignora las tecnologías `i` (Convoyes), `h` (Mantenimiento) y `s` (Espionaje) al sumar niveles de tecnología, y los edificios `v` (Estación de vigilancia) y `r` (Portal al Arca) al sumar niveles de edificios · → toast,histAdd
 - `attack(p)` · S.cnt,S.ev · p.rb,p.b,p.dm · → toast,histAdd
 - `advance(now)` · próxima visita a los 15-30 min (÷ (1 + 0,15 × niveles de Puerto comercial)) · S.t,S.sh,S.cs,S.net,S.tech,S.fleet,S.cnt,S.mis,S.rf,S.nv · p.nj,p.rr,p.dm,p.q,p.b,p.rb,p.rq,p.sq · → prod,rbT,toast,startNext,nextShip,evento,histRes,cxRun,rtRun
 - `genRU()` · → rng
@@ -254,7 +255,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `statsFl(t)` · S.fleet,S.mis · total de naves del modelo `t`: las de casa más las que van en misión (`x` exploradores, `c` colonizadores, `r` saqueo con `mFl`, `s` suministros; en las de vuelta `k:'b'` se usa `w`; sin `n` cuenta 1) · → mFl
 - `statsTmp()` · S.acc,S.sh,S.bo,S.cs · p.st · bloque «Mejoras temporales»: aceleradores, tiempo de escudo restante, tiempo restante de la anomalía de exploración y una línea por colonia con tormenta solar activa (`p.st` > ahora) con su tiempo restante; solo lectura · → fmtT,U
 - `statsShips()` · S.fleet,S.mis,S.tech · tabla «Naves»: una fila por modelo con `shUn(t)` o alguna unidad; Total (y «N en vuelo»), Poder (`pw` × (1+0,1×Armamento)), Carga (`cg` × (1+0,25×Bodegas); colonizador con `cvMax()`, suministros `SUC`) y Pérdidas (`rdLost(1,t)`), solo el valor con mejoras (sin base); nota con el éxito por unidad (`exPc` con dificultad 1) · → statsFl,sn,fmt,shUn,rdLost,cvMax,exPc
-- `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Mejoras temporales, Naves, almacén de la red y de cada colonia suelta · → statsTmp,statsShips,statsBox,statsTr,prod
+- `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Mejoras temporales, Naves, almacén de la red y de cada colonia suelta · → statsTmp,statsShips,statsBox,statsTr,prod,arkIc
 - `statsLive()` · se repinta cada 2 s mientras `V==='e'` y `SUBE==='s'` y se para solo al salir · `statsView()` · devuelve `<div id=stb>` y arranca `statsLive`
 
 ## ark.js
@@ -263,6 +264,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `arkReq()` · S.cs · edificios del Hogar exigidos para iniciar el Arca (Almacén, Hangar, Laboratorio, Centro de mando, Astillero): `[nombre, nivel, máximo]`, con el máximo de `maxL` · → maxL
 - `arkWhy(i)` · S.cs · motivo por el que no se puede subir la parte i ('' si se puede): nivel máximo, mientras `arkN()==0` los edificios del Hogar que falten según `arkReq` («Requiere Almacén 12 (tienes 9)»), Hogar fuera de la red, Superestructura insuficiente, `capN` por debajo del coste («Sube el Almacén») o recursos de `R(Hogar)` insuficientes · → R,capN
 - `arkSvg()` dibujo provisional con una capa por parte (opacidad según nivel) · `arkImg()` capas `img/arca/` si `ARKIMG`, si no `arkSvg`
+- `arkIc(p)` · icono 🌌 sin texto (en color si `arkBn(p)`, tachado y apagado si no); lo pintan `render` (a la izquierda del 🔗 bajo el nombre de la colonia) y `statsBody` (junto al nombre en la tabla de producción) · → arkBn
 - `arkBtn()` · S.ark · botón «🛸 El Arca · X %» (lo pone `view` al principio de Edificios) · `arkCard(x,i)` tarjeta de una parte; los chips de coste llevan `data-ak`/`data-an` (para que `tick` no los toque) y usan la clase `lack` si falta ese recurso en `R(Hogar)`; `arkTx(k,n)` da el texto, igual que `tick`
 - `arkLive()` · S.cs · mientras `#md` muestra el Arca, cada segundo (intervalo `AKT`, se para solo al cerrar) repinta los chips (`lack` y texto con `arkTx`) y habilita/deshabilita los botones con `arkWhy` · → R,arkWhy
 - `arkOpen()` · S.ark,S.cs · ventana dedicada sobre `#md`: dibujo, progreso global, recursos de la red, sin iniciar la línea «Para empezar, en el Hogar: …» y una tarjeta por parte · → arkImg,arkCard,arkReq,R,fmt · arranca `arkLive`
@@ -319,10 +321,10 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `queueView()` · S.cs,S.tech,S.mis,S.rk · p.q,p.b,p.rr,p.rq,p.sq,p.bq,p.sqq · → goTo,mTx,spTx,exTx
 - `raidView()` · S.fleet,S.mis,S.tech,S.ru,S.rk,S.wr,S.rd,S.tr · «Contraataque X %» por puesto con `semC(cp,20,40)` y botón `dpEx` · desgaste del planeta con color (`semC(wp,10,30)`: verde <10 %, amarillo <30 %, rojo) · → fmtT,planet,need,exOpen,openRaid,rdTy,rdN,wrP,rdDef,semC,cxPct,cxN,dpEx
 - `portView(p)` · sub-pestañas Colonización (`mapView`), Saqueos (`raidView`) y Misiones en curso (`missionsView`); cada una solo si `tabVis` lo permite (Misiones, siempre) · `empireView(p)` · sub-pestañas Estadísticas (`statsView`), Eventos (`histView`), Comercio (`tradeView`) y Colas (`queueView`) · → tabVis,subTabs,histView,rcEx
-- `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,cvOpen,exOpen,spEx,dbEx,rcEx
+- `view(p)` · pestañas Colonia (Arca solo en el Hogar; «Pedir suministros»/rutas y «Abandonar colonia» arriba), Laboratorio (bloque colapsable «Investigaciones»), Astillero, Puerto (`portView`) e Imperio (`empireView`) · S.tech,S.cs,S.fleet,S.mis,S.net,S.u,S.known · p.q,p.b,p.rr,p.rq,p.sq,p.dm · → arkBtn,arkDone,cost,fmt,fmtT,prod,reqTxt,trq,shUn,shUnT,tabVis,tabAct,repC,maxL,icon,bic,planet,card,slots,build,qBlock,bqList,sqList,research,ship,repair,cancelRR,rrCard,cancelB,cancelR,cancelS,need,send,selPlanet,comm,tin,tmax,trade,abandon,dsEx,cvOpen,exOpen,spEx,dbEx,rcEx
 
 ## render.js
-- `render()` · S.cs · p.nj · el menú de secciones llama a `tabGo` · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view
+- `render()` · S.cs · p.nj · el menú de secciones llama a `tabGo` · → tabVis,tabAct,warn,planet,orb,rfCard,selPlanet,openBk,openObj,load,logout,view,arkIc
 - `tick(skip)` · S.sh · p.rb,p.st,p.b · → warnP,lv,afford,fmt,fmtT,rbT,defRed,advance,obReady,avSet
 - `avTx(s)` · texto corto de un tiempo (45 s, 3 min, 2 h) · `avSet(b,c,p)` · añade « · en X» / «Sube el Almacén» / «Sin producción» al botón deshabilitado por recursos (solo `build`, `research`, `ship`, sin hijos); guarda el texto original en `data-t0` y lo restaura al poder pagar · → avT,avTx
 

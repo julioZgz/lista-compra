@@ -29,7 +29,7 @@ S.ev=w===2?`Convoy de suministros perdido en ruta a ${nm}: se pierde toda la car
 function visitor(){const lvl=S.cs.reduce((a,p)=>a+lv(p,'p'),0);
 if(!S.rf&&Math.random()<.3/(1+.1*lvl)){const q=S.cs[Math.floor(Math.random()*S.cs.length)],pool=R(q),c={};for(const k of['m','c','g'])c[k]=Math.floor(pool[k]*.15);
 S.rf={pid:q.id,c,exp:Date.now()+600000};S.ev=`Llegan refugiados a ${U(q.id).name}: decide si los aceptas.`;histAdd('v',q.id,S.ev,1);toast(S.ev,q.id,'b');return}
-let pw=0;S.cs.forEach(p=>{for(const k in p.b)if(k!=='v')pw+=p.b[k]});for(const k in S.tech)if(k!=='i'&&k!=='h'&&k!=='s')pw+=2*S.tech[k];
+let pw=0;S.cs.forEach(p=>{for(const k in p.b)if(k!=='v'&&k!=='r')pw+=p.b[k]});for(const k in S.tech)if(k!=='i'&&k!=='h'&&k!=='s')pw+=2*S.tech[k];
 const f=(.6+Math.random()*.8)*(1+.05*lvl),g={m:Math.round((40+pw*14)*f),c:Math.round((30+pw*10)*f),g:Math.round((12+pw*4)*f)};
 const p=S.cs[Math.floor(Math.random()*S.cs.length)],who=['Unos mercaderes','Unos peregrinos','Una nave a la deriva'][Math.floor(Math.random()*3)];
 for(const k in g)R(p)[k]+=g[k];

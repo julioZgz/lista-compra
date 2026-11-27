@@ -4,7 +4,7 @@
  * Movido tal cual de juego-espacial.html original; ver ARCHITECTURE.md. */
 
 const DB='https://lista-compra-3e6a2-default-rtdb.europe-west1.firebasedatabase.app';
-function norm(p){p.bq=p.bq||[];p.sqq=p.sqq||[];for(const k of['o','k','w','t','p','v'])p.b[k]=p.b[k]||0;if(p.b.z==null)p.b.z=Math.min(10,Math.max(0,Math.max(...['m','c','g','a','s','l','u','d','h','w','t','p'].map(x=>p.b[x]||0))-2));p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];p.st=p.st||0;if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
+function norm(p){p.bq=p.bq||[];p.sqq=p.sqq||[];for(const k of['o','k','w','t','p','v','r'])p.b[k]=p.b[k]||0;if(p.b.z==null)p.b.z=Math.min(10,Math.max(0,Math.max(...['m','c','g','a','s','l','u','d','h','w','t','p'].map(x=>p.b[x]||0))-2));p.rb0=p.rb0??(p.id?8+(p.id*7)%23:10);p.rb=p.rb??p.rb0;p.dm=p.dm||[];p.st=p.st||0;if(p.q&&p.q.rep){p.rr={k:p.q.k,end:Math.min(p.q.end,Date.now()+repT(p,p.q.k)*1000),c:p.q.c};delete p.q}}
 const key=()=>encodeURIComponent(code.replace(/[.$#\[\]\/]/g,'_'));
 let ET=null,SV=0,CK=0;
 async function save(){if(!S||!code||SV)return;SV=1;advance(Date.now());
