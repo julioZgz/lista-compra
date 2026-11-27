@@ -200,7 +200,7 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `MR`
 - `pctN(fl,u)` · → rdPct
 - `mUpd()` · → rdLoot,pctN,fmt,semC · pinta el % de éxito con `semC(pc,70,40)`
-- `openRaid(id)` · S.fleet,S.tech · modal sobre el componente `qtyOpen` (según la cabecera de raids.js; no revisado en ui-core): una fila −/+ y un slider por modelo en casa · → qtyOpen,fmtT,rdTy
+- `openRaid(id)` · S.fleet,S.tech · modal sobre el componente `qtyOpen` de ui-core: una fila −/+ y un slider por modelo en casa · → qtyOpen,fmtT,rdTy
 - `mFix(t)` · deja al menos 1 nave en el envío
 - `closeM()`
 - `sendRaid()`
@@ -238,9 +238,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `statsFill(h,cp,q)` · texto y color («Almacén lleno» / «Sin producción» / «Se llena en X») con `semC(min,120,30)` · → semC,fmtT
 - `statsBox(t,p,net)` · S.net · p.r · bloque de almacén (lleno/capacidad, barra, producción por hora) de la red (`net`=1) o de una colonia suelta · → statsFill,capN,capK,prodN,prod,fmt
 - `statsTr(n,f,b)` · fila de la tabla de producción por hora
-- `sn(x)` número con coma decimal · `sba(b,a)` «base → actual» (solo `a` si son iguales)
+- `sn(x)` número con coma decimal
 - `statsFl(t)` · S.fleet,S.mis · total de naves del modelo `t`: las de casa más las que van en misión (`x` exploradores, `c` colonizadores, `r` saqueo con `mFl`, `s` suministros; en las de vuelta `k:'b'` se usa `w`; sin `n` cuenta 1) · → mFl
-- `statsShips()` · S.fleet,S.mis,S.tech · tabla «Naves»: una fila por modelo con `shUn(t)` o alguna unidad; Total (y «N en vuelo»), Poder (`pw` → ×(1+0,1×Armamento)), Carga (`cg` → ×(1+0,25×Bodegas); colonizador con `cvMax()`, suministros `SUC`) y Pérdidas (`ls` → `rdLost(1,t)`); nota con el éxito por unidad (`exPc` con dificultad 1) · → statsFl,sba,sn,fmt,shUn,rdLost,cvMax,exPc
+- `statsShips()` · S.fleet,S.mis,S.tech · tabla «Naves»: una fila por modelo con `shUn(t)` o alguna unidad; Total (y «N en vuelo»), Poder (`pw` × (1+0,1×Armamento)), Carga (`cg` × (1+0,25×Bodegas); colonizador con `cvMax()`, suministros `SUC`) y Pérdidas (`rdLost(1,t)`), solo el valor con mejoras (sin base); nota con el éxito por unidad (`exPc` con dificultad 1) · → statsFl,sn,fmt,shUn,rdLost,cvMax,exPc
 - `statsBody()` · S.cs,S.net · HTML del panel: producción por hora, Naves, almacén de la red y de cada colonia suelta · → statsShips,statsBox,statsTr,prod
 - `statsLive()` · se repinta cada 2 s mientras `V==='e'` y `SUBE==='s'` y se para solo al salir · `statsView()` · devuelve `<div id=stb>` y arranca `statsLive`
 
@@ -254,6 +254,11 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `arkLive()` · S.cs · mientras `#md` muestra el Arca, cada segundo (intervalo `AKT`, se para solo al cerrar) repinta los chips (`lack` y texto con `arkTx`) y habilita/deshabilita los botones con `arkWhy` · → R,arkWhy
 - `arkOpen()` · S.ark,S.cs · ventana dedicada sobre `#md`: dibujo, progreso global, recursos de la red, sin iniciar la línea «Para empezar, en el Hogar: …» y una tarjeta por parte · → arkImg,arkCard,arkReq,R,fmt · arranca `arkLive`
 - `arkBuy(k)` · S.ark · R(Hogar) · paga el coste del siguiente nivel, sube la parte, toast, `dirty`, reabre la ventana conservando el scroll y `render()` · → arkWhy,toast,arkOpen,render
+
+## confirm.js
+- `CFM` (confirmación pendiente; no se guarda; no lee ni escribe S)
+- `cfOpen(o)` · `o` = `{t,i,g,f,c?,x?}` (título, texto, texto de la acción, función que la ejecuta, color opcional, onclick de cancelar opcional) · tarjeta `.card` sobre `#md` con Cancelar (`o.x` o `closeM()`) y la acción (color `o.c` o `#e8a86a`) · → $
+- `cfGo()` · vacía `CFM`, cierra con `closeM` y ejecuta `f` · → closeM
 
 ## ui-art.js
 - `icon(p,c)`
@@ -277,6 +282,9 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 - `card()` · → fmtT
 - `showAway(ms,t0,ev)` · S.rf · → fmt,fmtT,tot,closeM
 - `toast(t,pid,v)` · localStorage setItem:je_sp · → render
+- `QTY` (modal de cantidad abierta; no se guarda)
+- `qtyOpen(c)` · modal de cantidad común sobre `#md` (raids, dismantle, convoy, supply, expedition): `c.t` título · `c.i` contexto · `c.pre`/`c.post` HTML · `c.rows` filas −/N/+ con range `{mn,mx(),get(),set(v),st,fm(n),h,x}` · `c.gt`/`c.go` texto y onclick de la acción (`c.gid`, `c.gm`, `c.sc`) · `c.u()` refresca líneas propias · el estado vive en el módulo que abre, nunca en S · → qtyUpd
+- `qtyUpd()` · repinta números y ranges y llama a `c.u()` · `qtyStep(i,d)` · `qtySl(i,v)` · → qtyUpd
 - `QO`
 - `qBlock(h,sm,inner)`
 - `qToggle()`
