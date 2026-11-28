@@ -278,6 +278,8 @@ Orden de carga = orden de este índice. Helpers pequeños declarados en la misma
 
 ## ui-art.js
 - `icon(p,c)`
+- `INV` (Set de ids de investigación con imagen cargada) · `INVN` (contador de pruebas terminadas; al llegar a todas y con `S`, hace `render`) · `tic(k)` · icono de investigación: imagen `img/research/<k>.webp` si está en `INV`, si no el SVG de `TI`; lo usa la vista Laboratorio (`view`)
+- `NAV` · `NAVN` · `sic(t)` · igual que `tic` para las naves: imagen `img/ships/<t>.webp` si está en `NAV`, si no el SVG de `SI`; lo usa la vista Astillero (`view`)
 - `SPM`
 - `SPR`
 - (arranque) if(typeof Image!=='undefined'){const spr=new Image();spr.onl
