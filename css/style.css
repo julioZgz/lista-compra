@@ -50,7 +50,7 @@ input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--ln);backg
 .card button.tab{width:auto;background:var(--pn);color:var(--tx);border:1px solid var(--ln);padding:6px 12px;font-weight:400}.card button.tab.on{border-color:var(--ok)}
 .ms{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.ms .ch{background:var(--pn);padding:4px 8px}
 .ic{width:46px;height:46px;border-radius:12px;background:var(--bg);border:1px solid var(--ln);display:grid;place-items:center;flex:none;color:var(--ok)}
-.ic.im{overflow:hidden;padding:0}.ic.im img{width:100%;height:100%;display:block}
+.ic.im{width:76px;height:76px;overflow:hidden;padding:0}.ic.im img{width:100%;height:100%;display:block}
 .ic.m{color:var(--m)}.ic.c{color:var(--c)}.ic.g{color:var(--g)}
 /* Modales (#md): fondo más oscuro (gana al estilo en línea del HTML) y sin scroll detrás cuando está abierta (display:flex puesto por JS) */
 #md{background:#000e!important;overscroll-behavior:contain;touch-action:none}#md .card{overscroll-behavior:contain;touch-action:pan-y}
