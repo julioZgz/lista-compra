@@ -1,5 +1,5 @@
 /* ui-art.js — Dibujo: iconos SVG (BI, TI, SI, icon), sprite edificios.webp (SPM, SPR, bic), planetas (planet, orb).
- * Lee: S solo para pintar. Escribe: SPR. Carga edificios.webp.
+ * Lee: S solo para pintar. Escribe: SPR, INV, INVN. Carga edificios.webp e img/inv/<id>.webp.
  * NO debe: mutar S ni contener reglas.
  * Movido tal cual de juego-espacial.html original; ver ARCHITECTURE.md. */
 const icon=(p,c)=>`<div class="ic ${c||''}"><svg viewBox="0 0 48 48" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${p}</svg></div>`;
@@ -49,6 +49,10 @@ f:`<path d="M24 4l8 14v14l-8 10-8-10V18z"/><path d="M16 28l-8 8M32 28l8 8M24 14v
 k:`<rect x="12" y="12" width="24" height="26" rx="3"/><path d="M12 22h24M20 38v4M28 38v4M18 6h12"/>`,
 a:`<path d="M24 4l10 12v18l-10 10-10-10V16z"/><path d="M8 22l6 4v10l-6-6zM40 22l-6 4v10l6-6zM24 12v22"/>`,
 s:`<path d="M6 32h36l-5 9H11z"/><rect x="12" y="18" width="10" height="10"/><rect x="26" y="18" width="10" height="10"/><path d="M17 18v10M31 18v10M22 41v3M26 41v3"/>`};
+/* Imágenes de investigaciones: img/inv/<id>.webp (128x128), una por clave de T. Si falta o no carga, se usa el SVG de TI. Se repinta una sola vez al terminar de probarlas todas. */
+const INV=new Set();let INVN=0;
+if(typeof Image!=='undefined'){const tot=Object.keys(T).length,fin=()=>{if(++INVN===tot&&S)render()};for(const k in T){const im=new Image();im.onload=()=>{INV.add(k);fin()};im.onerror=fin;im.src='img/inv/'+k+'.webp'}}
+const tic=k=>INV.has(k)?`<div class="ic im"><img src="img/inv/${k}.webp" alt=""></div>`:icon(TI[k]);
 let gid=0;
 function planet(id,sz,unk){
 if(unk)return `<svg width="${sz}" height="${sz}" viewBox="0 0 64 64" style="flex:none"><circle cx="32" cy="32" r="22" fill="#111c31" stroke="#2a3b5e" stroke-width="2" stroke-dasharray="4 4"/><text x="32" y="41" text-anchor="middle" font-size="24" fill="#93a4c4" font-family="Chakra Petch,sans-serif">?</text></svg>`;
